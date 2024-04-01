@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dp8lv63rn2iqy"]
+[gd_scene load_steps=10 format=3 uid="uid://dp8lv63rn2iqy"]
 
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="1_qxcb2"]
 [ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="2_46af0"]
 [ext_resource type="PackedScene" uid="uid://cxad238frrfpd" path="res://scenes/player.tscn" id="2_alpoj"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="3_lo65r"]
+[ext_resource type="PackedScene" uid="uid://dwrd8a810ieea" path="res://enemyv1.tscn" id="5_lp3po"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
 texture = ExtResource("1_qxcb2")
@@ -545,3 +546,5 @@ script = ExtResource("3_lo65r")
 [node name="TileMap2" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_smx06")
 format = 2
+
+[node name="Enemy" parent="." instance=ExtResource("5_lp3po")]
