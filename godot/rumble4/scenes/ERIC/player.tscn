@@ -1,40 +1,40 @@
-[gd_scene load_steps=12 format=3 uid="uid://cxad238frrfpd"]
+[gd_scene load_steps=12 format=3 uid="uid://2xnrkuxcxnqc"]
 
-[ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_iix47"]
+[ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_6p5b7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
 size = Vector2(32.0547, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0ec6r"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(0, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ldh5t"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(24, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w00k6"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(48, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lhh1m"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(72, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1lo4b"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(96, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m77ot"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(120, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4mfx8"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(144, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d4jja"]
-atlas = ExtResource("1_iix47")
+atlas = ExtResource("1_6p5b7")
 region = Rect2(168, 24, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_w5nhf"]
@@ -76,7 +76,7 @@ position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_2vxdc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(16, 16)
+position = Vector2(15, 13)
 scale = Vector2(1.29167, 1.33333)
 sprite_frames = SubResource("SpriteFrames_w5nhf")
 frame = 4

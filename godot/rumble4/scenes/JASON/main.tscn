@@ -1,17 +1,18 @@
-[gd_scene load_steps=17 format=3 uid="uid://dp8lv63rn2iqy"]
+[gd_scene load_steps=18 format=3 uid="uid://ccci5qcgbhnkk"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_271xv"]
-[ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="1_qxcb2"]
-[ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="2_46af0"]
-[ext_resource type="PackedScene" uid="uid://cxad238frrfpd" path="res://scenes/player.tscn" id="2_alpoj"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="3_lo65r"]
-[ext_resource type="Texture2D" uid="uid://dkyeg85p5odma" path="res://assets/TX Tileset Wall.png" id="3_mpu10"]
-[ext_resource type="PackedScene" uid="uid://c0jqedbw0tc32" path="res://scenes/platform.tscn" id="7_1bj0u"]
-[ext_resource type="PackedScene" uid="uid://cnxfd2d7tr8gf" path="res://scenes/staff_1.tscn" id="7_15n14"]
-[ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/enemyv1.tscn" id="11_auewd"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_3puqd"]
+[ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_rtxjw"]
+[ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="3_6jgi4"]
+[ext_resource type="Texture2D" uid="uid://dkyeg85p5odma" path="res://assets/TX Tileset Wall.png" id="4_5lqkd"]
+[ext_resource type="PackedScene" uid="uid://cxad238frrfpd" path="res://scenes/MAIN FOLDER/player.tscn" id="5_0tft7"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="6_w336b"]
+[ext_resource type="PackedScene" uid="uid://cnxfd2d7tr8gf" path="res://scenes/MAIN FOLDER/staff_1.tscn" id="7_qm2qn"]
+[ext_resource type="PackedScene" uid="uid://c0jqedbw0tc32" path="res://scenes/MAIN FOLDER/platform.tscn" id="8_jhoiy"]
+[ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/MAIN FOLDER/enemyv1.tscn" id="9_vdei1"]
+[ext_resource type="PackedScene" uid="uid://p3gnew6isfuo" path="res://scenes/MAIN FOLDER/key.tscn" id="10_vrd34"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
-texture = ExtResource("1_qxcb2")
+texture = ExtResource("2_rtxjw")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
@@ -208,7 +209,7 @@ texture_region_size = Vector2i(32, 32)
 7:7/0/physics_layer_0/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b7mry"]
-texture = ExtResource("2_46af0")
+texture = ExtResource("3_6jgi4")
 texture_region_size = Vector2i(32, 32)
 1:0/0 = 0
 1:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
@@ -572,7 +573,7 @@ texture_region_size = Vector2i(32, 32)
 6:15/0/physics_layer_0/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0jun"]
-texture = ExtResource("3_mpu10")
+texture = ExtResource("4_5lqkd")
 texture_region_size = Vector2i(32, 32)
 1:1/0 = 0
 1:1/0/physics_layer_0/linear_velocity = Vector2(0, 0)
@@ -766,7 +767,7 @@ sources/1 = SubResource("TileSetAtlasSource_b7mry")
 sources/2 = SubResource("TileSetAtlasSource_o0jun")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3qu3k"]
-texture = ExtResource("3_mpu10")
+texture = ExtResource("4_5lqkd")
 texture_region_size = Vector2i(32, 32)
 1:1/0 = 0
 1:1/0/physics_layer_0/linear_velocity = Vector2(0, 0)
@@ -957,7 +958,7 @@ texture_region_size = Vector2i(32, 32)
 5:10/0/physics_layer_0/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xpvm8"]
-texture = ExtResource("2_46af0")
+texture = ExtResource("3_6jgi4")
 texture_region_size = Vector2i(32, 32)
 1:0/0 = 0
 1:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
@@ -1283,7 +1284,7 @@ sources/1 = SubResource("TileSetAtlasSource_xpvm8")
 
 [node name="Main" type="Node2D"]
 scale = Vector2(5, 5)
-script = ExtResource("1_271xv")
+script = ExtResource("1_3puqd")
 
 [node name="Background" type="TileMap" parent="."]
 scale = Vector2(1.00056, 1)
@@ -1292,8 +1293,8 @@ collision_visibility_mode = 1
 format = 2
 layer_0/tile_data = PackedInt32Array(0, 0, 0, 65536, 393216, 3, 131072, 393216, 3, 196608, 0, 0, 262144, 0, 0, 327680, 327681, 15, 1, 0, 0, 65537, 0, 0, 131073, 393216, 3, 196609, 393216, 3, 262145, 0, 0, 327681, 327681, 15, 2, 0, 6, 65538, 65536, 6, 131074, 65536, 4, 196610, 0, 7, 262146, 65536, 5, 327682, 327681, 15, 3, 65536, 4, 65539, 65536, 7, 131075, 65536, 4, 196611, 65536, 4, 262147, 0, 5, 327683, 327681, 15, 4, 0, 0, 65540, 0, 0, 131076, 393216, 2, 196612, 131072, 1, 262148, 0, 0, 327684, 327681, 15, 5, 327681, 15, 65541, 65537, 4, 131077, 327681, 15, 196613, 327681, 15, 262149, 327681, 15, 327685, 327681, 15, -1, 327681, 15, 65535, 327681, 15, 131071, 327681, 15, 196607, 327681, 15, 262143, 327681, 15, 327679, 327681, 15, 393215, 327681, 15, -65536, 327681, 15, -65535, 327681, 15, -65534, 327681, 15, -65533, 327681, 15, -65532, 327681, 15, -65531, 327681, 15)
 
-[node name="Player" parent="." instance=ExtResource("2_alpoj")]
-script = ExtResource("3_lo65r")
+[node name="Player" parent="." instance=ExtResource("5_0tft7")]
+script = ExtResource("6_w336b")
 
 [node name="Walls" type="TileMap" parent="."]
 position = Vector2(32, 0)
@@ -1302,7 +1303,7 @@ collision_visibility_mode = 1
 format = 2
 layer_0/tile_data = PackedInt32Array(65538, 786432, 1, 65539, 786432, 1, 131073, 589824, 2, 196609, 589824, 2, 262145, 589824, 2, 0, 327681, 9)
 
-[node name="Staff1" parent="." instance=ExtResource("7_15n14")]
+[node name="Staff1" parent="." instance=ExtResource("7_qm2qn")]
 position = Vector2(45.2, -44.6)
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -1322,12 +1323,16 @@ offset_left = 39.6
 offset_top = 196.8
 offset_right = 120.6
 offset_bottom = 219.8
+text = " "
 
-[node name="platform" parent="." instance=ExtResource("7_1bj0u")]
+[node name="platform" parent="." instance=ExtResource("8_jhoiy")]
 position = Vector2(16.2, 79)
 
-[node name="platform2" parent="." instance=ExtResource("7_1bj0u")]
+[node name="platform2" parent="." instance=ExtResource("8_jhoiy")]
 position = Vector2(16, 110.8)
 
-[node name="Enemy Node2D" parent="." instance=ExtResource("11_auewd")]
+[node name="Enemy Node2D" parent="." instance=ExtResource("9_vdei1")]
 position = Vector2(90, -45.8)
+
+[node name="Key" parent="." instance=ExtResource("10_vrd34")]
+position = Vector2(48, 16.2)
