@@ -10,6 +10,8 @@ import (
 	"starter-game/msg"
 )
 
+const PLAYER_MAX_HEALTH = 5
+
 // PlayerSpawnerSystem spawns players based on `CreatePlayer` transactions.
 // This provides an example of a system that creates a new entity.
 func PlayerSpawnerSystem(world cardinal.WorldContext) error {
@@ -18,7 +20,11 @@ func PlayerSpawnerSystem(world cardinal.WorldContext) error {
 		func(create message.TxData[msg.CreatePlayerMsg]) (msg.CreatePlayerResult, error) {
 			maxHp := 100
 			id, err := cardinal.Create(world,
-				comp.Player{Nickname: create.Msg.Nickname},
+				comp.Player{
+					Nickname:      create.Msg.Nickname,
+					MaxHealth:     PLAYER_MAX_HEALTH,
+					CurrentHealth: PLAYER_MAX_HEALTH,
+				},
 				comp.Health{HP: maxHp},
 			)
 			if err != nil {
