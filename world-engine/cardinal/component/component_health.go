@@ -1,7 +1,8 @@
 package component
 
 type Health struct {
-	HP int
+	MaxHealth  int
+	CurrHealth int
 }
 
 func (Health) Name() string {

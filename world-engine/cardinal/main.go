@@ -8,7 +8,6 @@ import (
 
 	"cinco-paus/component"
 	"cinco-paus/msg"
-	"cinco-paus/query"
 	"cinco-paus/system"
 )
 
@@ -21,8 +20,10 @@ func main() {
 	// Register components
 	// NOTE: You must register your components here for it to be accessible.
 	Must(
+		// cardinal.RegisterComponent[component.Character](w),
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Health](w),
+		cardinal.RegisterComponent[component.Position](w),
 	)
 
 	// Register messages (user action)
@@ -36,7 +37,7 @@ func main() {
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
 	Must(
-		cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
+	// cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
 	)
 
 	// Each system executes deterministically in the order they are added.
@@ -44,8 +45,8 @@ func main() {
 	// For example, you may want to run the attack system before the regen system
 	// so that the player's HP is subtracted (and player killed if it reaches 0) before HP is regenerated.
 	Must(cardinal.RegisterSystems(w,
-		system.AttackSystem,
-		system.RegenSystem,
+		// system.AttackSystem,
+		// system.RegenSystem,
 		system.PlayerTurnSystem,
 	))
 
