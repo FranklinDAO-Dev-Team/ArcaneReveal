@@ -16,3 +16,5 @@ func move():
 		velocity = Vector2.ZERO
 		
 	move_and_slide()
+	
+	#testing
