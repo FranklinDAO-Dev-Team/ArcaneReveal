@@ -1,0 +1,27 @@
+curl --request POST \
+  --url http://localhost:4040/tx/game/create-player \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"personaTag": "CoolMage",
+	"namespace": "",
+	"nonce": 0,
+	"signature": "",
+	"body": {
+		"nickname": "CoolMage"
+	}
+  }'
+
+curl --request POST \
+  --url http://localhost:4040/tx/game/player-turn \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"personaTag": "CoolMage",
+	"namespace": "",
+	"nonce": 0,
+	"signature": "",
+	"body": {
+		"nickname": "CoolMage",
+        "action": "move",
+        "direction": "up"
+	}
+  }'

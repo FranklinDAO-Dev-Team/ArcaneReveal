@@ -1,4 +1,4 @@
-module starter-game
+module cinco-paus
 
 go 1.22.1
 

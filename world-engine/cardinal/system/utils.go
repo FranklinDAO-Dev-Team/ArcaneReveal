@@ -7,7 +7,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/search/filter"
 	"pkg.world.dev/world-engine/cardinal/types"
 
-	comp "starter-game/component"
+	comp "cinco-paus/component"
 )
 
 // queryTargetPlayer queries for the target player's entity ID and health component.

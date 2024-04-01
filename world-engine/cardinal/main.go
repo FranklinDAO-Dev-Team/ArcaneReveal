@@ -6,10 +6,10 @@ import (
 	"github.com/rs/zerolog/log"
 	"pkg.world.dev/world-engine/cardinal"
 
-	"starter-game/component"
-	"starter-game/msg"
-	"starter-game/query"
-	"starter-game/system"
+	"cinco-paus/component"
+	"cinco-paus/msg"
+	"cinco-paus/query"
+	"cinco-paus/system"
 )
 
 func main() {
@@ -46,8 +46,11 @@ func main() {
 	Must(cardinal.RegisterSystems(w,
 		system.AttackSystem,
 		system.RegenSystem,
-		system.PlayerSpawnerSystem,
 		system.PlayerTurnSystem,
+	))
+
+	Must(cardinal.RegisterInitSystems(w,
+		system.PlayerSpawnerSystem,
 	))
 
 	Must(w.StartGame())
