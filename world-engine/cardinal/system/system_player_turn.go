@@ -18,8 +18,6 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
 			}
 
-			// player, err := queryPlayer(world, turn.Msg.Nickname)
-			fmt.Println("in PlayerTurnSystem")
 			playerID, err := queryPlayerID(world)
 			player, err := cardinal.GetComponent[comp.Position](world, playerID)
 
@@ -30,15 +28,12 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: Player Not Found")
 			}
 
-			fmt.Printf("turn.Msg.Action: %s, action: %s", turn.Msg.Action, turn.Msg.Action)
-
 			switch turn.Msg.Action {
 			case "attack":
 				// player_turn_attack(*player, turn.Msg.Direction)
 			case "wand":
 				// player_turn_wand(*player, turn.Msg.Direction)
 			case "move":
-				fmt.Println("in correct switch")
 				err = player_turn_move(world, turn.Msg.Direction)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
@@ -68,7 +63,6 @@ func player_turn_wand(player comp.Player, direction string) {
 }
 
 func player_turn_move(world cardinal.WorldContext, direction string) error {
-	fmt.Println("entered player_turn_move")
 	playerID, err := queryPlayerID(world)
 	if err != nil {
 		return err
@@ -99,7 +93,6 @@ func player_turn_move(world cardinal.WorldContext, direction string) error {
 	default:
 		return fmt.Errorf("invalid direction")
 	}
-	fmt.Printf("x: %d, y: %d", currPos.X, currPos.Y)
 	cardinal.SetComponent[comp.Position](world, playerID, currPos)
 
 	return nil
