@@ -12,7 +12,7 @@ const PLAYER_MAX_HEALTH = 5
 
 // PlayerSpawnerSystem spawns players based on `CreatePlayer` transactions.
 // This provides an example of a system that creates a new entity.
-func PlayerSpawnerSystem(world cardinal.WorldContext) error {
+func SpawnPlayerSystem(world cardinal.WorldContext) error {
 	// Create player
 	_, err := cardinal.Create(world,
 		comp.Player{},

@@ -20,6 +20,10 @@ func queryPlayerID(world cardinal.WorldContext) (types.EntityID, error) {
 	return 0, nil // current hardcoded
 }
 
+func manDist(e1ID types.EntityID, e2ID types.EntityID) (int, error) {
+	return 0, nil
+}
+
 // // queryTargetPlayer queries for the target player's entity ID and health component.
 // func queryTargetPlayer(world cardinal.WorldContext, targetNickname string) (types.EntityID, *comp.Health, error) {
 // 	var playerID types.EntityID

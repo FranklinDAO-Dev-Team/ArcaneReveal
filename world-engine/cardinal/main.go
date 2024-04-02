@@ -22,6 +22,8 @@ func main() {
 	Must(
 		// cardinal.RegisterComponent[component.Character](w),
 		cardinal.RegisterComponent[component.Player](w),
+		cardinal.RegisterComponent[component.Monster](w),
+		cardinal.RegisterComponent[component.Wand](w),
 		cardinal.RegisterComponent[component.Health](w),
 		cardinal.RegisterComponent[component.Position](w),
 	)
@@ -51,7 +53,9 @@ func main() {
 	))
 
 	Must(cardinal.RegisterInitSystems(w,
-		system.PlayerSpawnerSystem,
+		system.SpawnPlayerSystem,
+		system.SpawnWandsSystem,
+		system.PopulateBoardSystem,
 	))
 
 	Must(w.StartGame())
