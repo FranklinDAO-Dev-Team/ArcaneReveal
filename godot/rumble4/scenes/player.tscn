@@ -81,4 +81,3 @@ scale = Vector2(1.29167, 1.33333)
 sprite_frames = SubResource("SpriteFrames_w5nhf")
 frame = 4
 frame_progress = 0.940225
-
