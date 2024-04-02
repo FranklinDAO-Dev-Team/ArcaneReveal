@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_iix47"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
+size = Vector2(32.0547, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0ec6r"]
 atlas = ExtResource("1_iix47")
@@ -71,10 +72,13 @@ animations = [{
 [node name="Player" type="CharacterBody2D"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 3)
+position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_2vxdc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(16, 16)
+scale = Vector2(1.29167, 1.33333)
 sprite_frames = SubResource("SpriteFrames_w5nhf")
 frame = 4
-frame_progress = 0.299305
+frame_progress = 0.940225
+
