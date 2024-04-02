@@ -4,6 +4,7 @@ var input_movement = Vector2.ZERO
 var speed = 70
 var currPos = [0, 0]
 
+
 #func _physics_process(delta):
 	#move()
 	#
