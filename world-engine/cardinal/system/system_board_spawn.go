@@ -14,7 +14,7 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 	if err != nil {
 		return err
 	}
-	err = cardinal.SetComponent[comp.Position](world, p_id, &comp.Position{0, 0})
+	err = cardinal.SetComponent[comp.Position](world, p_id, &comp.Position{X: 0, Y: 0})
 	if err != nil {
 		return err
 	}

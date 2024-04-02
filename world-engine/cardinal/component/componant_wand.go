@@ -2,9 +2,9 @@ package component
 
 import "math/rand"
 
-const NUM_WANDS = 5
-const NUM_ABILITIES = 5
-const TOTAL_ABILITIES = 50
+const NUM_WANDS = 2
+const NUM_ABILITIES = 1
+const TOTAL_ABILITIES = 10
 
 type Wand struct {
 	Number    int
