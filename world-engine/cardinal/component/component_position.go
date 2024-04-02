@@ -20,33 +20,35 @@ func (Position) Name() string {
 	return "Position"
 }
 
-func (p Position) UpdateFromDirection(direction string) error {
+func (p Position) GetUpdateFromDirection(direction string) (*Position, error) {
+	fmt.Println("In UpdateFromDirection. p = ", p)
 	switch direction {
 	case "left":
 		if p.X == 0 {
-			return fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X--
 	case "right":
 		if p.X == MAX_X {
-			return fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X++
 	case "up":
 		if p.Y == 0 {
-			return fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.Y--
 	case "down":
 		if p.Y == MAX_Y {
-			return fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.Y++
 	default:
-		return fmt.Errorf("invalid direction")
+		return nil, fmt.Errorf("invalid direction")
 	}
 
-	return nil
+	fmt.Println("Exiting UpdateFromDirection. p = ", p)
+	return &p, nil
 }
 
 type EntityAtLocation struct {
@@ -56,7 +58,6 @@ type EntityAtLocation struct {
 
 func (p *Position) getEntityIDByPosition(world cardinal.WorldContext) (types.EntityID, error) {
 	var eID types.EntityID
-	var err error
 
 	// err := cardinal.NewSearch(world, filter.Contains(Monster{}, Position{})).Each(
 	// 	// Check if the position is equals p.X and p.Y
@@ -81,10 +82,7 @@ func (p *Position) getEntityIDByPosition(world cardinal.WorldContext) (types.Ent
 		},
 	)
 	if searchErr != nil {
-		return 0, err
-	}
-	if err != nil {
-		return 0, err
+		return 0, searchErr
 	}
 
 	return eID, nil

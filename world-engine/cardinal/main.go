@@ -24,6 +24,7 @@ func main() {
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Monster](w),
 		cardinal.RegisterComponent[component.Wand](w),
+		cardinal.RegisterComponent[component.Spell](w),
 		cardinal.RegisterComponent[component.Health](w),
 		cardinal.RegisterComponent[component.Position](w),
 	)

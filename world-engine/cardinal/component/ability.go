@@ -6,5 +6,5 @@ import (
 
 type Ability interface {
 	GetAbilityID() int
-	Resolve(cardinal.WorldContext, Position) (bool, error)
+	Resolve(cardinal.WorldContext, *Position) (bool, error)
 }

@@ -22,7 +22,7 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 	// spawn a monster
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.LIGHT},
-		comp.CollisionType{"monster"},
+		comp.CollisionType{Type: "monster"},
 		comp.Health{
 			MaxHealth:  1,
 			CurrHealth: 1,

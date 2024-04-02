@@ -17,7 +17,7 @@ var _ Ability = &Ability_1{}
 // Resolves effects of the ability
 // i.e. checks if it activates and if so updates the world
 // return if the ability should be revealed and if there was an error
-func (Ability_1) Resolve(world cardinal.WorldContext, spellPosition Position) (reveal bool, err error) {
+func (Ability_1) Resolve(world cardinal.WorldContext, spellPosition *Position) (reveal bool, err error) {
 	reveal = false
 	err = nil
 
@@ -44,7 +44,7 @@ func (Ability_1) Resolve(world cardinal.WorldContext, spellPosition Position) (r
 	// case "item":
 	// 	fmt.Println("Handling collision with an item")
 	default:
-		fmt.Println("Unknown collision type")
+		fmt.Printf("Unknown collision type: %s\n", colType.Type)
 	}
 
 	// check if it is a monser

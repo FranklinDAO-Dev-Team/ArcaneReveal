@@ -59,13 +59,21 @@ func player_turn_wand(world cardinal.WorldContext, direction string, wandnum int
 	if err != nil {
 		return err
 	}
-	playerPos.UpdateFromDirection(direction)
+	spellPos, err := playerPos.GetUpdateFromDirection(direction)
+	if err != nil {
+		return err
+	}
 	spell, err := cardinal.Create(world,
 		comp.Spell{},
-		playerPos,
+		spellPos,
 	)
 
+	// not done, do stop it from erroring
 	fmt.Println("spell: %d", spell)
+
+	a1 := &comp.Ability_1{}
+	fmt.Println(a1.GetAbilityID())
+	a1.Resolve(world, spellPos)
 
 	return nil
 }
@@ -99,8 +107,8 @@ func player_turn_move(world cardinal.WorldContext, direction string) error {
 		return err
 	}
 	currPos, err := cardinal.GetComponent[comp.Position](world, playerID)
-	currPos.UpdateFromDirection(direction)
-	cardinal.SetComponent[comp.Position](world, playerID, currPos)
+	updatePos, err := currPos.GetUpdateFromDirection(direction)
+	cardinal.SetComponent[comp.Position](world, playerID, updatePos)
 
 	return nil
 }
