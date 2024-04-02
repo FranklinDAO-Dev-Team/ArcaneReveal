@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cxad238frrfpd"]
+[gd_scene load_steps=14 format=3 uid="uid://cxad238frrfpd"]
 
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_iix47"]
 
@@ -64,10 +64,30 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_d4jja")
 }],
-"loop": true,
+"loop": false,
 "name": &"default",
 "speed": 6.0
 }]
+
+[sub_resource type="Animation" id="Animation_mfcfk"]
+resource_name = "shake"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5aeoo"]
+_data = {
+"shake": SubResource("Animation_mfcfk")
+}
 
 [node name="Player" type="CharacterBody2D"]
 
@@ -76,8 +96,13 @@ position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_2vxdc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(16, 16)
+position = Vector2(14, 11)
 scale = Vector2(1.29167, 1.33333)
 sprite_frames = SubResource("SpriteFrames_w5nhf")
 frame = 4
 frame_progress = 0.940225
+
+[node name="Shake" type="AnimationPlayer" parent="AnimatedSprite2D"]
+libraries = {
+"": SubResource("AnimationLibrary_5aeoo")
+}
