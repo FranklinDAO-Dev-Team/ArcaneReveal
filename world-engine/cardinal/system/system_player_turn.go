@@ -10,8 +10,6 @@ import (
 	"pkg.world.dev/world-engine/cardinal/message"
 )
 
-
-
 func PlayerTurnSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](
 		world,
@@ -57,42 +55,43 @@ func player_turn_attack(world cardinal.WorldContext, direction string) error {
 }
 
 func player_turn_wand(world cardinal.WorldContext, direction string, wandnum int) error {
-	spellhead, err := create_spellhead(world, direction, wandnum)
+	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return err
 	}
+	playerPos.UpdateFromDirection(direction)
+	spell, err := cardinal.Create(world,
+		comp.Spell{},
+		playerPos,
+	)
 
-	turn_uncomplete := false
-	while(turn_uncomplete) {
-		reveal
-	}
-
+	fmt.Println("spell: %d", spell)
 
 	return nil
 }
 
-func create_spellhead(world cardinal.WorldContext, direction string, wandnum int) (spellhead, error) {
-	playerID, err := queryPlayerID(world)
-	if err != nil {
-		return spellhead{}, err
-	}
-	pos, err := cardinal.GetComponent[comp.Position](world, playerID)
-	if err != nil {
-		return spellhead{}, err
-	}
-	_, wand, err := getWandByNumber(world, wandnum)
-	if err != nil {
-		return spellhead{}, err
-	}
-	pos.UpdateFromDirection(direction)
+// func create_spellhead(world cardinal.WorldContext, direction string, wandnum int) (spellhead, error) {
+// 	playerID, err := queryPlayerID(world)
+// 	if err != nil {
+// 		return spellhead{}, err
+// 	}
+// 	pos, err := cardinal.GetComponent[comp.Position](world, playerID)
+// 	if err != nil {
+// 		return spellhead{}, err
+// 	}
+// 	_, wand, err := getWandByNumber(world, wandnum)
+// 	if err != nil {
+// 		return spellhead{}, err
+// 	}
+// 	pos.UpdateFromDirection(direction)
 
-	var head = spellhead{
-		pos:       pos,
-		Abilities: wand.Abilities,
-	}
+// 	var head = spellhead{
+// 		Pos:       pos,
+// 		Abilities: wand.Abilities,
+// 	}
 
-	return head, err
-}
+// 	return head, err
+// }
 
 func player_turn_move(world cardinal.WorldContext, direction string) error {
 	playerID, err := queryPlayerID(world)

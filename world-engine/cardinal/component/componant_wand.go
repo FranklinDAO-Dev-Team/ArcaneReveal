@@ -4,7 +4,7 @@ import "math/rand"
 
 const NUM_WANDS = 2
 const NUM_ABILITIES = 1
-const TOTAL_ABILITIES = 10
+const TOTAL_ABILITIES = 1
 
 type Wand struct {
 	Number    int
@@ -17,7 +17,9 @@ func (Wand) Name() string {
 	return "Wand"
 }
 
-func (w *Wand) Init() error {
+func NewRandomWand() Wand {
+	w := Wand{}
+
 	// Set Revealed to all -1
 	for i := range w.Revealed {
 		w.Revealed[i] = -1
@@ -39,5 +41,5 @@ func (w *Wand) Init() error {
 		w.IsReady[i] = true
 	}
 
-	return nil
+	return w
 }

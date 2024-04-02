@@ -21,9 +21,8 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 
 	// spawn a monster
 	_, err = cardinal.Create(world,
-		comp.Monster{
-			Type: "light",
-		},
+		comp.Monster{Type: comp.LIGHT},
+		comp.CollisionType{"monster"},
 		comp.Health{
 			MaxHealth:  1,
 			CurrHealth: 1,
@@ -35,9 +34,8 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 	)
 
 	_, err = cardinal.Create(world,
-		comp.Monster{
-			Type: "heavy",
-		},
+		comp.Monster{Type: comp.HEAVY},
+		comp.CollisionType{Type: "monster"},
 		comp.Health{
 			MaxHealth:  3,
 			CurrHealth: 3,
