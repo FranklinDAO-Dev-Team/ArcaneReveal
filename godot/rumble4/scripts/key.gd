@@ -12,7 +12,6 @@ func _process(delta):
 
 func _on_area_2d_body_entered(body: CharacterBody2D):
 	if body.name == "Player" and not key_taken:
-		print("enter")
 		key_taken = true
 		$Sprite2D.queue_free()
 
