@@ -1,14 +1,21 @@
 package msg
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"strconv"
+
+	comp "cinco-paus/component"
+)
 
 type PlayerTurnMsg struct {
 	Action    string `json:"action"`
 	Direction string `json:"direction"`
+	WandNum   string `json:"wandnum"`
 }
 
 type PlayerTurnResult struct {
-	Success bool `json:"success"`
+	Success bool
 }
 
 func (m PlayerTurnMsg) ValFmt() error {
@@ -31,6 +38,14 @@ func (m PlayerTurnMsg) ValFmt() error {
 
 	if !validDirections[m.Direction] {
 		return errors.New("invalid direction")
+	}
+
+	wandnum, err := strconv.Atoi(m.WandNum)
+	if err != nil {
+		return fmt.Errorf("Error converting string to int: %w", err)
+	}
+	if m.Action == "wand" && (wandnum < 0 || wandnum >= comp.NUM_WANDS) {
+		return fmt.Errorf("invalid wand number: %d", wandnum)
 	}
 
 	return nil
