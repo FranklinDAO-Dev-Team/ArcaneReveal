@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dkyeg85p5odma" path="res://assets/TX Tileset Wall.png" id="3_mpu10"]
 [ext_resource type="PackedScene" path="res://scenes/staff_1.tscn" id="7_15n14"]
 [ext_resource type="Script" path="res://scenes/Platform.gd" id="7_aiw4p"]
+[ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/enemyv1.tscn" id="11_auewd"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
 texture = ExtResource("1_qxcb2")
@@ -1337,6 +1338,9 @@ offset_top = -56.4
 offset_right = -8.0
 offset_bottom = -40.4
 color = Color(1, 1, 1, 0.478431)
+
+[node name="Node2D" parent="." instance=ExtResource("11_auewd")]
+position = Vector2(47.4, -147)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(80.2, 79.2)
