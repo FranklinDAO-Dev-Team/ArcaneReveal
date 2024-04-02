@@ -1,10 +1,13 @@
+
 [gd_scene load_steps=13 format=3 uid="uid://dp8lv63rn2iqy"]
 
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_17kf0"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="1_qxcb2"]
 [ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="2_46af0"]
 [ext_resource type="PackedScene" uid="uid://cxad238frrfpd" path="res://scenes/player.tscn" id="2_alpoj"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="3_lo65r"]
 [ext_resource type="Texture2D" uid="uid://dkyeg85p5odma" path="res://assets/TX Tileset Wall.png" id="3_mpu10"]
+[ext_resource type="PackedScene" uid="uid://s3rwv0wp1oj7" path="res://scenes/staff_1.tscn" id="7_15n14"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
 texture = ExtResource("1_qxcb2")
@@ -1281,11 +1284,13 @@ sources/1 = SubResource("TileSetAtlasSource_xpvm8")
 scale = Vector2(5, 5)
 
 [node name="Background" type="TileMap" parent="."]
+
 scale = Vector2(1.00056, 1)
 tile_set = SubResource("TileSet_swgoq")
 collision_visibility_mode = 1
 format = 2
 layer_0/tile_data = PackedInt32Array(131071, 0, 0, 65535, 0, 0, -1, 393216, 3, -65537, 393216, 3, -196609, 327681, 15, -262144, 327681, 15, -196608, 0, 0, -65536, 393216, 3, 65537, 65536, 5, 1, 0, 7, -196607, 0, 6, -262143, 327681, 15, -262142, 327681, 15, -196606, 65536, 4, -65534, 65536, 4, 2, 65536, 4, 65538, 0, 5, 65539, 0, 0, 3, 131072, 1, -65533, 393216, 2, -131069, 0, 0, -196610, 327681, 15, -262140, 327681, 15, -262141, 327681, 15, -196605, 0, 0, -131070, 65536, 7, -65535, 65536, 4, 0, 393216, 3, 65536, 0, 0, 196606, 327681, 15, 196607, 327681, 15, 131072, 327681, 15, 131073, 327681, 15, 131074, 327681, 15, 131075, 327681, 15, 131076, 327681, 15, -196604, 327681, 15, -65532, 327681, 15, 4, 327681, 15, 65540, 327681, 15, -131074, 327681, 15, -65538, 327681, 15, -2, 327681, 15, 65534, 327681, 15, 131070, 327681, 15, -131073, 0, 0, -131072, 0, 0, -131071, 65536, 6, -131068, 65537, 4)
+
 
 [node name="Player" parent="." instance=ExtResource("2_alpoj")]
 script = ExtResource("3_lo65r")
@@ -1298,3 +1303,14 @@ tile_set = SubResource("TileSet_smx06")
 collision_visibility_mode = 1
 format = 2
 layer_0/tile_data = PackedInt32Array(65536, 589824, 2, -65536, 589824, 2, 0, 589824, 2, -65535, 786432, 1, -65534, 786432, 1, -131074, 327681, 9)
+
+[node name="TileMap2" type="TileMap" parent="."]
+visible = false
+tile_set = SubResource("TileSet_smx06")
+format = 2
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(79.5, 79)
+
+[node name="Staff1" parent="." instance=ExtResource("7_15n14")]
+position = Vector2(2, -145)
