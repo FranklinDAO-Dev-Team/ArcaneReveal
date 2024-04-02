@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://ojy5lgv1vumg"]
+
+[ext_resource type="Script" path="res://scripts/slot.gd" id="1_rd52b"]
+
+[node name="slot" type="TextureRect"]
+custom_minimum_size = Vector2(16, 16)
+offset_right = 18.0
+offset_bottom = 20.0
+expand_mode = 1
+script = ExtResource("1_rd52b")
+metadata/_edit_group_ = true
+
+[node name="Panel" type="Panel" parent="."]
+show_behind_parent = true
+layout_mode = 0
+offset_right = 18.0
+offset_bottom = 20.0
+mouse_filter = 2
