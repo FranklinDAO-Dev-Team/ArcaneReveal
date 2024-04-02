@@ -20,7 +20,7 @@ func main() {
 	// Register components
 	// NOTE: You must register your components here for it to be accessible.
 	Must(
-		// cardinal.RegisterComponent[component.Character](w),
+		cardinal.RegisterComponent[component.CollisionType](w),
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Monster](w),
 		cardinal.RegisterComponent[component.Wand](w),

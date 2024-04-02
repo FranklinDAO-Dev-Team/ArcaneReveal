@@ -43,43 +43,8 @@ func getWandByNumber(world cardinal.WorldContext, targetNum int) (types.EntityID
 	return wandID, wand, nil
 }
 
-func getEntityIDByPosition(world cardinal.WorldContext, targetPos comp.Position) (types.EntityID, error) {
-	var eID types.EntityID
-	var err error
-	searchErr := cardinal.NewSearch(world, filter.Contains(comp.Position{})).Each(
-		func(id types.EntityID) bool {
-			pos, err := cardinal.GetComponent[comp.Position](world, id)
-			if err != nil {
-				return false
-			}
-
-			// Terminates the search if the player is found
-			if pos.X == targetPos.X && pos.Y == targetPos.Y {
-				eID = id
-				return false
-			}
-
-			// Continue searching if the player is not the target player
-			return true
-		},
-	)
-	if searchErr != nil {
-		return 0, err
-	}
-	if err != nil {
-		return 0, err
-	}
-
-	return eID, nil
-}
-
 func manDist(e1ID types.EntityID, e2ID types.EntityID) (int, error) {
 	return 0, nil
-}
-
-type spellhead struct {
-	pos       *comp.Position
-	Abilities [comp.NUM_ABILITIES]int // Array of 5 integers
 }
 
 // // queryTargetPlayer queries for the target player's entity ID and health component.
