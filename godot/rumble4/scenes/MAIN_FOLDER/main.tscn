@@ -3,13 +3,13 @@
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_271xv"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="1_qxcb2"]
 [ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="2_46af0"]
-[ext_resource type="PackedScene" uid="uid://cxad238frrfpd" path="res://scenes/MAIN FOLDER/player.tscn" id="2_alpoj"]
+[ext_resource type="PackedScene" uid="uid://cxad238frrfpd" path="res://scenes/MAIN_FOLDER/player.tscn" id="2_alpoj"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="3_lo65r"]
 [ext_resource type="Texture2D" uid="uid://dkyeg85p5odma" path="res://assets/TX Tileset Wall.png" id="3_mpu10"]
-[ext_resource type="PackedScene" uid="uid://c0jqedbw0tc32" path="res://scenes/MAIN FOLDER/platform.tscn" id="7_1bj0u"]
-[ext_resource type="PackedScene" uid="uid://cnxfd2d7tr8gf" path="res://scenes/MAIN FOLDER/staff_1.tscn" id="7_15n14"]
-[ext_resource type="PackedScene" uid="uid://p3gnew6isfuo" path="res://scenes/MAIN FOLDER/key.tscn" id="10_0s5jt"]
-[ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/MAIN FOLDER/enemyv1.tscn" id="11_auewd"]
+[ext_resource type="PackedScene" uid="uid://c0jqedbw0tc32" path="res://scenes/MAIN_FOLDER/platform.tscn" id="7_1bj0u"]
+[ext_resource type="PackedScene" uid="uid://cnxfd2d7tr8gf" path="res://scenes/MAIN_FOLDER/staff_1.tscn" id="7_15n14"]
+[ext_resource type="PackedScene" uid="uid://dkdu7dpw4yb44" path="res://scenes/MAIN_FOLDER/key.tscn" id="10_0s5jt"]
+[ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/MAIN_FOLDER/enemyv1.tscn" id="11_auewd"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
 texture = ExtResource("1_qxcb2")
