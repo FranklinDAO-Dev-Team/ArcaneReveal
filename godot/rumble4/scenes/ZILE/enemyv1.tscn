@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=3 uid="uid://dhhvfe5ey0ws2"]
 
-[ext_resource type="Texture2D" uid="uid://cfvdrw72xeiin" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile000.png" id="1_1qbna"]
-[ext_resource type="Texture2D" uid="uid://dlbb46tn5gs4f" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile001.png" id="2_7dukf"]
-[ext_resource type="Texture2D" uid="uid://c7juupd8vntir" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile002.png" id="3_unkdb"]
-[ext_resource type="Texture2D" uid="uid://myhbjko7p51m" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile003.png" id="4_65xga"]
-[ext_resource type="Texture2D" uid="uid://cv2x17j65m58k" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile004.png" id="5_5s00w"]
-[ext_resource type="Texture2D" uid="uid://dld0bn31rdrnx" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile005.png" id="6_b5jh8"]
+[ext_resource type="Texture2D" uid="uid://cfvdrw72xeiin" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile000.png" id="1_1qbna"]
+[ext_resource type="Texture2D" uid="uid://dlbb46tn5gs4f" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile001.png" id="2_7dukf"]
+[ext_resource type="Texture2D" uid="uid://c7juupd8vntir" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile002.png" id="3_unkdb"]
+[ext_resource type="Texture2D" uid="uid://myhbjko7p51m" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile003.png" id="4_65xga"]
+[ext_resource type="Texture2D" uid="uid://cv2x17j65m58k" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile004.png" id="5_5s00w"]
+[ext_resource type="Texture2D" uid="uid://dld0bn31rdrnx" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile005.png" id="6_b5jh8"]
 
 [sub_resource type="GDScript" id="GDScript_n7wed"]
 script/source = "#class_name Enemy

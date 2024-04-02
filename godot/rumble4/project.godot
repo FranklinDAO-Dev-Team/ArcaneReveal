@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Test Game"
-run/main_scene="res://scenes/MAIN_FOLDER/main.tscn"
+run/main_scene="res://scenes/JOEY/main.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://assets/icon.svg"
 
