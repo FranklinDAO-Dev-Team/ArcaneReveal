@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dp8lv63rn2iqy"]
+[gd_scene load_steps=17 format=3 uid="uid://dp8lv63rn2iqy"]
 
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="1_qxcb2"]
 [ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="2_46af0"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dkyeg85p5odma" path="res://assets/TX Tileset Wall.png" id="3_mpu10"]
 [ext_resource type="PackedScene" uid="uid://cnxfd2d7tr8gf" path="res://scenes/staff_1.tscn" id="7_15n14"]
 [ext_resource type="Script" path="res://scenes/Platform.gd" id="7_aiw4p"]
+[ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/enemyv1.tscn" id="11_auewd"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
 texture = ExtResource("1_qxcb2")
@@ -1312,7 +1313,6 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform"]
 position = Vector2(-16, -48.2)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_j8bj2")
 
 [node name="ColorRect" type="ColorRect" parent="Platform"]
@@ -1329,7 +1329,6 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
 position = Vector2(-16, -48.2)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_j8bj2")
 
 [node name="ColorRect" type="ColorRect" parent="Platform2"]
@@ -1338,3 +1337,6 @@ offset_top = -56.4
 offset_right = -8.0
 offset_bottom = -40.4
 color = Color(1, 1, 1, 0.478431)
+
+[node name="Node2D" parent="." instance=ExtResource("11_auewd")]
+position = Vector2(47.4, -147)
