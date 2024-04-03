@@ -16,29 +16,53 @@ type Position struct {
 	Y int `josn:"y"`
 }
 
+type Direction int
+
+const (
+	UP Direction = iota
+	RIGHT
+	DOWN
+	LEFT
+)
+
 func (Position) Name() string {
 	return "Position"
 }
 
-func (p Position) GetUpdateFromDirection(direction string) (*Position, error) {
-	fmt.Println("In UpdateFromDirection. p = ", p)
-	switch direction {
+func StringToDirection(dirStr string) (Direction, error) {
+	switch dirStr {
 	case "left":
+		return LEFT, nil
+	case "right":
+		return RIGHT, nil
+	case "up":
+		return UP, nil
+	case "down":
+		return DOWN, nil
+	default:
+		return -1, fmt.Errorf("invalid direction string %s", dirStr)
+	}
+}
+
+func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error) {
+	// fmt.Printf("In UpdateFromDirection. p = (%d, %d), dir = %s\n", p.X, p.Y, direction)
+	switch direction {
+	case LEFT:
 		if p.X == 0 {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X--
-	case "right":
+	case RIGHT:
 		if p.X == MAX_X {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X++
-	case "up":
+	case UP:
 		if p.Y == 0 {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.Y--
-	case "down":
+	case DOWN:
 		if p.Y == MAX_Y {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
@@ -47,7 +71,7 @@ func (p Position) GetUpdateFromDirection(direction string) (*Position, error) {
 		return nil, fmt.Errorf("invalid direction")
 	}
 
-	fmt.Println("Exiting UpdateFromDirection. p = ", p)
+	// fmt.Println("Exiting UpdateFromDirection. p = ", p)
 	return &p, nil
 }
 
