@@ -130,7 +130,10 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 			if a == nil {
 				return errors.New("unknown ability called")
 			}
-			a.Resolve(world, spellPos, spell.Direction)
+			_, err := a.Resolve(world, spellPos, spell.Direction)
+			if err != nil {
+				return err
+			}
 		}
 
 		// get next spell position
