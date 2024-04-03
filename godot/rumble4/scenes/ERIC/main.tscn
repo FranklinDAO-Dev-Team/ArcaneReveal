@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bk7jsdksiver0"]
+[gd_scene load_steps=23 format=3 uid="uid://bk7jsdksiver0"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_mop3p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_wqleh"]
@@ -9,7 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://cnxfd2d7tr8gf" path="res://scenes/MAIN_FOLDER/staff_1.tscn" id="7_ipfie"]
 [ext_resource type="PackedScene" uid="uid://c0jqedbw0tc32" path="res://scenes/MAIN_FOLDER/platform.tscn" id="8_s5tpr"]
 [ext_resource type="PackedScene" uid="uid://cqb286r6k5iro" path="res://scenes/MAIN_FOLDER/enemyv1.tscn" id="9_qyyqw"]
-[ext_resource type="PackedScene" uid="uid://dkdu7dpw4yb44" path="res://scenes/MAIN_FOLDER/key.tscn" id="10_0vm7d"]
+[ext_resource type="PackedScene" uid="uid://dnygwlucpvc1q" path="res://scenes/ERIC/key.tscn" id="10_5e8s4"]
+[ext_resource type="Texture2D" uid="uid://cluoo0xh8yee6" path="res://assets/open_door.tres" id="11_1fe2o"]
+[ext_resource type="Script" path="res://scripts/door.gd" id="11_f416c"]
+[ext_resource type="Texture2D" uid="uid://b5dmt3do8oebd" path="res://assets/closed_door.tres" id="12_gc46r"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_urmi2"]
 texture = ExtResource("2_wqleh")
@@ -1263,6 +1266,7 @@ texture_region_size = Vector2i(32, 32)
 5:15/0 = 0
 5:15/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 5:15/0/physics_layer_0/angular_velocity = 0.0
+5:15/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 7:15/0 = 0
 7:15/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 7:15/0/physics_layer_0/angular_velocity = 0.0
@@ -1282,6 +1286,25 @@ physics_layer_0/collision_layer = 3
 sources/0 = SubResource("TileSetAtlasSource_3qu3k")
 sources/1 = SubResource("TileSetAtlasSource_xpvm8")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7yt81"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7jqdr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_0itwc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_gc46r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_1fe2o")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Main" type="Node2D"]
 scale = Vector2(5, 5)
 script = ExtResource("1_mop3p")
@@ -1291,17 +1314,18 @@ scale = Vector2(1.00056, 1)
 tile_set = SubResource("TileSet_swgoq")
 collision_visibility_mode = 1
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 0, 0, 65536, 393216, 3, 131072, 393216, 3, 196608, 0, 0, 262144, 0, 0, 327680, 327681, 15, 1, 0, 0, 65537, 0, 0, 131073, 393216, 3, 196609, 393216, 3, 262145, 0, 0, 327681, 327681, 15, 2, 0, 6, 65538, 65536, 6, 131074, 65536, 4, 196610, 0, 7, 262146, 65536, 5, 327682, 327681, 15, 3, 65536, 4, 65539, 65536, 7, 131075, 65536, 4, 196611, 65536, 4, 262147, 0, 5, 327683, 327681, 15, 4, 0, 0, 65540, 0, 0, 131076, 393216, 2, 196612, 131072, 1, 262148, 0, 0, 327684, 327681, 15, 5, 327681, 15, 65541, 65537, 4, 131077, 327681, 15, 196613, 327681, 15, 262149, 327681, 15, 327685, 327681, 15, -1, 327681, 15, 65535, 327681, 15, 131071, 327681, 15, 196607, 327681, 15, 262143, 327681, 15, 327679, 327681, 15, 393215, 327681, 15, -65536, 327681, 15, -65535, 327681, 15, -65534, 327681, 15, -65533, 327681, 15, -65532, 327681, 15, -65531, 327681, 15)
-
-[node name="Player" parent="." instance=ExtResource("5_kwx7n")]
-script = ExtResource("6_t02cc")
+layer_0/tile_data = PackedInt32Array(0, 131072, 2, 65536, 393216, 3, 131072, 393216, 3, 196608, 0, 0, 262144, 131072, 1, 327680, 131072, 1, 1, 0, 0, 65537, 0, 0, 131073, 393216, 3, 196609, 393216, 3, 262145, 0, 0, 327681, 131072, 1, 2, 0, 6, 65538, 65536, 6, 131074, 65536, 4, 196610, 0, 7, 262146, 65536, 5, 327682, 131072, 1, 3, 65536, 4, 65539, 65536, 7, 131075, 65536, 4, 196611, 65536, 4, 262147, 0, 5, 327683, 131072, 1, 4, 0, 0, 65540, 0, 0, 131076, 393216, 2, 196612, 131072, 1, 262148, 0, 0, 327684, 131072, 1, 5, 0, 4, 65541, 131072, 2, 131077, 131072, 2, 196613, 131072, 1, 262149, 131072, 1, 327685, 131072, 1, -1, 131072, 2, 65535, 131072, 1, 131071, 131072, 1, 196607, 131072, 1, 262143, 131072, 1, 327679, 131072, 1, 393215, 131072, 1, -65536, 131072, 2, -65535, 131072, 2, -65534, 131072, 2, -65533, 131072, 2, -65532, 131072, 2, -65531, 0, 4)
 
 [node name="Walls" type="TileMap" parent="."]
 position = Vector2(32, 0)
+scale = Vector2(1, 1)
 tile_set = SubResource("TileSet_smx06")
 collision_visibility_mode = 1
 format = 2
-layer_0/tile_data = PackedInt32Array(65538, 786432, 1, 65539, 786432, 1, 131073, 589824, 2, 196609, 589824, 2, 262145, 589824, 2, 0, 327681, 9)
+layer_0/tile_data = PackedInt32Array(65538, 786432, 1, 65539, 786432, 1, 131073, 589824, 2, 196609, 589824, 2, 262145, 589824, 2, -2, 327681, 15, -1, 327681, 15, -65536, 327681, 15, -65535, 327681, 15, -65534, 327681, 15, -65533, 327681, 15, -65532, 327681, 15, 65534, 327681, 15, 131070, 327681, 15, 196606, 327681, 15, 262142, 327681, 15, 327678, 327681, 15, 393214, 327681, 15, 393215, 327681, 15, 327680, 327681, 15, 327681, 327681, 15, 327682, 327681, 15, 327683, 327681, 15, 327684, 327681, 15, 262148, 327681, 15, 196612, 327681, 15, 131076, 327681, 15, 65540, 327681, 15)
+
+[node name="Player" parent="." instance=ExtResource("5_kwx7n")]
+script = ExtResource("6_t02cc")
 
 [node name="Staff1" parent="." instance=ExtResource("7_ipfie")]
 position = Vector2(45.2, -44.6)
@@ -1334,5 +1358,30 @@ position = Vector2(16, 110.8)
 [node name="Enemy Node2D" parent="." instance=ExtResource("9_qyyqw")]
 position = Vector2(90, -45.8)
 
-[node name="Key" parent="." instance=ExtResource("10_0vm7d")]
-position = Vector2(48, 16.2)
+[node name="Key" parent="." instance=ExtResource("10_5e8s4")]
+position = Vector2(144.8, 144.2)
+
+[node name="Door" type="StaticBody2D" parent="."]
+script = ExtResource("11_f416c")
+
+[node name="DoorZone" type="Area2D" parent="Door"]
+
+[node name="DoorCollision" type="CollisionShape2D" parent="Door/DoorZone"]
+position = Vector2(160.4, 14.8)
+shape = SubResource("RectangleShape2D_7yt81")
+
+[node name="OpenDoor" type="Sprite2D" parent="Door"]
+position = Vector2(177.4, 4)
+texture = ExtResource("11_1fe2o")
+
+[node name="ClosedDoor" type="Sprite2D" parent="Door"]
+position = Vector2(178.2, 5.2)
+texture = ExtResource("12_gc46r")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Door"]
+visible = false
+sprite_frames = SubResource("SpriteFrames_7jqdr")
+
+[connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
+[connection signal="body_entered" from="Door/DoorZone" to="Key" method="_on_door_zone_body_entered"]
+[connection signal="body_exited" from="Door/DoorZone" to="Key" method="_on_door_zone_body_exited"]

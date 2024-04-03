@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://dnygwlucpvc1q"]
 
 [ext_resource type="Script" path="res://scripts/key.gd" id="1_py1bg"]
-[ext_resource type="Texture2D" uid="uid://dvsc4heio3gxj" path="res://assets/key.tres" id="2_lmnri"]
+[ext_resource type="Texture2D" path="res://assets/key.tres" id="2_lmnri"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_bf3nh"]
-radius = 8.0
+radius = 9.05539
 
 [node name="Key" type="StaticBody2D"]
 script = ExtResource("1_py1bg")
@@ -16,3 +16,5 @@ shape = SubResource("CircleShape2D_bf3nh")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_lmnri")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
