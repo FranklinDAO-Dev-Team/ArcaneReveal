@@ -1,15 +1,19 @@
 package component
 
-import "math/rand"
+import (
+	"crypto/rand"
+	"encoding/binary"
+	"fmt"
+)
 
-const NUM_WANDS = 2
-const NUM_ABILITIES = 1
-const TOTAL_ABILITIES = 2
+const NumWands = 2
+const NumAbilities = 1
+const TotalAbilites = 2
 
 type WandCore struct {
 	Number    int
-	Abilities [NUM_ABILITIES]int // Array of 5 integers
-	Revealed  [NUM_ABILITIES]int // Slice of integers
+	Abilities [NumAbilities]int // Array of 5 integers
+	Revealed  [NumAbilities]int // Slice of integers
 }
 
 func (WandCore) Name() string {
@@ -26,8 +30,12 @@ func NewRandomWandCore() WandCore {
 
 	// Generate unique random numbers for Abilities
 	uniqueNumbers := make(map[int]bool)
-	for i := 0; i < NUM_ABILITIES; {
-		num := rand.Intn(TOTAL_ABILITIES) + 1 // Random number between 1 and 50
+	for i := 0; i < NumAbilities; {
+		num, err := cryptoRandInt(1, TotalAbilites) // Random number between 1 and 50
+		if err != nil {
+			panic(err)
+		}
+
 		if !uniqueNumbers[num] {
 			uniqueNumbers[num] = true
 			w.Abilities[i] = num
@@ -36,4 +44,23 @@ func NewRandomWandCore() WandCore {
 	}
 
 	return w
+}
+
+// cryptoRandInt generates a random integer between min and max using crypto/rand.
+func cryptoRandInt(min, max int) (int, error) {
+	if max <= min {
+		return 0, fmt.Errorf("max must be greater than min")
+	}
+
+	var b [8]byte
+	_, err := rand.Read(b[:])
+	if err != nil {
+		return 0, err
+	}
+
+	// Convert the byte slice to an unsigned 64-bit integer
+	randUint := binary.BigEndian.Uint64(b[:])
+
+	// Scale the value to the desired range
+	return int(randUint%uint64(max-min+1)) + min, nil
 }

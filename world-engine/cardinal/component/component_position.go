@@ -9,8 +9,8 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-const MAX_X = 4
-const MAX_Y = 4
+const MaxX = 4
+const MaxY = 4
 
 type Position struct {
 	X int `json:"x"`
@@ -54,7 +54,7 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		}
 		p.X--
 	case RIGHT:
-		if p.X == MAX_X {
+		if p.X == MaxX {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X++
@@ -64,7 +64,7 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		}
 		p.Y--
 	case DOWN:
-		if p.Y == MAX_Y {
+		if p.Y == MaxY {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.Y++
@@ -81,9 +81,11 @@ type EntityAtLocation struct {
 	Players  []types.EntityID
 }
 
-func (p *Position) GetEntityIDByPosition(world cardinal.WorldContext) (found bool, eID types.EntityID, searchErr error) {
+func (p *Position) GetEntityIDByPosition(
+	world cardinal.WorldContext,
+) (found bool, eID types.EntityID, searchErr error) {
 	if p == nil {
-		return false, 0, errors.New("Attempting GetEntityIDByPosition with nil input")
+		return false, 0, errors.New("attempting GetEntityIDByPosition with nil input")
 	}
 	searchErr = cardinal.NewSearch(world, filter.Contains(Position{})).Each(
 		func(id types.EntityID) bool {
@@ -103,6 +105,9 @@ func (p *Position) GetEntityIDByPosition(world cardinal.WorldContext) (found boo
 			return true
 		},
 	)
+	if searchErr != nil {
+		return false, 0, searchErr
+	}
 
-	return
+	return found, eID, nil
 }
