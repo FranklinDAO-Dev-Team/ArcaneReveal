@@ -1,0 +1,15 @@
+{
+    "name": "circuits",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "ptau:up": "bash scripts/install_ptau.sh",
+        "build": "bash scripts/build.sh"
+    },
+    "devDependencies": {
+        "circom2": "^0.2.16",
+        "circomlib": "^2.0.5",
+        "snarkjs": "^0.7.3"
+    }
+}
