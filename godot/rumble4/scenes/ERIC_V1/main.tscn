@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_f5wv6"]
 [ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/V1/wall.tscn" id="3_7j1av"]
 [ext_resource type="PackedScene" uid="uid://dhhvfe5ey0ws2" path="res://scenes/V1/enemyv1.tscn" id="4_crrdh"]
-[ext_resource type="PackedScene" uid="uid://dfltrgyh770em" path="res://scenes/V1/door.tscn" id="5_dxetm"]
-[ext_resource type="PackedScene" uid="uid://dnygwlucpvc1q" path="res://scenes/V1/key.tscn" id="6_iqre7"]
+[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/ERIC_V1/door.tscn" id="5_ihw6n"]
+[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/ERIC_V1/key.tscn" id="6_5ua02"]
 [ext_resource type="PackedScene" uid="uid://djxf1ieveyk7f" path="res://scenes/V1/player.tscn" id="7_l5j7q"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/V1/tile_piece.tscn" id="8_cifrw"]
 [ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/V1/staff_1.tscn" id="9_wonsr"]
@@ -436,17 +436,17 @@ position = Vector2(0, 32)
 [node name="Enemy" parent="." instance=ExtResource("4_crrdh")]
 position = Vector2(248, 48)
 
-[node name="Door" parent="." instance=ExtResource("5_dxetm")]
-position = Vector2(192, 160)
-
-[node name="Key" parent="." instance=ExtResource("6_iqre7")]
-position = Vector2(48, 176)
-
 [node name="Player" parent="." instance=ExtResource("7_l5j7q")]
 position = Vector2(96, 64)
 
 [node name="TilePiece" parent="Player" instance=ExtResource("8_cifrw")]
+visible = false
 position = Vector2(-96, -64)
+
+[node name="Door" parent="." instance=ExtResource("5_ihw6n")]
+position = Vector2(146, 369)
+
+[node name="Key" parent="." instance=ExtResource("6_5ua02")]
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 offset_left = 96.0
@@ -466,3 +466,7 @@ text = " "
 
 [node name="Staff1" parent="." instance=ExtResource("9_wonsr")]
 position = Vector2(56, -56)
+
+[connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]
+[connection signal="exited_door_zone" from="Door" to="Key" method="_on_door_exited_door_zone"]
+[connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]

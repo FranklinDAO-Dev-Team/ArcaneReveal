@@ -48,7 +48,11 @@ var inputs = {
 func _ready():
 	position = position.snapped(Vector2.ONE * tile_size)
 	#position += Vector2.ONE * tile_size / 
-	
+
+func _process(delta):
+	$Sprite.play("idle")
+		
+
 func _unhandled_input(event):
 	if moving:
 		return
@@ -66,5 +70,7 @@ func move(dir):
 		moving = true
 		await tween.finished
 		moving = false
+	else:
+		$AnimationPlayer.play("hit_wall")
 
 
