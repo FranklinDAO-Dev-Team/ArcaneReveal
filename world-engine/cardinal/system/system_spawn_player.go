@@ -16,7 +16,7 @@ func SpawnPlayerSystem(world cardinal.WorldContext) error {
 	// Create player
 	_, err := cardinal.Create(world,
 		comp.Player{},
-		comp.CollisionType{Type: "player"},
+		comp.Collidable{Type: comp.PlayerCollide},
 		comp.Health{
 			MaxHealth:  PLAYER_MAX_HEALTH,
 			CurrHealth: PLAYER_MAX_HEALTH,
