@@ -3,6 +3,7 @@ package component
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/search/filter"
@@ -46,7 +47,6 @@ func StringToDirection(dirStr string) (Direction, error) {
 }
 
 func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error) {
-	// fmt.Printf("In UpdateFromDirection. p = (%d, %d), dir = %s\n", p.X, p.Y, direction)
 	switch direction {
 	case LEFT:
 		if p.X == 0 {
@@ -72,7 +72,6 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		return nil, fmt.Errorf("invalid direction")
 	}
 
-	// fmt.Println("Exiting UpdateFromDirection. p = ", p)
 	return &p, nil
 }
 
@@ -110,4 +109,9 @@ func (p *Position) GetEntityIDByPosition(
 	}
 
 	return found, eID, nil
+}
+
+func (p *Position) ManhattenDistance(other *Position) int {
+	return int(math.Abs(float64(p.X-other.X)) + math.Abs(float64(p.Y-other.Y)))
+
 }
