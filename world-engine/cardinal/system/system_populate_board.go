@@ -22,7 +22,7 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 	// spawn a monster
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.LIGHT},
-		comp.CollisionType{Type: "monster"},
+		comp.Collidable{Type: comp.MonsterCollide},
 		comp.Health{
 			MaxHealth:  1,
 			CurrHealth: 1,
@@ -35,7 +35,7 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.HEAVY},
-		comp.CollisionType{Type: "monster"},
+		comp.Collidable{Type: comp.MonsterCollide},
 		comp.Health{
 			MaxHealth:  3,
 			CurrHealth: 3,
@@ -48,7 +48,7 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.HEAVY},
-		comp.CollisionType{Type: "monster"},
+		comp.Collidable{Type: comp.MonsterCollide},
 		comp.Health{
 			MaxHealth:  3,
 			CurrHealth: 3,
@@ -56,6 +56,28 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 		comp.Position{
 			X: 1,
 			Y: 1,
+		},
+	)
+
+	_, err = cardinal.Create(world,
+		comp.Wall{Type: comp.WALL},
+		comp.Collidable{Type: comp.WallCollide},
+		comp.Position{
+			X: 3,
+			Y: 0,
+		},
+	)
+
+	_, err = cardinal.Create(world,
+		comp.Monster{Type: comp.HEAVY},
+		comp.Collidable{Type: comp.MonsterCollide},
+		comp.Health{
+			MaxHealth:  3,
+			CurrHealth: 3,
+		},
+		comp.Position{
+			X: 4,
+			Y: 0,
 		},
 	)
 
@@ -77,42 +99,3 @@ func clear_board(world cardinal.WorldContext) error {
 	})
 	return searchErr
 }
-
-// func PlayerHealth(world cardinal.WorldContext, req *PlayerHealthRequest) (*PlayerHealthResponse, error) {
-// 	var playerHealth *comp.Health
-// 	var err error
-// 	searchErr := cardinal.NewSearch(
-// 		world,
-// 		filter.Exact(comp.Character{}, comp.Health{})).
-// 		Each(func(id types.EntityID) bool {
-// 			var character *comp.Character
-// 			character, err = cardinal.GetComponent[comp.Character](world, id)
-// 			if err != nil {
-// 				return false
-// 			}
-
-// 			// Terminates the search if the player is found
-// 			if player.Nickname == req.Nickname {
-// 				playerHealth, err = cardinal.GetComponent[comp.Health](world, id)
-// 				if err != nil {
-// 					return false
-// 				}
-// 				return false
-// 			}
-
-// 			// Continue searching if the player is not the target player
-// 			return true
-// 		})
-// 	if searchErr != nil {
-// 		return nil, searchErr
-// 	}
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	if playerHealth == nil {
-// 		return nil, fmt.Errorf("player %s does not exist", req.Nickname)
-// 	}
-
-// 	return &PlayerHealthResponse{HP: playerHealth.HP}, nil
-// }

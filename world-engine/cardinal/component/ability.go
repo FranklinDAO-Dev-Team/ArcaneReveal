@@ -17,19 +17,24 @@ var AbilityMap = map[int]Ability{
 }
 
 func damageAtPostion(world cardinal.WorldContext, pos *Position, includePlayer bool) (damageDelt bool, err error) {
-	id, err := pos.getEntityIDByPosition(world)
+	found, id, err := pos.GetEntityIDByPosition(world)
 	if err != nil {
 		return false, err
 	}
-	colType, err := cardinal.GetComponent[CollisionType](world, id)
-	switch colType.Type {
-	case "monster":
-		fmt.Println("damage delt at ", pos)
-		return true, decrementHealth(world, id)
-	case "player":
-		fmt.Println("damage delt at ", pos)
-		if includePlayer {
+	if found {
+		colType, err := cardinal.GetComponent[Collidable](world, id)
+		if err != nil {
+			return false, err
+		}
+		switch colType.Type {
+		case MonsterCollide:
+			fmt.Println("damage delt at ", pos)
 			return true, decrementHealth(world, id)
+		case PlayerCollide:
+			fmt.Println("damage delt at ", pos)
+			if includePlayer {
+				return true, decrementHealth(world, id)
+			}
 		}
 	}
 

@@ -80,15 +80,8 @@ type EntityAtLocation struct {
 	Players  []types.EntityID
 }
 
-func (p *Position) getEntityIDByPosition(world cardinal.WorldContext) (types.EntityID, error) {
-	var eID types.EntityID
-
-	// err := cardinal.NewSearch(world, filter.Contains(Monster{}, Position{})).Each(
-	// 	// Check if the position is equals p.X and p.Y
-	// 	// // If the position is equals p.X and p.Y add it to the EntityAtLocation.Monster
-	// )
-
-	searchErr := cardinal.NewSearch(world, filter.Contains(Position{})).Each(
+func (p *Position) GetEntityIDByPosition(world cardinal.WorldContext) (found bool, eID types.EntityID, searchErr error) {
+	searchErr = cardinal.NewSearch(world, filter.Contains(Position{})).Each(
 		func(id types.EntityID) bool {
 			pos, err := cardinal.GetComponent[Position](world, id)
 			if err != nil {
@@ -98,16 +91,14 @@ func (p *Position) getEntityIDByPosition(world cardinal.WorldContext) (types.Ent
 			// Terminates the search if the player is found
 			if pos.X == p.X && pos.Y == p.Y {
 				eID = id
+				found = true
 				return false
 			}
 
-			// Continue searching if the player is not the target player
+			// Continue searching if position (x, y) does not match
 			return true
 		},
 	)
-	if searchErr != nil {
-		return 0, searchErr
-	}
 
-	return eID, nil
+	return
 }

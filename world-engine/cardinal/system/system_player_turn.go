@@ -69,6 +69,8 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	if err != nil {
 		return err
 	}
+
+	// hardcoding the ability for now instead of using wands
 	spell := comp.Spell{
 		Expired:   false,
 		Abilities: [1]int{2},
@@ -80,14 +82,13 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	)
 
 	// not done, do stop it from erroring
-	fmt.Println("spell: %d", spell)
 	fmt.Println("spell: %d", spell_entity)
 	// a1 := &comp.Ability_1{}
 	// fmt.Println(a1.GetAbilityID())
 	// a1.Resolve(world, spellPos)
 
 	for !spell.Expired {
-		// fmt.Println("Spell postion: ", spellPos)
+		fmt.Println("Spell postion: ", spellPos)
 		for i := 0; i < len(spell.Abilities); i++ {
 			// fmt.Printf("Resolving ability %d\n", spell.Abilities[i])
 			a := comp.AbilityMap[spell.Abilities[i]]
@@ -96,12 +97,28 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 			}
 			a.Resolve(world, spellPos, spell.Direction)
 		}
-		// println("spell.Direction  " + spell.Direction + "  coo")
+
+		// get next spell position
 		spellPos, err = spellPos.GetUpdateFromDirection(spell.Direction)
 		if err != nil {
 			spell.Expired = true
 		}
-		// fmt.Println("Updated spell postion: ", spellPos)
+
+		// if wall entity at spellPos, stop
+		found, id, err := spellPos.GetEntityIDByPosition(world)
+		if err != nil {
+			return err
+		}
+		if found {
+			colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+			if err != nil {
+				return err
+			}
+			if colType.Type == comp.WallCollide {
+				spell.Expired = true
+			}
+		}
+
 	}
 
 	return nil

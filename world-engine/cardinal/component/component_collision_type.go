@@ -1,9 +1,18 @@
 package component
 
-type CollisionType struct {
-	Type string `json:"type"`
+type CollideType int
+
+const (
+	PlayerCollide CollideType = iota
+	MonsterCollide
+	WallCollide
+	ItemCollide
+)
+
+type Collidable struct {
+	Type CollideType `json:"type"`
 }
 
-func (CollisionType) Name() string {
-	return "CollisionType"
+func (Collidable) Name() string {
+	return "Collidable"
 }
