@@ -12,20 +12,21 @@ func queryPlayerID(world cardinal.WorldContext) (types.EntityID, error) {
 	return 0, nil // current hardcoded, player is always first entity created
 }
 
-func getWandByNumber(world cardinal.WorldContext, targetNum int) (types.EntityID, *comp.Wand, error) {
-	var wandID types.EntityID
-	var wand *comp.Wand
-	var err error
-	searchErr := cardinal.NewSearch(world, filter.Contains(comp.Wand{})).Each(
+func getWandByNumber(world cardinal.WorldContext, targetNum int) (wandID types.EntityID, wandCore *comp.WandCore, available *comp.Available, err error) {
+	searchErr := cardinal.NewSearch(world, filter.Contains(comp.WandCore{})).Each(
 		func(id types.EntityID) bool {
-			wand, err = cardinal.GetComponent[comp.Wand](world, id)
+			wandCore, err = cardinal.GetComponent[comp.WandCore](world, id)
 			if err != nil {
 				return false
 			}
 
 			// Terminates the search if the player is found
-			if wand.Number == targetNum {
+			if wandCore.Number == targetNum {
 				wandID = id
+				available, err = cardinal.GetComponent[comp.Available](world, id)
+				if err != nil {
+					return false
+				}
 				return false
 			}
 
@@ -34,11 +35,11 @@ func getWandByNumber(world cardinal.WorldContext, targetNum int) (types.EntityID
 		},
 	)
 	if searchErr != nil {
-		return 0, nil, err
-	}
-	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 
-	return wandID, wand, nil
+	// fmt.Printf("wandID: %s\n", fmt.Sprint(wandID))
+	// fmt.Println("wandCore: ", wandCore)
+	return wandID, wandCore, available, nil
+
 }

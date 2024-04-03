@@ -1,6 +1,7 @@
 package component
 
 import (
+	"errors"
 	"fmt"
 
 	"pkg.world.dev/world-engine/cardinal"
@@ -81,6 +82,9 @@ type EntityAtLocation struct {
 }
 
 func (p *Position) GetEntityIDByPosition(world cardinal.WorldContext) (found bool, eID types.EntityID, searchErr error) {
+	if p == nil {
+		return false, 0, errors.New("Attempting GetEntityIDByPosition with nil input")
+	}
 	searchErr = cardinal.NewSearch(world, filter.Contains(Position{})).Each(
 		func(id types.EntityID) bool {
 			pos, err := cardinal.GetComponent[Position](world, id)
