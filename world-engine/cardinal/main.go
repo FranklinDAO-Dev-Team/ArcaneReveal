@@ -17,9 +17,6 @@ func main() {
 		log.Fatal().Err(err).Msg("")
 	}
 
-	seismicClient := system.Initialize(w)
-	seismicClient.Start()
-
 	// Register components
 	// NOTE: You must register your components here for it to be accessible.
 	Must(
@@ -40,7 +37,6 @@ func main() {
 		// cardinal.RegisterMessage[msg.CreatePlayerMsg, msg.CreatePlayerResult](w, "create-player"),
 		// cardinal.RegisterMessage[msg.AttackPlayerMsg, msg.AttackPlayerMsgReply](w, "attack-player"),
 		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
-
 		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
 	)
 
@@ -65,6 +61,9 @@ func main() {
 		system.SpawnWandsSystem,
 		system.PopulateBoardSystem,
 	))
+
+	seismicClient := system.Initialize(w)
+	seismicClient.Start()
 
 	Must(w.StartGame())
 }

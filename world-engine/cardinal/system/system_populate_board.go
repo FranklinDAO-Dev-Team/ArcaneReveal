@@ -4,8 +4,6 @@ import (
 	comp "cinco-paus/component"
 
 	"pkg.world.dev/world-engine/cardinal"
-	"pkg.world.dev/world-engine/cardinal/search/filter"
-	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 func PopulateBoardSystem(world cardinal.WorldContext) error {
@@ -32,6 +30,9 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			Y: 1,
 		},
 	)
+	if err != nil {
+		return err
+	}
 
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.HEAVY},
@@ -45,6 +46,9 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			Y: 2,
 		},
 	)
+	if err != nil {
+		return err
+	}
 
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.HEAVY},
@@ -58,6 +62,9 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			Y: 1,
 		},
 	)
+	if err != nil {
+		return err
+	}
 
 	_, err = cardinal.Create(world,
 		comp.Wall{Type: comp.WALL},
@@ -67,6 +74,9 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			Y: 0,
 		},
 	)
+	if err != nil {
+		return err
+	}
 
 	_, err = cardinal.Create(world,
 		comp.Monster{Type: comp.HEAVY},
@@ -80,22 +90,22 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			Y: 0,
 		},
 	)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-// deletes all monsters, eventually delete everything except player
-func clear_board(world cardinal.WorldContext) error {
-	var err error
-	searchErr := cardinal.NewSearch(
-		world,
-		filter.Contains(comp.Monster{}),
-	).Each(func(id types.EntityID) bool {
-		err = cardinal.Remove(world, id)
-		if err != nil {
-			return false
-		}
-		return true
-	})
-	return searchErr
-}
+// // deletes all monsters, eventually delete everything except player
+// func clear_board(world cardinal.WorldContext) error {
+// 	var err error
+// 	searchErr := cardinal.NewSearch(
+// 		world,
+// 		filter.Contains(comp.Monster{}),
+// 	).Each(func(id types.EntityID) bool {
+// 		err = cardinal.Remove(world, id)
+// 		return err == nil
+// 	})
+// 	return searchErr
+// }
