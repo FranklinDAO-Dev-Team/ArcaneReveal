@@ -16,3 +16,18 @@ type Collidable struct {
 func (Collidable) Name() string {
 	return "Collidable"
 }
+
+func (c Collidable) ToString() string {
+	switch c.Type {
+	case PlayerCollide:
+		return "PlayerCollide"
+	case MonsterCollide:
+		return "MonsterCollide"
+	case WallCollide:
+		return "WallCollide"
+	case ItemCollide:
+		return "ItemCollide"
+	default:
+		return "idk wat"
+	}
+}
