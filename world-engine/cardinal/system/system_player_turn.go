@@ -41,7 +41,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
 			case "move":
-				err = player_turn_move(world, direction)
+				err = playerTurnMove(world, direction)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
@@ -76,7 +76,7 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 		return err
 	}
 	if found {
-		fmt.Printf("found: %t, id: %s, err: %w", found, id, nil)
+		fmt.Printf("found: %t, id: %s, err: %w", found, fmt.Sprint(id), nil)
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
 			return err
@@ -123,14 +123,14 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	// )
 
 	for !spell.Expired {
-		fmt.Println("Spell postion: ", spellPos)
+		fmt.Println("Spell position: ", spellPos)
 		for i := 0; i < len(spell.Abilities); i++ {
 			// fmt.Printf("Resolving ability %d\n", spell.Abilities[i])
 			a := comp.AbilityMap[spell.Abilities[i]]
 			if a == nil {
 				return errors.New("unknown ability called")
 			}
-			_, err := a.Resolve(world, spellPos, spell.Direction)
+			_, err := a.Resolve(world, spellPos, spell.Direction, true)
 			if err != nil {
 				return err
 			}
@@ -184,7 +184,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 // 	return head, err
 // }
 
-func player_turn_move(world cardinal.WorldContext, direction comp.Direction) error {
+func playerTurnMove(world cardinal.WorldContext, direction comp.Direction) error {
 	playerID, err := queryPlayerID(world)
 	if err != nil {
 		return err

@@ -42,9 +42,9 @@ func (m PlayerTurnMsg) ValFmt() error {
 
 	wandnum, err := strconv.Atoi(m.WandNum)
 	if err != nil {
-		return fmt.Errorf("Error converting string to int: %w", err)
+		return fmt.Errorf("error converting string to int: %w", err)
 	}
-	if m.Action == "wand" && (wandnum < 0 || wandnum >= comp.NUM_WANDS) {
+	if m.Action == "wand" && (wandnum < 0 || wandnum >= comp.NumWands) {
 		return fmt.Errorf("invalid wand number: %d", wandnum)
 	}
 
