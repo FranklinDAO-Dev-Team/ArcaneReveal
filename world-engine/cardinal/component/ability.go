@@ -29,11 +29,21 @@ func damageAtPostion(world cardinal.WorldContext, pos *Position, includePlayer b
 		switch colType.Type {
 		case MonsterCollide:
 			fmt.Println("damage delt at ", pos)
-			return true, DecrementHealth(world, id)
+			err := DecrementHealth(world, id)
+			if err != nil {
+				return false, err
+			}
+			return true, nil
 		case PlayerCollide:
-			fmt.Println("damage delt at ", pos)
 			if includePlayer {
-				return true, DecrementHealth(world, id)
+				fmt.Println("damage delt at ", pos)
+				err := DecrementHealth(world, id)
+				if err != nil {
+					return false, err
+				}
+				return true, nil
+			} else {
+				return false, nil
 			}
 		}
 	}
