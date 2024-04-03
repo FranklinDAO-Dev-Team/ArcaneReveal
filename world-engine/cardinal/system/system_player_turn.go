@@ -27,7 +27,10 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 			switch turn.Msg.Action {
 			case "attack":
-				player_turn_attack(world, direction)
+				err = player_turn_attack(world, direction)
+				if err != nil {
+					return msg.PlayerTurnResult{Success: false}, err
+				}
 			case "wand":
 				wandnum, err := strconv.Atoi(turn.Msg.WandNum)
 				if err != nil {
@@ -35,8 +38,6 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				}
 				err = player_turn_wand(world, direction, wandnum)
 				if err != nil {
-					// note: returned err = nil b/c handled player_turn_wand's error correctly, returned Success: false
-					fmt.Println("here")
 					return msg.PlayerTurnResult{Success: false}, err
 				}
 			case "move":
@@ -75,6 +76,7 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 		return err
 	}
 	if found {
+		fmt.Printf("found: %t, id: %s, err: %w", found, id, nil)
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
 			return err
