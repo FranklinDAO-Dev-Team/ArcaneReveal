@@ -57,7 +57,14 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
 			}
-			return msg.PlayerTurnResult{Success: true}, nil
+
+			result := msg.PlayerTurnResult{Success: true}
+
+			// if turn.Msg.Action == "wand" {
+			MonsterTurnSystem(world)
+			// }
+
+			return result, nil
 		})
 }
 
@@ -76,14 +83,12 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 		return err
 	}
 	if found {
-		fmt.Printf("found: %t, id: %s", found, fmt.Sprint(id))
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
 			return err
 		}
 		switch colType.Type {
 		case comp.MonsterCollide:
-			fmt.Println("damage delt at ", attackPos)
 			return comp.DecrementHealth(world, id)
 		default:
 			return fmt.Errorf("attempting to attack %s", colType.ToString())
@@ -112,7 +117,6 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	}
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
-	fmt.Println("wand = ", wand)
 
 	// hardcoding the ability for now instead of using wands
 	spell := comp.Spell{
@@ -129,8 +133,6 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	// TODO: call seismic client to resolve abilities
 	// TODO: acivate abilities returned by Seismic
 	// TODO: emit activated abilities and spell log to client
-
-	fmt.Println("potential abilities: ", potentialAbilities)
 
 	return nil
 }
@@ -175,7 +177,6 @@ func recordPotentialAbilities(
 	potentialAbilities *[comp.TotalAbilities]bool,
 ) error {
 	for !spell.Expired {
-		fmt.Println("recordPotentialAbilities. Spell position: ", spellPos)
 		// record abilities that could activate a current square
 		err := recordCurrentPotentialAbilities(world, spellPos, spell.Direction, potentialAbilities)
 		if err != nil {
