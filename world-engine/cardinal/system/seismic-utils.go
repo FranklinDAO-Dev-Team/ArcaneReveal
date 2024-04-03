@@ -3,6 +3,7 @@ package system
 import (
 	"cinco-paus/seismic/client"
 	"fmt"
+
 	"github.com/ethereum/go-ethereum/crypto"
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/sign"
