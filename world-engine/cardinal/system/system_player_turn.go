@@ -33,7 +33,12 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("Error converting string to int: %w", err)
 				}
-				player_turn_wand(world, direction, wandnum)
+				err = player_turn_wand(world, direction, wandnum)
+				if err != nil {
+					// note: returned err = nil b/c handled player_turn_wand's error correctly, returned Success: false
+					fmt.Println("here")
+					return msg.PlayerTurnResult{Success: false}, err
+				}
 			case "move":
 				err = player_turn_move(world, direction)
 				if err != nil {
@@ -96,24 +101,24 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		return err
 	}
 
-	fmt.Printf("should use wandnum %d, but currently hardcoded\n", wandnum)
+	wandID, wand, available, err := getWandByNumber(world, wandnum)
+	if !available.IsAvailable {
+		return fmt.Errorf("Wand %d already expired", wandnum)
+	}
+	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
+	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
+	fmt.Println("wand = ", wand)
 
 	// hardcoding the ability for now instead of using wands
 	spell := comp.Spell{
 		Expired:   false,
-		Abilities: [1]int{2},
+		Abilities: wand.Abilities,
 		Direction: direction,
 	}
-	spell_entity, err := cardinal.Create(world,
-		spell,
-		spellPos,
-	)
-
-	// not done, do stop it from erroring
-	fmt.Printf("spell: %d", spell_entity)
-	// a1 := &comp.Ability_1{}
-	// fmt.Println(a1.GetAbilityID())
-	// a1.Resolve(world, spellPos)
+	// spell_entity, err := cardinal.Create(world,
+	// 	spell,
+	// 	spellPos,
+	// )
 
 	for !spell.Expired {
 		fmt.Println("Spell postion: ", spellPos)
@@ -146,7 +151,6 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 				spell.Expired = true
 			}
 		}
-
 	}
 
 	return nil
