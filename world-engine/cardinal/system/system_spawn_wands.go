@@ -7,7 +7,7 @@ import (
 )
 
 func SpawnWandsSystem(world cardinal.WorldContext) error {
-	for i := 0; i < comp.NUM_WANDS; i++ {
+	for i := 0; i < comp.NumWands; i++ {
 		w := comp.NewRandomWandCore()
 		_, err := cardinal.Create(world,
 			comp.WandCore{

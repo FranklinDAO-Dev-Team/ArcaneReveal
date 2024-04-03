@@ -8,20 +8,27 @@ import (
 
 type Ability interface {
 	GetAbilityID() int
-	Resolve(cardinal.WorldContext, *Position, Direction) (bool, error)
+	Resolve(cardinal.WorldContext, *Position, Direction, bool) (bool, error)
 }
 
 var AbilityMap = map[int]Ability{
-	1: &Ability_1{},
-	2: &Ability_2{},
+	1: &Ability1{},
+	2: &Ability2{},
 }
 
-func damageAtPostion(world cardinal.WorldContext, pos *Position, includePlayer bool) (damageDelt bool, err error) {
+func damageAtPostion(
+	world cardinal.WorldContext,
+	pos *Position,
+	executeUpdates bool,
+	includePlayer bool,
+) (damageDelt bool, err error) {
+	// lookup if entity exists
 	found, id, err := pos.GetEntityIDByPosition(world)
 	if err != nil {
 		return false, err
 	}
 	if found {
+		// check entity type
 		colType, err := cardinal.GetComponent[Collidable](world, id)
 		if err != nil {
 			return false, err
@@ -29,24 +36,29 @@ func damageAtPostion(world cardinal.WorldContext, pos *Position, includePlayer b
 		switch colType.Type {
 		case MonsterCollide:
 			fmt.Println("damage delt at ", pos)
-			err := DecrementHealth(world, id)
-			if err != nil {
-				return false, err
-			}
-			return true, nil
-		case PlayerCollide:
-			if includePlayer {
-				fmt.Println("damage delt at ", pos)
+			if executeUpdates {
 				err := DecrementHealth(world, id)
 				if err != nil {
 					return false, err
 				}
 				return true, nil
+			}
+		case PlayerCollide:
+			if includePlayer {
+				fmt.Println("damage delt at ", pos)
+				if executeUpdates {
+					err := DecrementHealth(world, id)
+					if err != nil {
+						return false, err
+					}
+				}
+				return true, nil
 			} else {
 				return false, nil
 			}
+		default:
+			return false, nil
 		}
 	}
-
 	return false, err
 }
