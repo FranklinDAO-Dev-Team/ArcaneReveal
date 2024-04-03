@@ -56,7 +56,8 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 }
 
 func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) error {
-	fmt.Printf("attacking in the %s direction\n", direction)
+	fmt.Printf("attacking in the %d direction\n", direction)
+	fmt.Printf(fmt.Sprint(world.CurrentTick()))
 	return nil
 }
 
@@ -70,6 +71,8 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		return err
 	}
 
+	fmt.Printf("should use wandnum %d, but currently hardcoded\n", wandnum)
+
 	// hardcoding the ability for now instead of using wands
 	spell := comp.Spell{
 		Expired:   false,
@@ -82,7 +85,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	)
 
 	// not done, do stop it from erroring
-	fmt.Println("spell: %d", spell_entity)
+	fmt.Printf("spell: %d", spell_entity)
 	// a1 := &comp.Ability_1{}
 	// fmt.Println(a1.GetAbilityID())
 	// a1.Resolve(world, spellPos)
@@ -154,6 +157,21 @@ func player_turn_move(world cardinal.WorldContext, direction comp.Direction) err
 	}
 	currPos, err := cardinal.GetComponent[comp.Position](world, playerID)
 	updatePos, err := currPos.GetUpdateFromDirection(direction)
+
+	found, id, err := updatePos.GetEntityIDByPosition(world)
+	if err != nil {
+		return err
+	}
+	if found {
+		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+		if err != nil {
+			return err
+		}
+		if colType.Type != comp.ItemCollide {
+			return fmt.Errorf("Attempting to move onto an object of type %s", colType.ToString())
+		}
+	}
+
 	cardinal.SetComponent[comp.Position](world, playerID, updatePos)
 
 	return nil
