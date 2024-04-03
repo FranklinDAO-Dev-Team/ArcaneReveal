@@ -14,7 +14,7 @@ func (Health) Name() string {
 	return "Health"
 }
 
-func decrementHealth(world cardinal.WorldContext, entityID types.EntityID) error {
+func DecrementHealth(world cardinal.WorldContext, entityID types.EntityID) error {
 	health, err := cardinal.GetComponent[Health](world, entityID)
 	if err != nil {
 		return err
