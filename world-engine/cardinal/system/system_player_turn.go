@@ -56,9 +56,34 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 }
 
 func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) error {
-	fmt.Printf("attacking in the %d direction\n", direction)
-	fmt.Printf(fmt.Sprint(world.CurrentTick()))
-	return nil
+	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
+	if err != nil {
+		return err
+	}
+	attackPos, err := playerPos.GetUpdateFromDirection(direction)
+	if err != nil {
+		return err
+	}
+
+	found, id, err := attackPos.GetEntityIDByPosition(world)
+	if err != nil {
+		return err
+	}
+	if found {
+		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+		if err != nil {
+			return err
+		}
+		switch colType.Type {
+		case comp.MonsterCollide:
+			fmt.Println("damage delt at ", attackPos)
+			return comp.DecrementHealth(world, id)
+		default:
+			return fmt.Errorf("attempting to attack %s", colType.ToString())
+		}
+	} else {
+		return errors.New("attempting to attack empty stace")
+	}
 }
 
 func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int) error {
