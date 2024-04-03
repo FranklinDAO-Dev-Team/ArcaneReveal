@@ -46,6 +46,19 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 		},
 	)
 
+	_, err = cardinal.Create(world,
+		comp.Monster{Type: comp.HEAVY},
+		comp.CollisionType{Type: "monster"},
+		comp.Health{
+			MaxHealth:  3,
+			CurrHealth: 3,
+		},
+		comp.Position{
+			X: 1,
+			Y: 1,
+		},
+	)
+
 	return nil
 }
 

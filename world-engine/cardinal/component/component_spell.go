@@ -1,9 +1,9 @@
 package component
 
 type Spell struct {
-	Abilities [NUM_ABILITIES]Ability // Array of 5 integers
+	Abilities [NUM_ABILITIES]int // Array of 5 integers
 	Expired   bool
-	Direction string
+	Direction Direction
 }
 
 func (Spell) Name() string {
