@@ -64,13 +64,33 @@ func (sc *SeismicClient) Start() {
 				sc.proofReturnCh <- NewProofSuccessResponse(req, *proof)
 
 			case req := <-sc.revealRequestCh:
-				// TODO: legit response here, depending on game implementation
+
+				gameState, hasGame := sc.store.GetGameState(req.PersonaTag)
+				if !hasGame {
+					sc.revealReturnCh <- RevealReqResponse{
+						PersonaTag: req.PersonaTag,
+						GameID:     req.GameID,
+						Success:    false,
+						Error:      "no game found",
+					}
+					continue
+				}
+
+				castedAbilities := [TotalAbilities]bool{}
+				salts := [TotalAbilities]string{}
+				for i, canCast := range req.PotentialAbilities {
+					wandHasAbility, salt := gameState.WandHasAbility(req.WandNum, i)
+					castedAbilities[i] = canCast && wandHasAbility
+					salts[i] = salt
+				}
 
 				sc.revealReturnCh <- RevealReqResponse{
 					PersonaTag: req.PersonaTag,
 					GameID:     req.GameID,
+					Success:    true,
+					Abilities:  castedAbilities,
+					Salts:      salts,
 				}
-				fmt.Println("commit-reveal req:", req)
 			}
 		}
 	}()

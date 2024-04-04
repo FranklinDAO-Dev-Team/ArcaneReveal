@@ -5,12 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 type PlayerTurnMsg struct {
-	Action    string `json:"action"`
-	Direction string `json:"direction"`
-	WandNum   string `json:"wandnum"`
+	GameID    types.EntityID `json:"gameID"`
+	Action    string         `json:"action"`
+	Direction string         `json:"direction"`
+	WandNum   string         `json:"wandnum"`
 }
 
 type PlayerTurnResult struct {

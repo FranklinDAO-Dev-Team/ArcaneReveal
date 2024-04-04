@@ -41,6 +41,7 @@ func main() {
 		// cardinal.RegisterMessage[msg.AttackPlayerMsg, msg.AttackPlayerMsgReply](w, "attack-player"),
 		cardinal.RegisterMessage[msg.RequestGameMsg, msg.RequestGameMsgResult](w, "request-game"),
 		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
+		cardinal.RegisterMessage[msg.FulfillCastMsg, msg.FulfillCastMsgResult](w, "fulfill-cast"),
 
 		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
 	)
@@ -48,7 +49,7 @@ func main() {
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
 	Must(
-		// cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
+	// cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
 	)
 
 	// Each system executes deterministically in the order they are added.

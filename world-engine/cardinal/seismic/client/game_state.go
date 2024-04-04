@@ -90,3 +90,13 @@ func (game *GameState) ToCircuitInputs() map[string]interface{} {
 
 	return input
 }
+
+func (game *GameState) WandHasAbility(wandNum int, ability int) (bool, string) {
+	abilityStr := fmt.Sprint(ability)
+	for i, abilityIndex := range game.Attributes[wandNum] {
+		if abilityStr == abilityIndex {
+			return true, game.Salts[wandNum][i]
+		}
+	}
+	return false, ""
+}
