@@ -37,6 +37,7 @@ func main() {
 		// cardinal.RegisterMessage[msg.CreatePlayerMsg, msg.CreatePlayerResult](w, "create-player"),
 		// cardinal.RegisterMessage[msg.AttackPlayerMsg, msg.AttackPlayerMsgReply](w, "attack-player"),
 		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
+		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
 	)
 
 	// Register queries
@@ -50,9 +51,8 @@ func main() {
 	// For example, you may want to run the attack system before the regen system
 	// so that the player's HP is subtracted (and player killed if it reaches 0) before HP is regenerated.
 	Must(cardinal.RegisterSystems(w,
-		// system.AttackSystem,
-		// system.RegenSystem,
 		system.PlayerTurnSystem,
+		// system.MonsterTurnSystem,
 	))
 
 	Must(cardinal.RegisterInitSystems(w,
@@ -60,6 +60,9 @@ func main() {
 		system.SpawnWandsSystem,
 		system.PopulateBoardSystem,
 	))
+
+	seismicClient := system.Initialize(w)
+	seismicClient.Start()
 
 	Must(w.StartGame())
 }

@@ -30,4 +30,3 @@ func damage() -> void:
 	if health < 0:
 		health = MAX_HEALTH
 	update_health_ui()
-	

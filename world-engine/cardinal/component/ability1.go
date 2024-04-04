@@ -4,21 +4,28 @@ import (
 	"pkg.world.dev/world-engine/cardinal"
 )
 
-type Ability_1 struct{}
+const Ability1ID = 1
 
-var _ Ability = &Ability_1{}
+type Ability1 struct{}
 
-func (Ability_1) GetAbilityID() int {
-	return 1
+var _ Ability = &Ability1{}
+
+func (Ability1) GetAbilityID() int {
+	return Ability1ID
 }
 
 // Resolves effects of the ability
 // i.e. checks if it activates and if so updates the world
 // return if the ability should be revealed and if there was an error
-func (Ability_1) Resolve(world cardinal.WorldContext, spellPosition *Position, direction Direction) (reveal bool, err error) {
-	damage_delt, err := damageAtPostion(world, spellPosition, false)
+func (Ability1) Resolve(
+	world cardinal.WorldContext,
+	spellPosition *Position,
+	_ Direction,
+	executeUpdates bool,
+) (reveal bool, err error) {
+	damageDealt, err := damageAtPostion(world, spellPosition, executeUpdates, false)
 	if err != nil {
 		return false, err
 	}
-	return damage_delt, nil
+	return damageDealt, nil
 }
