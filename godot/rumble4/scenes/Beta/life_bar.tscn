@@ -1,16 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://dxjtr38jxd26j"]
+[gd_scene load_steps=4 format=3 uid="uid://cflwrb4c6hj8h"]
 
-[ext_resource type="Texture2D" uid="uid://d36ccqo0lbx8x" path="res://assets/heart2.tres" id="1_wxx5x"]
-[ext_resource type="Texture2D" uid="uid://y0n3ulw18vla" path="res://assets/heart3.tres" id="2_ixrik"]
+[ext_resource type="Texture2D" path="res://assets/heart2.tres" id="1_e0jun"]
+[ext_resource type="Texture2D" path="res://assets/heart3.tres" id="2_rix3q"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gdfsd"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_wxx5x")
+"texture": ExtResource("1_e0jun")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_ixrik")
+"texture": ExtResource("2_rix3q")
 }],
 "loop": true,
 "name": &"hearts",

@@ -18,6 +18,7 @@ func (a AbilityNegOne) Resolve(
 	spellPosition *Position,
 	_ Direction,
 	executeUpdates bool,
+	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
 	return false, nil
 }
