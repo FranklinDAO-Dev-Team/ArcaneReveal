@@ -11,7 +11,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]gameEventLog) error {
+func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEventLog) error {
 	fmt.Println("MonsterTurnSystem")
 	var turnErr error
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
@@ -41,7 +41,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]gameEventLog
 			// Decrement health of player
 			comp.DecrementHealth(world, playerID)
 			// add event to event log
-			*eventLogList = append(*eventLogList, gameEventLog{x: origMonsterPos.X, y: origMonsterPos.Y, event: gameEventMonsterAttack})
+			*eventLogList = append(*eventLogList, comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: comp.GameEventMonsterAttack})
 		} else {
 			// get move options (places that are legal, not moving into a wall, etc),
 			direction, err := decideMonsterMovementDirection(world, origMonsterPos, playerPos)
@@ -62,7 +62,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]gameEventLog
 				return false // if error, break out of search
 			}
 			// add event to event log
-			*eventLogList = append(*eventLogList, gameEventLog{x: origMonsterPos.X, y: origMonsterPos.Y, event: directionToMonsterAttack(direction)})
+			*eventLogList = append(*eventLogList, comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: directionToMonsterAttack(direction)})
 		}
 		return true // always return true to move on to the next monster
 	})
@@ -131,16 +131,16 @@ func CheckMonsterMovementUtility(
 
 }
 
-func directionToMonsterAttack(direction comp.Direction) gameEvent {
+func directionToMonsterAttack(direction comp.Direction) comp.GameEvent {
 	switch direction {
 	case comp.LEFT:
-		return gameEventMonsterLeft
+		return comp.GameEventMonsterLeft
 	case comp.RIGHT:
-		return gameEventMonsterRight
+		return comp.GameEventMonsterRight
 	case comp.UP:
-		return gameEventMonsterUp
+		return comp.GameEventMonsterUp
 	case comp.DOWN:
-		return gameEventMonsterDown
+		return comp.GameEventMonsterDown
 	default:
 		panic("invalid direction")
 	}

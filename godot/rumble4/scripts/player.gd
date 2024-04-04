@@ -48,6 +48,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
+@onready var wand_animations = $"../WandAnimations"
 	
 func _ready():
 	$"../LifeBar/Life1".play("hearts")
@@ -72,6 +73,17 @@ func update_health_ui():
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
 		damage()
+		wand_animations.position = Vector2(20, -23)
+		wand_animations.play("lightning_strike")
+	if event.is_action_pressed("enemy_left"):
+		$AnimationPlayer.play("attack_left")
+	if event.is_action_pressed("enemy_right"):
+		$AnimationPlayer.play("attack_right")
+	if event.is_action_pressed("enemy_down"):
+		$AnimationPlayer.play("attack_down")
+	if event.is_action_pressed("enemy_up"):
+		$AnimationPlayer.play("attack_up")
+	
 
 
 func damage() -> void:

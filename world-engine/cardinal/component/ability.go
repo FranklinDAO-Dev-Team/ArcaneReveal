@@ -4,6 +4,25 @@ import (
 	"pkg.world.dev/world-engine/cardinal"
 )
 
+type GameEvent int
+
+const (
+	GameEventSpellBeam GameEvent = iota
+	GameEventSpellDamage
+	GameEventSpellDisappate
+	GameEventMonsterAttack
+	GameEventMonsterUp
+	GameEventMonsterRight
+	GameEventMonsterDown
+	GameEventMonsterLeft
+)
+
+type GameEventLog struct {
+	X     int
+	Y     int
+	Event GameEvent
+}
+
 type Ability interface {
 	GetAbilityID() int
 	Resolve(
@@ -11,6 +30,7 @@ type Ability interface {
 		spellPosition *Position,
 		direction Direction,
 		executeUpdates bool,
+		eventLogList *[]GameEventLog,
 	) (reveal bool, err error)
 }
 

@@ -1,4 +1,5 @@
-[gd_scene load_steps=12 format=3 uid="uid://ccski0bqh1gbo"]
+
+[gd_scene load_steps=19 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_cvpuc"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
@@ -9,6 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Beta/life_bar.tscn" id="8_th4ig"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_imb6i"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Beta/door.tscn" id="10_xqvk1"]
+[ext_resource type="Texture2D" uid="uid://bjvhek0pu75xj" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_1.png" id="11_fa5e8"]
+[ext_resource type="Texture2D" uid="uid://h4lhxnehuaee" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_2.png" id="12_vayrl"]
+[ext_resource type="Texture2D" uid="uid://bidv3x2nek36l" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_3.png" id="13_bbuce"]
+[ext_resource type="Texture2D" uid="uid://dfnuetr2xjowj" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_4.png" id="14_s27op"]
+[ext_resource type="Texture2D" uid="uid://dy747avdl4u3m" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_5.png" id="15_3oab1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
 texture = ExtResource("2_vpu8v")
@@ -274,6 +280,35 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_ebk6o")
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_eh1nc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_fa5e8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_vayrl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_bbuce")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_s27op")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_3oab1")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"lightning_strike",
+"speed": 20.0
+}]
+
 [node name="TestMain" type="Node2D"]
 script = ExtResource("1_cvpuc")
 
@@ -506,16 +541,22 @@ position = Vector2(128, -64)
 position = Vector2(-32, -32)
 
 [node name="LifeBar" parent="." instance=ExtResource("8_th4ig")]
-offset_left = 16.0
-offset_top = 333.0
-offset_right = 16.0
-offset_bottom = 333.0
+offset_left = 28.0
+offset_top = 352.0
+offset_right = 28.0
+offset_bottom = 352.0
 
 [node name="Key" parent="." instance=ExtResource("9_imb6i")]
 position = Vector2(16, 144)
 
 [node name="Door" parent="." instance=ExtResource("10_xqvk1")]
 position = Vector2(288, 128)
+
+[node name="WandAnimations" type="AnimatedSprite2D" parent="."]
+position = Vector2(112, -6)
+scale = Vector2(0.234615, 0.0931817)
+sprite_frames = SubResource("SpriteFrames_eh1nc")
+animation = &"lightning_strike"
 
 [connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
 [connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]
