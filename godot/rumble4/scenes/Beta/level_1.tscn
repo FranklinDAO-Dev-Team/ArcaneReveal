@@ -275,7 +275,7 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_ebk6o")
 
-[node name="TestMain" type="Node2D"]
+[node name="TestMain2" type="Node2D"]
 script = ExtResource("1_64lna")
 
 [node name="Camera2D" type="Camera2D" parent="."]
