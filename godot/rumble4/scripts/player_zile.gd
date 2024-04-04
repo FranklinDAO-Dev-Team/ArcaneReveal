@@ -63,7 +63,6 @@ func _ready():
 	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
 	#position += Vector2.ONE * tile_size / 
 
-
 func _process(delta):
 	$Sprite.play("idle")
 
