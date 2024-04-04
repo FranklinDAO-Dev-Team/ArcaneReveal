@@ -1,6 +1,7 @@
 package system
 
 import (
+	"cinco-paus/msg"
 	"cinco-paus/seismic/client"
 	"fmt"
 
@@ -12,16 +13,23 @@ import (
 var (
 	proofRequestCh  = make(chan client.ProofRequest)
 	proofReturnCh   = make(chan client.ProofReqResponse)
-	revealRequestCh = make(chan int)
-	revealReturnCh  = make(chan int)
+	revealRequestCh = make(chan client.RevealRequest)
+	revealReturnCh  = make(chan client.RevealReqResponse)
 )
 
 func Initialize(world *cardinal.World) *client.SeismicClient {
-	fulFillMsg, ok := world.GetMessageByFullName("game.fulfill-create-game")
+	fulFillCreateMsg, ok := world.GetMessageByFullName("game.fulfill-create-game")
 	if !ok {
 		fmt.Printf("error: no 'fulfill-create-game' message")
 		return nil
 	}
+
+	fulFillCastMsg, ok := world.GetMessageByFullName("game.fulfill-cast")
+	if !ok {
+		fmt.Printf("error: no 'fulfill-cast' message")
+		return nil
+	}
+
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
 		panic(err)
@@ -36,15 +44,22 @@ func Initialize(world *cardinal.World) *client.SeismicClient {
 					fmt.Println("verification res:", ok)
 				}
 
-				// TODO: fix this signature
-				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, `{}`)
+				payload := msg.FulfillCreateGameMsg{Result: proofRes}
+				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, payload)
 				if err != nil {
 					fmt.Printf("failed to sign new tx: %v", err)
 				}
-				world.AddTransaction(fulFillMsg.ID(), `{}`, sig)
+
+				world.AddTransaction(fulFillCreateMsg.ID(), payload, sig)
 
 			case revealRes := <-revealReturnCh:
-				fmt.Println(revealRes)
+				payload := msg.FulfillCastMsg{Result: revealRes}
+				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, payload)
+				if err != nil {
+					fmt.Printf("failed to sign new tx: %v", err)
+				}
+
+				world.AddTransaction(fulFillCastMsg.ID(), payload, sig)
 			}
 		}
 	}()

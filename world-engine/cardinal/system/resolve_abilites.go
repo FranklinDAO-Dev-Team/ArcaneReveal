@@ -2,6 +2,7 @@ package system
 
 import (
 	comp "cinco-paus/component"
+	"cinco-paus/seismic/client"
 	"errors"
 
 	"pkg.world.dev/world-engine/cardinal"
@@ -19,7 +20,7 @@ func resolveAbilities(
 	world cardinal.WorldContext,
 	spell *comp.Spell,
 	spellPos *comp.Position,
-	potentialAbilities *[comp.TotalAbilities]bool,
+	potentialAbilities *[client.TotalAbilities]bool,
 	updateChainState bool,
 	eventLogList *[]comp.GameEventLog,
 ) error {
@@ -68,7 +69,7 @@ func resolveAbilitiesAtPosition(
 	world cardinal.WorldContext,
 	spellPos *comp.Position,
 	direction comp.Direction,
-	potentialAbilities *[comp.TotalAbilities]bool,
+	potentialAbilities *[client.TotalAbilities]bool,
 	updateChainState bool,
 	eventLogList *[]comp.GameEventLog,
 ) error {

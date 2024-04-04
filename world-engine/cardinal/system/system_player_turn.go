@@ -3,18 +3,21 @@ package system
 import (
 	comp "cinco-paus/component"
 	"cinco-paus/msg"
+	"cinco-paus/seismic/client"
 	"errors"
 	"fmt"
 	"strconv"
 
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/message"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 func PlayerTurnSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](
 		world,
 		func(turn message.TxData[msg.PlayerTurnMsg]) (msg.PlayerTurnResult, error) {
+			fmt.Println("starting player turn system")
 			err := turn.Msg.ValFmt()
 			if err != nil {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
@@ -33,20 +36,46 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
+				MonsterTurnSystem(world, eventLogList)
+				// TODO: emit events to client
+				fmt.Println("TODO: emit activated abilities and spell log to client")
+
 			case "wand":
 				wandnum, err := strconv.Atoi(turn.Msg.WandNum)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
 				}
-				err = player_turn_wand(world, direction, wandnum, eventLogList)
+				castID, potentialAbilities, err := player_turn_wand(world, direction, wandnum)
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
+				fmt.Println("castID: ", castID)
+				fmt.Println("potentialAbilities: ", potentialAbilities)
+
+				fmt.Println("gameidstr:", turn.Msg.GameIDStr)
+
+				gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
+				if err != nil {
+					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
+				}
+				revealRequest := client.RevealRequest{
+					PersonaTag:         turn.Tx.PersonaTag,
+					GameID:             types.EntityID(gameID),
+					CastID:             castID,
+					WandNum:            wandnum,
+					PotentialAbilities: *potentialAbilities,
+				}
+				revealRequest.PotentialAbilities = [2]bool{true, true}
+				revealRequestCh <- revealRequest
+				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
+
 			case "move":
 				err = playerTurnMove(world, direction)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
+				MonsterTurnSystem(world, eventLogList)
+				fmt.Println("TODO: emit activated abilities and spell log to client")
 			default:
 				return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: Invalid action")
 			}
@@ -61,17 +90,8 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			}
 
 			result := msg.PlayerTurnResult{Success: true}
-
-			MonsterTurnSystem(world, eventLogList)
-			println()
-			println("eventLogList: ", eventLogList)
-			println("len(eventLogList): ", len(*eventLogList))
-			for _, logEntry := range *eventLogList {
-				fmt.Printf("X: %d, Y: %d, Event: %d\n",
-					logEntry.X, logEntry.Y, logEntry.Event)
-			}
-
 			return result, nil
+
 		})
 }
 
@@ -105,53 +125,60 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 	}
 }
 
-func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int, eventLogList *[]comp.GameEventLog) error {
+func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
-		return err
+		return 0, nil, err
 	}
 	spellPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
-		return err
+		return 0, nil, err
+	}
+	wandID, _, available, err := getWandByNumber(world, wandnum)
+	if err != nil {
+		return 0, nil, err
 	}
 
-	wandID, wand, available, err := getWandByNumber(world, wandnum)
-	if err != nil {
-		return err
-	}
+	// handle wand availability
 	if !available.IsAvailable {
-		return fmt.Errorf("wand %d already expired", wandnum)
+		return 0, nil, fmt.Errorf("wand %d already expired", wandnum)
 	}
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
 
-	// hardcoding the ability for now instead of using wands
-	spell := comp.Spell{
-		Expired:   false,
-		Abilities: wand.Abilities,
-		Direction: direction,
+	// set all abilities to true since we don't know which ones will be activated
+	allAbilities := &[client.TotalAbilities]bool{}
+	for i := range allAbilities {
+		allAbilities[i] = true
+	}
+	spell := &comp.Spell{
+		WandNumber: wandnum,
+		Expired:    false,
+		Abilities:  allAbilities,
+		Direction:  direction,
 	}
 
-	potentialAbilities := &[comp.TotalAbilities]bool{}
+	// simulate a cast to determine potential ability activations
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
-	err = resolveAbilities(world, &spell, spellPos, potentialAbilities, updateChainState, dummy)
+	err = resolveAbilities(world, spell, spellPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
-		return err
+		return 0, nil, err
 	}
-	// TODO: call seismic client to resolve abilities
-	seismic_response := &[comp.TotalAbilities]bool{false, true}
 
-	// acivate abilities returned by Seismic
-	updateChainState = true
-	spell.Expired = false
-	err = resolveAbilities(world, &spell, spellPos, seismic_response, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
+	// create a new entity for the cast to later be resolved
+	castID, err = cardinal.Create(
+		world,
+		comp.AwaitingReveal{IsAvailable: true},
+		spell,
+		spellPos,
+	)
 	if err != nil {
-		return err
+		return 0, nil, err
 	}
-	// TODO: emit activated abilities and spell log to client
 
-	return nil
+	return castID, spell.Abilities, nil
+
 }
 
 func playerTurnMove(world cardinal.WorldContext, direction comp.Direction) error {

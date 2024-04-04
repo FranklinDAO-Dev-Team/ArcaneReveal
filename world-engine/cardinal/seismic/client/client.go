@@ -10,11 +10,16 @@ type SeismicClient struct {
 	prover          *SeismicProver
 	proofRequestCh  chan ProofRequest
 	proofReturnCh   chan ProofReqResponse
-	revealRequestCh chan int
-	revealReturnCh  chan int
+	revealRequestCh chan RevealRequest
+	revealReturnCh  chan RevealReqResponse
 }
 
-func New(proofRequestCh chan ProofRequest, proofReturnCh chan ProofReqResponse, revealRequestCh chan int, revealReturnCh chan int) *SeismicClient {
+func New(
+	proofRequestCh chan ProofRequest,
+	proofReturnCh chan ProofReqResponse,
+	revealRequestCh chan RevealRequest,
+	revealReturnCh chan RevealReqResponse,
+) *SeismicClient {
 	store := NewGameStateStore()
 	prover, err := NewProver()
 	if err != nil {
@@ -38,27 +43,56 @@ func (sc *SeismicClient) Start() {
 			case req := <-sc.proofRequestCh:
 				playerSource, ok := new(big.Int).SetString(req.PlayerSource, 10)
 				if !ok {
-					sc.proofReturnCh <- NewProofFailResponse("failed to parse playerSource")
+					sc.proofReturnCh <- NewProofFailResponse(req, "failed to parse playerSource")
+					continue
 				}
 
 				gameState, err := NewGameState(playerSource)
 				if err != nil {
-					sc.proofReturnCh <- NewProofFailResponse("failed to generate game state")
+					sc.proofReturnCh <- NewProofFailResponse(req, "failed to generate game state")
+					continue
 				}
 
 				proof, err := sc.prover.Prove(gameState)
 				if err != nil {
-					sc.proofReturnCh <- NewProofFailResponse("failed to prove")
+					sc.proofReturnCh <- NewProofFailResponse(req, "failed to prove")
+					continue
 				}
 
 				sc.store.ReplaceGameState(req.PersonaTag, gameState)
 
-				sc.proofReturnCh <- NewProofSuccessResponse(*proof)
+				sc.proofReturnCh <- NewProofSuccessResponse(req, *proof)
 
 			case req := <-sc.revealRequestCh:
-				// TODO: legit response here, depending on game implementation
-				sc.revealReturnCh <- 42
-				fmt.Println("commit-reveal req:", req)
+
+				gameState, hasGame := sc.store.GetGameState(req.PersonaTag)
+				if !hasGame {
+					sc.revealReturnCh <- RevealReqResponse{
+						PersonaTag: req.PersonaTag,
+						GameID:     req.GameID,
+						CastID:     req.CastID,
+						Success:    false,
+						Error:      "no game found",
+					}
+					continue
+				}
+
+				castedAbilities := [TotalAbilities]bool{}
+				salts := [TotalAbilities]string{}
+				for i, canCast := range req.PotentialAbilities {
+					wandHasAbility, salt := gameState.WandHasAbility(req.WandNum, i)
+					castedAbilities[i] = canCast && wandHasAbility
+					salts[i] = salt
+				}
+
+				sc.revealReturnCh <- RevealReqResponse{
+					PersonaTag: req.PersonaTag,
+					GameID:     req.GameID,
+					CastID:     req.CastID,
+					Success:    true,
+					Abilities:  castedAbilities,
+					Salts:      salts,
+				}
 			}
 		}
 	}()
