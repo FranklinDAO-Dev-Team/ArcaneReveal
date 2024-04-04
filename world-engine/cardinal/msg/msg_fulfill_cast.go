@@ -1,6 +1,7 @@
 package msg
 
 import (
+	"cinco-paus/component"
 	"cinco-paus/seismic/client"
 )
 
@@ -9,5 +10,5 @@ type FulfillCastMsg struct {
 }
 
 type FulfillCastMsgResult struct {
-	Success bool
+	LogEntry []component.GameEventLog
 }

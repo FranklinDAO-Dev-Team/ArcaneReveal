@@ -80,12 +80,19 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 
 			// TODO: emit activated abilities and spell log to client
 			println("TODO: emit activated abilities and spell log to client")
+			eventMap := make(map[string]any)
+			eventMap["turnEvent"] = *eventLogList
+			world.EmitEvent(eventMap)
+
 			for _, logEntry := range *eventLogList {
 				fmt.Printf("X: %d, Y: %d, Event: %d\n",
 					logEntry.X, logEntry.Y, logEntry.Event)
 			}
 
 			// return successfully
-			return msg.FulfillCastMsgResult{Success: true}, nil
+			// note: this msg returns to Seismic as the caller, not the player client
+			return msg.FulfillCastMsgResult{
+				LogEntry: *eventLogList,
+			}, nil
 		})
 }
