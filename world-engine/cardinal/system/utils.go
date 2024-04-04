@@ -41,5 +41,4 @@ func getWandByNumber(world cardinal.WorldContext, targetNum int) (wandID types.E
 	// fmt.Printf("wandID: %s\n", fmt.Sprint(wandID))
 	// fmt.Println("wandCore: ", wandCore)
 	return wandID, wandCore, available, nil
-
 }

@@ -3,14 +3,15 @@ package component
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/search/filter"
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-const MAX_X = 4
-const MAX_Y = 4
+const MaxX = 4
+const MaxY = 4
 
 type Position struct {
 	X int `json:"x"`
@@ -46,7 +47,6 @@ func StringToDirection(dirStr string) (Direction, error) {
 }
 
 func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error) {
-	// fmt.Printf("In UpdateFromDirection. p = (%d, %d), dir = %s\n", p.X, p.Y, direction)
 	switch direction {
 	case LEFT:
 		if p.X == 0 {
@@ -54,7 +54,7 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		}
 		p.X--
 	case RIGHT:
-		if p.X == MAX_X {
+		if p.X == MaxX {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X++
@@ -64,7 +64,7 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		}
 		p.Y--
 	case DOWN:
-		if p.Y == MAX_Y {
+		if p.Y == MaxY {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.Y++
@@ -72,7 +72,6 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		return nil, fmt.Errorf("invalid direction")
 	}
 
-	// fmt.Println("Exiting UpdateFromDirection. p = ", p)
 	return &p, nil
 }
 
@@ -81,9 +80,11 @@ type EntityAtLocation struct {
 	Players  []types.EntityID
 }
 
-func (p *Position) GetEntityIDByPosition(world cardinal.WorldContext) (found bool, eID types.EntityID, searchErr error) {
+func (p *Position) GetEntityIDByPosition(
+	world cardinal.WorldContext,
+) (found bool, eID types.EntityID, searchErr error) {
 	if p == nil {
-		return false, 0, errors.New("Attempting GetEntityIDByPosition with nil input")
+		return false, 0, errors.New("attempting GetEntityIDByPosition with nil input")
 	}
 	searchErr = cardinal.NewSearch(world, filter.Contains(Position{})).Each(
 		func(id types.EntityID) bool {
@@ -103,6 +104,14 @@ func (p *Position) GetEntityIDByPosition(world cardinal.WorldContext) (found boo
 			return true
 		},
 	)
+	if searchErr != nil {
+		return false, 0, searchErr
+	}
 
-	return
+	return found, eID, nil
+}
+
+func (p *Position) ManhattenDistance(other *Position) int {
+	return int(math.Abs(float64(p.X-other.X)) + math.Abs(float64(p.Y-other.Y)))
+
 }

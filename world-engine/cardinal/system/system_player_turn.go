@@ -34,14 +34,14 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			case "wand":
 				wandnum, err := strconv.Atoi(turn.Msg.WandNum)
 				if err != nil {
-					return msg.PlayerTurnResult{}, fmt.Errorf("Error converting string to int: %w", err)
+					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
 				}
 				err = player_turn_wand(world, direction, wandnum)
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
 			case "move":
-				err = player_turn_move(world, direction)
+				err = playerTurnMove(world, direction)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
@@ -57,7 +57,14 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
 			}
-			return msg.PlayerTurnResult{Success: true}, nil
+
+			result := msg.PlayerTurnResult{Success: true}
+
+			// if turn.Msg.Action == "wand" {
+			MonsterTurnSystem(world)
+			// }
+
+			return result, nil
 		})
 }
 
@@ -76,14 +83,12 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 		return err
 	}
 	if found {
-		fmt.Printf("found: %t, id: %s, err: %w", found, id, nil)
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
 			return err
 		}
 		switch colType.Type {
 		case comp.MonsterCollide:
-			fmt.Println("damage delt at ", attackPos)
 			return comp.DecrementHealth(world, id)
 		default:
 			return fmt.Errorf("attempting to attack %s", colType.ToString())
@@ -104,12 +109,14 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	}
 
 	wandID, wand, available, err := getWandByNumber(world, wandnum)
+	if err != nil {
+		return err
+	}
 	if !available.IsAvailable {
-		return fmt.Errorf("Wand %d already expired", wandnum)
+		return fmt.Errorf("wand %d already expired", wandnum)
 	}
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
-	fmt.Println("wand = ", wand)
 
 	// hardcoding the ability for now instead of using wands
 	spell := comp.Spell{
@@ -117,29 +124,73 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		Abilities: wand.Abilities,
 		Direction: direction,
 	}
-	// spell_entity, err := cardinal.Create(world,
-	// 	spell,
-	// 	spellPos,
-	// )
 
+	potentialAbilities := &[comp.TotalAbilities]bool{}
+	err = recordPotentialAbilities(world, &spell, spellPos, potentialAbilities)
+	if err != nil {
+		return err
+	}
+	// TODO: call seismic client to resolve abilities
+	// TODO: acivate abilities returned by Seismic
+	// TODO: emit activated abilities and spell log to client
+
+	return nil
+}
+
+func playerTurnMove(world cardinal.WorldContext, direction comp.Direction) error {
+	playerID, err := queryPlayerID(world)
+	if err != nil {
+		return err
+	}
+	currPos, err := cardinal.GetComponent[comp.Position](world, playerID)
+	if err != nil {
+		return err
+	}
+	updatePos, err := currPos.GetUpdateFromDirection(direction)
+	if err != nil {
+		return err
+	}
+
+	found, id, err := updatePos.GetEntityIDByPosition(world)
+	if err != nil {
+		return err
+	}
+	if found {
+		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+		if err != nil {
+			return err
+		}
+		if colType.Type != comp.ItemCollide {
+			return fmt.Errorf("attempting to move onto an object of type %s", colType.ToString())
+		}
+	}
+
+	cardinal.SetComponent[comp.Position](world, playerID, updatePos)
+
+	return nil
+}
+
+func recordPotentialAbilities(
+	world cardinal.WorldContext,
+	spell *comp.Spell,
+	spellPos *comp.Position,
+	potentialAbilities *[comp.TotalAbilities]bool,
+) error {
 	for !spell.Expired {
-		fmt.Println("Spell postion: ", spellPos)
-		for i := 0; i < len(spell.Abilities); i++ {
-			// fmt.Printf("Resolving ability %d\n", spell.Abilities[i])
-			a := comp.AbilityMap[spell.Abilities[i]]
-			if a == nil {
-				return errors.New("unknown ability called")
-			}
-			_, err := a.Resolve(world, spellPos, spell.Direction)
-			if err != nil {
-				return err
-			}
+		// record abilities that could activate a current square
+		err := recordCurrentPotentialAbilities(world, spellPos, spell.Direction, potentialAbilities)
+		if err != nil {
+			return err
 		}
 
 		// get next spell position
 		spellPos, err = spellPos.GetUpdateFromDirection(spell.Direction)
 		if err != nil {
 			spell.Expired = true
+		}
+		if spellPos == nil {
+			spell.Expired = true
+			break
 		}
 
 		// if wall entity at spellPos, stop
@@ -157,56 +208,28 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 			}
 		}
 	}
-
 	return nil
 }
 
-// func create_spellhead(world cardinal.WorldContext, direction string, wandnum int) (spellhead, error) {
-// 	playerID, err := queryPlayerID(world)
-// 	if err != nil {
-// 		return spellhead{}, err
-// 	}
-// 	pos, err := cardinal.GetComponent[comp.Position](world, playerID)
-// 	if err != nil {
-// 		return spellhead{}, err
-// 	}
-// 	_, wand, err := getWandByNumber(world, wandnum)
-// 	if err != nil {
-// 		return spellhead{}, err
-// 	}
-// 	pos.UpdateFromDirection(direction)
-
-// 	var head = spellhead{
-// 		Pos:       pos,
-// 		Abilities: wand.Abilities,
-// 	}
-
-// 	return head, err
-// }
-
-func player_turn_move(world cardinal.WorldContext, direction comp.Direction) error {
-	playerID, err := queryPlayerID(world)
-	if err != nil {
-		return err
-	}
-	currPos, err := cardinal.GetComponent[comp.Position](world, playerID)
-	updatePos, err := currPos.GetUpdateFromDirection(direction)
-
-	found, id, err := updatePos.GetEntityIDByPosition(world)
-	if err != nil {
-		return err
-	}
-	if found {
-		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+func recordCurrentPotentialAbilities(
+	world cardinal.WorldContext,
+	spellPos *comp.Position,
+	direction comp.Direction,
+	potentialAbilities *[comp.TotalAbilities]bool,
+) error {
+	for i := 0; i < len(*potentialAbilities); i++ {
+		println("i: ", i)
+		a := comp.AbilityMap[i+1]
+		if a == nil {
+			return errors.New("unknown ability called")
+		}
+		activated, err := a.Resolve(world, spellPos, direction, true)
+		// only overwrite if ability activated
+		(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
 		if err != nil {
 			return err
 		}
-		if colType.Type != comp.ItemCollide {
-			return fmt.Errorf("Attempting to move onto an object of type %s", colType.ToString())
-		}
 	}
-
-	cardinal.SetComponent[comp.Position](world, playerID, updatePos)
 
 	return nil
 }
