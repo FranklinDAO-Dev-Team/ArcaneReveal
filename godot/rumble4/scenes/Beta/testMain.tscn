@@ -1,12 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://ccski0bqh1gbo"]
+[gd_scene load_steps=12 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_cvpuc"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
 [ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Beta/wall.tscn" id="3_ekmmf"]
 [ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyV2.tscn" id="4_1sovk"]
-[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Beta/player.tscn" id="5_5f1lg"]
+[ext_resource type="PackedScene" uid="uid://dkuggb0i87g8k" path="res://scenes/Beta/player_ZILE.tscn" id="5_448f8"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Beta/tile_piece.tscn" id="6_x7epu"]
-[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Beta/staff_1.tscn" id="7_nhq4h"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Beta/life_bar.tscn" id="8_th4ig"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_imb6i"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Beta/door.tscn" id="10_xqvk1"]
@@ -455,11 +454,10 @@ position = Vector2(96, 320)
 [node name="EnemyV2" parent="." instance=ExtResource("4_1sovk")]
 position = Vector2(192, 128)
 
-[node name="Player" parent="." instance=ExtResource("5_5f1lg")]
-position = Vector2(96, 64)
+[node name="Player_ZILE" parent="." instance=ExtResource("5_448f8")]
 
-[node name="TilePiece" parent="Player" instance=ExtResource("6_x7epu")]
-position = Vector2(-96, -64)
+[node name="TilePiece" parent="." instance=ExtResource("6_x7epu")]
+position = Vector2(176, -120)
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 offset_left = 96.0
@@ -476,9 +474,6 @@ offset_top = 400.0
 offset_right = 198.2
 offset_bottom = 423.0
 text = " "
-
-[node name="Staff1" parent="." instance=ExtResource("7_nhq4h")]
-position = Vector2(56, -56)
 
 [node name="Wall9" parent="." instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 32)
