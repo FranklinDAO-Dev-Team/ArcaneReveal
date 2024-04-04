@@ -33,7 +33,7 @@
 	
 extends Area2D
 
-var animation_speed = 1
+var animation_speed = 4
 var moving = false
 var tile_size = 64
 var inputs = {

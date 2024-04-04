@@ -4,13 +4,14 @@ const MAX_HEALTH = 5
 var health = MAX_HEALTH
 
 func _ready() -> void:
-	$LifeBar/Life1.play("hearts")
-	$LifeBar/Life2.play("hearts")
-	$LifeBar/Life3.play("hearts")
-	$LifeBar/Life4.play("hearts")
-	$LifeBar/Life5.play("hearts")
-	update_health_ui()
-	$HealthBar.max_value = MAX_HEALTH
+	#$LifeBar/Life1.play("hearts")
+	#$LifeBar/Life2.play("hearts")
+	#$LifeBar/Life3.play("hearts")
+	#$LifeBar/Life4.play("hearts")
+	#$LifeBar/Life5.play("hearts")
+	#update_health_ui()
+	#$HealthBar.max_value = MAX_HEALTH
+	print("todo")
 
 func update_health_ui():
 	set_health_bar()
