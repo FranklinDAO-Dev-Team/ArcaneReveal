@@ -3,33 +3,45 @@ extends Node2D
 var draggable = false
 var is_inside_dropable = false
 var body_ref
-
 var offset: Vector2
-var initialPos: Vector2
+var initial_pos: Vector2
+
+@onready var staff_position_top = get_parent().get_node("StaffPositionTop")
+@onready var staff_position_bottom = get_parent().get_node("StaffPositionBottom")
+@onready var staff_position_left = get_parent().get_node("StaffPositionLeft")
+@onready var staff_position_right = get_parent().get_node("StaffPositionRight")
 
 func _ready():
-	# Enable input events for the staff ability
 	set_process_input(true)
-
-
+	var tile_pieces = get_parent().get_parent().get_node("TilePiece").get_children()
+	for tile_piece in tile_pieces:
+		tile_piece.connect("direction_changed", _on_direction_changed)
+		
+func _on_direction_changed(new_direction):
+	if is_inside_dropable:
+		body_ref.current_direction = new_direction
 
 func _process(delta):
 	if draggable:
 		if Input.is_action_just_pressed("click"):
 			offset = get_global_mouse_position() - global_position
-
 			global.is_dragging = true
+
 		if Input.is_action_pressed("click"):
 			global_position = get_global_mouse_position() - offset
-		
+
 		elif Input.is_action_just_released("click"):
 			global.is_dragging = false
-			var tween = get_tree().create_tween()
 			if is_inside_dropable:
-				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
-			else:
-				tween.tween_property(self, "global_position", global_position, 0.2).set_ease(Tween.EASE_OUT)
-				
+				match body_ref.current_direction:
+					body_ref.Direction.TOP:
+						position = staff_position_top.position  # Assign the position of the StaffPositionTop node
+					body_ref.Direction.BOTTOM:
+						position = staff_position_bottom.position  # Assign the position of the StaffPositionBottom node
+					body_ref.Direction.LEFT:
+						position = staff_position_left.position  # Assign the position of the StaffPositionLeft node
+					body_ref.Direction.RIGHT:
+						position = staff_position_right.position  # Assign the position of the StaffPositionRight node
 
 func _on_area_2d_mouse_entered(): 
 	if not global.is_dragging:
