@@ -8,10 +8,10 @@ func (Available) Name() string {
 	return "IsAvailable"
 }
 
-func (a Available) SetIsAvailable(b bool) {
+func (a *Available) SetIsAvailable(b bool) {
 	a.IsAvailable = b
 }
 
-func (a Available) FlipIsAvailable() {
+func (a *Available) FlipIsAvailable() {
 	a.IsAvailable = !a.IsAvailable
 }

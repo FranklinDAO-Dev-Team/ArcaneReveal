@@ -11,7 +11,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-func MonsterTurnSystem(world cardinal.WorldContext) error {
+func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]gameEventLog) error {
 	fmt.Println("MonsterTurnSystem")
 	var turnErr error
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
@@ -22,13 +22,15 @@ func MonsterTurnSystem(world cardinal.WorldContext) error {
 		world,
 		filter.Contains(comp.Monster{}),
 	).Each(func(id types.EntityID) bool {
-		fmt.Println("MonsterTurnSystem. Monster id: ", id)
-		monsterPos, err := cardinal.GetComponent[comp.Position](world, id)
+		// get original monster position
+		origMonsterPos, err := cardinal.GetComponent[comp.Position](world, id)
 		if err != nil {
 			turnErr = err
 			return false // if error, break out of search
 		}
-		manDist := monsterPos.ManhattenDistance(playerPos)
+		// get manhatten distance between original monster position and player position
+		manDist := origMonsterPos.ManhattenDistance(playerPos)
+
 		if manDist == 1 {
 			// attack since player is in range
 			playerID, err := queryPlayerID(world)
@@ -36,27 +38,31 @@ func MonsterTurnSystem(world cardinal.WorldContext) error {
 				turnErr = err
 				return false
 			}
+			// Decrement health of player
 			comp.DecrementHealth(world, playerID)
-			fmt.Println("successful monster action: attack")
+			// add event to event log
+			*eventLogList = append(*eventLogList, gameEventLog{x: origMonsterPos.X, y: origMonsterPos.Y, event: gameEventMonsterAttack})
 		} else {
 			// get move options (places that are legal, not moving into a wall, etc),
-			direction, err := decideMonsterMovementDirection(world, monsterPos, playerPos)
+			direction, err := decideMonsterMovementDirection(world, origMonsterPos, playerPos)
 			if err != nil {
 				turnErr = err
 				return false // if error, break out of search
 			}
-			newMonsterPos, err := monsterPos.GetUpdateFromDirection(direction)
+			// calculate new monster position
+			newMonsterPos, err := origMonsterPos.GetUpdateFromDirection(direction)
 			if err != nil {
 				turnErr = err
 				return false // if error, break out of search
 			}
-			fmt.Println("MonsterTurnSystem. New monster position: ", newMonsterPos)
+			// update monster position onchain
 			err = cardinal.SetComponent[comp.Position](world, id, newMonsterPos)
 			if err != nil {
 				turnErr = err
 				return false // if error, break out of search
 			}
-			fmt.Println("successful monster action: Move")
+			// add event to event log
+			*eventLogList = append(*eventLogList, gameEventLog{x: origMonsterPos.X, y: origMonsterPos.Y, event: directionToMonsterAttack(direction)})
 		}
 		return true // always return true to move on to the next monster
 	})
@@ -123,4 +129,19 @@ func CheckMonsterMovementUtility(
 	// no entity found, so it's a valid move
 	return true, manDist, nil
 
+}
+
+func directionToMonsterAttack(direction comp.Direction) gameEvent {
+	switch direction {
+	case comp.LEFT:
+		return gameEventMonsterLeft
+	case comp.RIGHT:
+		return gameEventMonsterRight
+	case comp.UP:
+		return gameEventMonsterUp
+	case comp.DOWN:
+		return gameEventMonsterDown
+	default:
+		panic("invalid direction")
+	}
 }
