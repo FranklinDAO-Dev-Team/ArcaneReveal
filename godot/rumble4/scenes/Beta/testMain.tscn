@@ -1,18 +1,18 @@
-[gd_scene load_steps=13 format=3 uid="uid://dineyho28mhly"]
+[gd_scene load_steps=13 format=3 uid="uid://ccski0bqh1gbo"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_64lna"]
-[ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_rpmh3"]
-[ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/V1/wall.tscn" id="3_ov2pl"]
-[ext_resource type="PackedScene" uid="uid://dhhvfe5ey0ws2" path="res://scenes/V1/enemyv1.tscn" id="4_s41jy"]
-[ext_resource type="PackedScene" uid="uid://djxf1ieveyk7f" path="res://scenes/V1/player.tscn" id="7_s1muq"]
-[ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/V1/tile_piece.tscn" id="8_mct5s"]
-[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/ERIC_V1/key.tscn" id="9_2nx3l"]
-[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/V1/staff_1.tscn" id="9_wqbqc"]
-[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/JASON_VA/life_bar.tscn" id="10_f7uf3"]
-[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/ERIC_V1/door.tscn" id="10_q0qe5"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_cvpuc"]
+[ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
+[ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Beta/wall.tscn" id="3_ekmmf"]
+[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyV2.tscn" id="4_1sovk"]
+[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Beta/player.tscn" id="5_5f1lg"]
+[ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Beta/tile_piece.tscn" id="6_x7epu"]
+[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Beta/staff_1.tscn" id="7_nhq4h"]
+[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Beta/life_bar.tscn" id="8_th4ig"]
+[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_imb6i"]
+[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Beta/door.tscn" id="10_xqvk1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
-texture = ExtResource("2_rpmh3")
+texture = ExtResource("2_vpu8v")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 1:0/0 = 0
@@ -276,7 +276,7 @@ tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_ebk6o")
 
 [node name="TestMain" type="Node2D"]
-script = ExtResource("1_64lna")
+script = ExtResource("1_cvpuc")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(176, 175)
@@ -291,174 +291,174 @@ layer_0/tile_data = PackedInt32Array(0, 0, 0, 65536, 327680, 3, 131072, 0, 0, 19
 [node name="Walls" type="Node2D" parent="."]
 position = Vector2(-32, -32)
 
-[node name="Wall9" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 256)
 
-[node name="Wall2" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall2" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(32, 320)
 
-[node name="Wall3" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall3" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 64)
 
-[node name="Wall4" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall4" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 96)
 
-[node name="Wall6" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall6" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 128)
 
-[node name="Wall5" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall5" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 160)
 
-[node name="Wall7" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall7" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 192)
 
-[node name="Wall8" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall8" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 224)
 
-[node name="Wall10" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall10" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 288)
 
-[node name="Wall11" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall11" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 320)
 
-[node name="Wall13" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall13" parent="Walls" instance=ExtResource("3_ekmmf")]
 
-[node name="Wall14" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall14" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(96, 0)
 
-[node name="Wall15" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall15" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 0)
 
-[node name="Wall16" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall16" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(32, 0)
 
-[node name="Wall" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(0, 32)
 
-[node name="Wall17" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall17" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 64)
 
-[node name="Wall18" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall18" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 96)
 
-[node name="Wall20" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall20" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 288)
 
-[node name="Wall21" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall21" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(288, 64)
 
-[node name="Wall22" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall22" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 32)
 
-[node name="Wall23" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall23" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, 64)
 
-[node name="Wall24" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall24" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 128)
 
-[node name="Wall25" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall25" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 64)
 
-[node name="Wall26" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall26" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(256, 64)
 
-[node name="Wall27" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall27" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(192, 64)
 
-[node name="Wall28" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall28" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 128)
 
-[node name="Wall29" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall29" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(256, 128)
 
-[node name="Wall30" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall30" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(192, 128)
 
-[node name="Wall31" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall31" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, 128)
 
-[node name="Wall32" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall32" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, 256)
 
-[node name="Wall33" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall33" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 320)
 
-[node name="Wall34" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall34" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 256)
 
-[node name="Wall35" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall35" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(192, 256)
 
-[node name="Wall36" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall36" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, 320)
 
-[node name="Wall37" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall37" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 192)
 
-[node name="Wall38" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall38" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(256, 256)
 
-[node name="Wall39" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall39" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(192, 320)
 
-[node name="Wall40" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall40" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, 192)
 
-[node name="Wall41" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall41" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 256)
 
-[node name="Wall42" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall42" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 192)
 
-[node name="Wall43" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall43" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(256, 320)
 
-[node name="Wall44" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall44" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(192, 192)
 
-[node name="Wall45" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall45" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 320)
 
-[node name="Wall46" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall46" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(256, 192)
 
-[node name="Wall47" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall47" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 0)
 
-[node name="Wall48" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall48" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(288, 0)
 
-[node name="Wall49" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall49" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(256, 0)
 
-[node name="Wall50" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall50" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(224, 0)
 
-[node name="Wall51" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall51" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(192, 0)
 
-[node name="Wall52" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall52" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(160, 0)
 
-[node name="Wall53" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall53" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, 0)
 
-[node name="Wall54" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall54" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(288, 320)
 
-[node name="Wall55" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall55" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(160, 320)
 
-[node name="Wall56" parent="Walls" instance=ExtResource("3_ov2pl")]
+[node name="Wall56" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(96, 320)
 
-[node name="Enemy" parent="." instance=ExtResource("4_s41jy")]
-position = Vector2(248, 48)
+[node name="EnemyV2" parent="." instance=ExtResource("4_1sovk")]
+position = Vector2(192, 128)
 
-[node name="Player" parent="." instance=ExtResource("7_s1muq")]
+[node name="Player" parent="." instance=ExtResource("5_5f1lg")]
 position = Vector2(96, 64)
 
-[node name="TilePiece" parent="Player" instance=ExtResource("8_mct5s")]
+[node name="TilePiece" parent="Player" instance=ExtResource("6_x7epu")]
 position = Vector2(-96, -64)
 
 [node name="HealthBar" type="ProgressBar" parent="."]
@@ -477,51 +477,51 @@ offset_right = 198.2
 offset_bottom = 423.0
 text = " "
 
-[node name="Staff1" parent="." instance=ExtResource("9_wqbqc")]
+[node name="Staff1" parent="." instance=ExtResource("7_nhq4h")]
 position = Vector2(56, -56)
 
-[node name="Wall9" parent="." instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="." instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 32)
 
-[node name="Wall9" parent="Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 64)
 
-[node name="Wall9" parent="Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(32, -32)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 0)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(-128, 64)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(32, 96)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(64, 64)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(-32, -32)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(128, -64)
 
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ov2pl")]
+[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
 position = Vector2(-32, -32)
 
-[node name="LifeBar" parent="." instance=ExtResource("10_f7uf3")]
+[node name="LifeBar" parent="." instance=ExtResource("8_th4ig")]
 offset_left = 16.0
 offset_top = 333.0
 offset_right = 16.0
 offset_bottom = 333.0
 
-[node name="Door" parent="." instance=ExtResource("10_q0qe5")]
+[node name="Key" parent="." instance=ExtResource("9_imb6i")]
+position = Vector2(16, 144)
+
+[node name="Door" parent="." instance=ExtResource("10_xqvk1")]
 position = Vector2(288, 128)
 
-[node name="Key" parent="." instance=ExtResource("9_2nx3l")]
-position = Vector2(0, 64)
-
+[connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
 [connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]
 [connection signal="exited_door_zone" from="Door" to="Key" method="_on_door_exited_door_zone"]
-[connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]

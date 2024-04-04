@@ -1,33 +1,33 @@
-[gd_scene load_steps=11 format=3 uid="uid://bptc8ls2spwsx"]
+[gd_scene load_steps=13 format=3 uid="uid://0nka4rtgo7vg"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_6vaa0"]
-[ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="2_jvckk"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_7xlh3"]
+[ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_req7c"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
 size = Vector2(30, 30)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qm1nf"]
-atlas = ExtResource("2_jvckk")
+atlas = ExtResource("1_req7c")
 region = Rect2(0, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wb4d6"]
-atlas = ExtResource("2_jvckk")
+atlas = ExtResource("1_req7c")
 region = Rect2(24, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h6gcs"]
-atlas = ExtResource("2_jvckk")
+atlas = ExtResource("1_req7c")
 region = Rect2(48, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vnhgb"]
-atlas = ExtResource("2_jvckk")
+atlas = ExtResource("1_req7c")
 region = Rect2(120, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w0g88"]
-atlas = ExtResource("2_jvckk")
+atlas = ExtResource("1_req7c")
 region = Rect2(144, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3baau"]
-atlas = ExtResource("2_jvckk")
+atlas = ExtResource("1_req7c")
 region = Rect2(168, 24, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_klfs3"]
@@ -52,26 +52,52 @@ animations = [{
 "texture": SubResource("AtlasTexture_3baau")
 }],
 "loop": true,
-"name": &"default",
+"name": &"idle",
 "speed": 5.0
 }]
 
+[sub_resource type="Animation" id="Animation_cvvqg"]
+resource_name = "hit_wall"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(6.82121e-13, -3), Vector2(-6, -3), Vector2(7, -3), Vector2(-1.43051e-06, -3)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3iu28"]
+_data = {
+"hit_wall": SubResource("Animation_cvvqg")
+}
+
 [node name="Player" type="Area2D"]
 position = Vector2(-1, 0)
-script = ExtResource("1_6vaa0")
+script = ExtResource("1_7xlh3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_2vxdc")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(6.82121e-13, 6.82121e-13)
+position = Vector2(6.82121e-13, -3)
 scale = Vector2(1.33333, 1.33333)
 sprite_frames = SubResource("SpriteFrames_klfs3")
-frame_progress = 0.163307
+animation = &"idle"
 centered = false
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 position = Vector2(16, 16)
 enabled = false
 target_position = Vector2(2.08165e-12, 32)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_3iu28")
+}
