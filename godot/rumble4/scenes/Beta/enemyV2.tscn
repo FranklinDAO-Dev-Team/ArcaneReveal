@@ -62,4 +62,20 @@ position = Vector2(16, 16)
 enabled = false
 target_position = Vector2(2.08165e-12, 32)
 
+[node name="healthbar" type="ProgressBar" parent="."]
+modulate = Color(0, 1, 0.0784314, 1)
+offset_top = 1.0
+offset_right = 310.0
+offset_bottom = 28.0
+scale = Vector2(0.1, 0.1)
+max_value = 5.0
+step = 1.0
+show_percentage = false
+
+[node name="TextureRect" type="TextureRect" parent="healthbar"]
+layout_mode = 0
+offset_top = -10.0
+offset_right = 40.0
+offset_bottom = 30.0
+
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
