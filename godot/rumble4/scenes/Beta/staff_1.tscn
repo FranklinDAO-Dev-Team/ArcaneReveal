@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmpk73pbw6dok"]
+[gd_scene load_steps=6 format=3 uid="uid://cmpk73pbw6dok"]
 
 [ext_resource type="Script" path="res://scripts/staff_1.gd" id="1_cqpl4"]
 [ext_resource type="Texture2D" uid="uid://b4pq5fqc5r47q" path="res://assets/tile001.png" id="2_lmve5"]
+[ext_resource type="PackedScene" uid="uid://bu0gr54ywawxt" path="res://scenes/Beta/spell1.tscn" id="3_kmh55"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_nltpd"]
 animations = [{
@@ -28,6 +29,28 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_n3ool")
+
+[node name="SpellRight" parent="." instance=ExtResource("3_kmh55")]
+position = Vector2(77, 1.59413e-13)
+rotation = 3.14159
+scale = Vector2(0.2, 0.2)
+
+[node name="SpellBottom" parent="." instance=ExtResource("3_kmh55")]
+visible = false
+position = Vector2(7.62939e-06, 77)
+rotation = 4.71239
+scale = Vector2(0.2, 0.2)
+
+[node name="SpellLeft" parent="." instance=ExtResource("3_kmh55")]
+visible = false
+position = Vector2(-77, 1.35687e-20)
+scale = Vector2(0.2, 0.2)
+
+[node name="SpellTop" parent="." instance=ExtResource("3_kmh55")]
+visible = false
+position = Vector2(7.62939e-06, -77)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

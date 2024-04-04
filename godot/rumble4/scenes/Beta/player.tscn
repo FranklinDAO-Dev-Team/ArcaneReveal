@@ -1,7 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://0nka4rtgo7vg"]
+[gd_scene load_steps=19 format=3 uid="uid://0nka4rtgo7vg"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_7xlh3"]
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_req7c"]
+[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Beta/staff_1.tscn" id="3_6po7h"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
 size = Vector2(30, 30)
@@ -185,3 +186,18 @@ target_position = Vector2(2.08165e-12, 32)
 libraries = {
 "": SubResource("AnimationLibrary_3iu28")
 }
+
+[node name="StaffPositionTop" type="Node2D" parent="."]
+position = Vector2(1, -8)
+
+[node name="StaffPositionBottom" type="Node2D" parent="."]
+position = Vector2(1, -8)
+
+[node name="StaffPositionLeft" type="Node2D" parent="."]
+position = Vector2(1, -8)
+
+[node name="StaffPositionRight" type="Node2D" parent="."]
+position = Vector2(1, -8)
+
+[node name="Staff1" parent="." instance=ExtResource("3_6po7h")]
+position = Vector2(33, -8)

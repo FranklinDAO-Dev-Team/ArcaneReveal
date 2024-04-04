@@ -48,7 +48,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
-@onready var wand_animations = $"../WandAnimations"
+@onready var wand_animations = $"Staff1/SpellRight/WandAnimations/AnimatedSprite2D"
 	
 func _ready():
 	$"../LifeBar/Life1".play("hearts")
@@ -58,6 +58,10 @@ func _ready():
 	$"../LifeBar/Life5".play("hearts")
 	update_health_ui()
 	position = position.snapped(Vector2.ONE * tile_size)
+	$StaffPositionTop.position = Vector2(16, 0)  # Adjust this offset
+	$StaffPositionBottom.position = Vector2(16, 32)  # Adjust this offset
+	$StaffPositionLeft.position = Vector2(0, 16)  # Adjust this offset
+	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
 	#position += Vector2.ONE * tile_size / 
 
 
