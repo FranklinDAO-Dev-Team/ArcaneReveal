@@ -36,3 +36,13 @@ func NewProofFailResponse(req ProofRequest, msg string) ProofReqResponse {
 		Error:         msg,
 	}
 }
+
+type RevealRequest struct {
+	PersonaTag string
+	GameID     worldEngineTypes.EntityID
+}
+
+type RevealReqResponse struct {
+	PersonaTag string
+	GameID     worldEngineTypes.EntityID
+}
