@@ -76,8 +76,8 @@ func update_health_ui():
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_accept"):
-		damage()
+	#if event.is_action_pressed("ui_accept"):
+		#damage()
 	if event.is_action_pressed("enemy_left"):
 		$AnimationPlayer.play("attack_left")
 	if event.is_action_pressed("enemy_right"):
@@ -91,8 +91,10 @@ func _input(event: InputEvent) -> void:
 
 func damage() -> void:
 	health -= 1
-	if health < 0:
-		health = MAX_HEALTH
+	if health == 0:
+		queue_free()
+		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
+
 	update_health_ui()
 
 
