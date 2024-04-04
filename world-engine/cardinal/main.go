@@ -20,6 +20,9 @@ func main() {
 	// Register components
 	// NOTE: You must register your components here for it to be accessible.
 	Must(
+		cardinal.RegisterComponent[component.PendingGame](w),
+		cardinal.RegisterComponent[component.Game](w),
+
 		cardinal.RegisterComponent[component.Collidable](w),
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Monster](w),
@@ -36,14 +39,16 @@ func main() {
 	Must(
 		// cardinal.RegisterMessage[msg.CreatePlayerMsg, msg.CreatePlayerResult](w, "create-player"),
 		// cardinal.RegisterMessage[msg.AttackPlayerMsg, msg.AttackPlayerMsgReply](w, "attack-player"),
-		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
+		cardinal.RegisterMessage[msg.RequestGameMsg, msg.RequestGameMsgResult](w, "request-game"),
 		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
+
+		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
 	)
 
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
 	Must(
-	// cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
+		// cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
 	)
 
 	// Each system executes deterministically in the order they are added.
@@ -51,6 +56,9 @@ func main() {
 	// For example, you may want to run the attack system before the regen system
 	// so that the player's HP is subtracted (and player killed if it reaches 0) before HP is regenerated.
 	Must(cardinal.RegisterSystems(w,
+		system.RequestGameSystem,
+		system.FulfillCreateGameSystem,
+
 		system.PlayerTurnSystem,
 		// system.MonsterTurnSystem,
 	))

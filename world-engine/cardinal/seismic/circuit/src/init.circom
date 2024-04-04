@@ -9,7 +9,7 @@ template Init() {
     var N_STAFF_SPELLS = 1;
     var N_ALL_SPELLS = 2;
 
-    assert(N_STAFFS * N_STAFF_SPELLS < N_ALL_SPELLS);
+    assert(N_STAFFS * N_STAFF_SPELLS <= N_ALL_SPELLS);
 
     signal input playerSource;
     signal input commitments[N_STAFFS][N_STAFF_SPELLS];

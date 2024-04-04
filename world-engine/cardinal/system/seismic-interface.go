@@ -1,6 +1,7 @@
 package system
 
 import (
+	"cinco-paus/msg"
 	"cinco-paus/seismic/client"
 	"fmt"
 
@@ -36,12 +37,13 @@ func Initialize(world *cardinal.World) *client.SeismicClient {
 					fmt.Println("verification res:", ok)
 				}
 
-				// TODO: fix this signature
-				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, `{}`)
+				payload := msg.FulfillCreateGameMsg{Result: proofRes}
+				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, payload)
 				if err != nil {
 					fmt.Printf("failed to sign new tx: %v", err)
 				}
-				world.AddTransaction(fulFillMsg.ID(), `{}`, sig)
+
+				world.AddTransaction(fulFillMsg.ID(), payload, sig)
 
 			case revealRes := <-revealReturnCh:
 				fmt.Println(revealRes)

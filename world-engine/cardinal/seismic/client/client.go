@@ -38,22 +38,25 @@ func (sc *SeismicClient) Start() {
 			case req := <-sc.proofRequestCh:
 				playerSource, ok := new(big.Int).SetString(req.PlayerSource, 10)
 				if !ok {
-					sc.proofReturnCh <- NewProofFailResponse("failed to parse playerSource")
+					sc.proofReturnCh <- NewProofFailResponse(req, "failed to parse playerSource")
+					continue
 				}
 
 				gameState, err := NewGameState(playerSource)
 				if err != nil {
-					sc.proofReturnCh <- NewProofFailResponse("failed to generate game state")
+					sc.proofReturnCh <- NewProofFailResponse(req, "failed to generate game state")
+					continue
 				}
 
 				proof, err := sc.prover.Prove(gameState)
 				if err != nil {
-					sc.proofReturnCh <- NewProofFailResponse("failed to prove")
+					sc.proofReturnCh <- NewProofFailResponse(req, "failed to prove")
+					continue
 				}
 
 				sc.store.ReplaceGameState(req.PersonaTag, gameState)
 
-				sc.proofReturnCh <- NewProofSuccessResponse(*proof)
+				sc.proofReturnCh <- NewProofSuccessResponse(req, *proof)
 
 			case req := <-sc.revealRequestCh:
 				// TODO: legit response here, depending on game implementation
