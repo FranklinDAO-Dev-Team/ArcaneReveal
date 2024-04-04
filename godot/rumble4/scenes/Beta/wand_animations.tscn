@@ -49,6 +49,7 @@ animations = [{
 "speed": 20.0
 }]
 
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_h5gd3"]
 animations = [{
 "frames": [{
@@ -74,6 +75,7 @@ animations = [{
 "name": &"play",
 "speed": 20.0
 }]
+
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_akqiw"]
 animations = [{
@@ -203,6 +205,7 @@ sprite_frames = SubResource("SpriteFrames_h5gd3")
 animation = &"play"
 frame = 5
 frame_progress = 1.0
+
 
 [node name="Explosion" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1.00002, -2.38419e-07)

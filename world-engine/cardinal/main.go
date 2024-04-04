@@ -20,6 +20,9 @@ func main() {
 	// Register components
 	// NOTE: You must register your components here for it to be accessible.
 	Must(
+		cardinal.RegisterComponent[component.PendingGame](w),
+		cardinal.RegisterComponent[component.Game](w),
+
 		cardinal.RegisterComponent[component.Collidable](w),
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Monster](w),
@@ -27,6 +30,7 @@ func main() {
 		cardinal.RegisterComponent[component.WandCore](w),
 		cardinal.RegisterComponent[component.Available](w),
 		cardinal.RegisterComponent[component.Spell](w),
+		cardinal.RegisterComponent[component.AwaitingReveal](w),
 		cardinal.RegisterComponent[component.Health](w),
 		cardinal.RegisterComponent[component.Position](w),
 	)
@@ -36,8 +40,10 @@ func main() {
 	Must(
 		// cardinal.RegisterMessage[msg.CreatePlayerMsg, msg.CreatePlayerResult](w, "create-player"),
 		// cardinal.RegisterMessage[msg.AttackPlayerMsg, msg.AttackPlayerMsgReply](w, "attack-player"),
-		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
+		cardinal.RegisterMessage[msg.RequestGameMsg, msg.RequestGameMsgResult](w, "request-game"),
 		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
+		cardinal.RegisterMessage[msg.FulfillCastMsg, msg.FulfillCastMsgResult](w, "fulfill-cast"),
+		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
 	)
 
 	// Register queries
@@ -51,6 +57,9 @@ func main() {
 	// For example, you may want to run the attack system before the regen system
 	// so that the player's HP is subtracted (and player killed if it reaches 0) before HP is regenerated.
 	Must(cardinal.RegisterSystems(w,
+		system.RequestGameSystem,
+		system.FulfillCreateGameSystem,
+		system.FulfillCastSystem,
 		system.PlayerTurnSystem,
 		// system.MonsterTurnSystem,
 	))
