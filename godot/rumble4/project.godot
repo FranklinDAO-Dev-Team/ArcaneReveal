@@ -18,6 +18,7 @@ config/icon="res://assets/icon.svg"
 [autoload]
 
 global="*res://scripts/global.gd"
+Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 
 [display]
 

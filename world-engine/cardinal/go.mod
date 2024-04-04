@@ -14,8 +14,15 @@ replace (
 )
 
 require (
+	github.com/ethereum/go-ethereum v1.13.4
+	github.com/iden3/go-iden3-crypto v0.0.16
+	github.com/iden3/go-rapidsnark/prover v0.0.10
+	github.com/iden3/go-rapidsnark/types v0.0.3
+	github.com/iden3/go-rapidsnark/verifier v0.0.5
+	github.com/iden3/go-rapidsnark/witness v0.0.6
 	github.com/rs/zerolog v1.31.0
 	pkg.world.dev/world-engine/cardinal v1.2.4-beta
+	pkg.world.dev/world-engine/sign v1.0.1-beta
 )
 
 require (
@@ -68,7 +75,6 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/ebitengine/purego v0.5.0 // indirect
-	github.com/ethereum/go-ethereum v1.13.4 // indirect
 	github.com/fasthttp/websocket v1.5.8 // indirect
 	github.com/getsentry/sentry-go v0.25.0 // indirect
 	github.com/go-kit/kit v0.13.0 // indirect
@@ -97,11 +103,6 @@ require (
 	github.com/holiman/uint256 v1.2.3 // indirect
 	github.com/iancoleman/orderedmap v0.0.0-20190318233801-ac98e3ecb4b0 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
-	github.com/iden3/go-iden3-crypto v0.0.16 // indirect
-	github.com/iden3/go-rapidsnark/prover v0.0.10 // indirect
-	github.com/iden3/go-rapidsnark/types v0.0.3 // indirect
-	github.com/iden3/go-rapidsnark/verifier v0.0.5 // indirect
-	github.com/iden3/go-rapidsnark/witness v0.0.6 // indirect
 	github.com/iden3/wasmer-go v0.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/jsonschema v0.7.0 // indirect
@@ -177,6 +178,5 @@ require (
 	inet.af/netaddr v0.0.0-20230525184311-b8eac61e914a // indirect
 	pkg.world.dev/world-engine/evm v1.0.4-0.20240227035346-26b21454bb27 // indirect
 	pkg.world.dev/world-engine/rift v1.1.0-beta.0.20240327175559-74add9112b93 // indirect
-	pkg.world.dev/world-engine/sign v1.0.1-beta // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
