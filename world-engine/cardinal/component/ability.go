@@ -1,14 +1,37 @@
 package component
 
 import (
-	"fmt"
-
 	"pkg.world.dev/world-engine/cardinal"
 )
 
+type GameEvent int
+
+const (
+	GameEventSpellBeam GameEvent = iota
+	GameEventSpellDamage
+	GameEventSpellDisappate
+	GameEventMonsterAttack
+	GameEventMonsterUp
+	GameEventMonsterRight
+	GameEventMonsterDown
+	GameEventMonsterLeft
+)
+
+type GameEventLog struct {
+	X     int
+	Y     int
+	Event GameEvent
+}
+
 type Ability interface {
 	GetAbilityID() int
-	Resolve(cardinal.WorldContext, *Position, Direction, bool) (bool, error)
+	Resolve(
+		world cardinal.WorldContext,
+		spellPosition *Position,
+		direction Direction,
+		executeUpdates bool,
+		eventLogList *[]GameEventLog,
+	) (reveal bool, err error)
 }
 
 var AbilityMap = map[int]Ability{
@@ -35,7 +58,6 @@ func damageAtPostion(
 		}
 		switch colType.Type {
 		case MonsterCollide:
-			fmt.Println("damage delt at ", pos)
 			if executeUpdates {
 				err := DecrementHealth(world, id)
 				if err != nil {
@@ -45,7 +67,6 @@ func damageAtPostion(
 			}
 		case PlayerCollide:
 			if includePlayer {
-				fmt.Println("damage delt at ", pos)
 				if executeUpdates {
 					err := DecrementHealth(world, id)
 					if err != nil {

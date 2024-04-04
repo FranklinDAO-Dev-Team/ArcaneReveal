@@ -25,6 +25,8 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				return msg.PlayerTurnResult{}, err
 			}
 
+			eventLogList := &[]comp.GameEventLog{}
+
 			switch turn.Msg.Action {
 			case "attack":
 				err = player_turn_attack(world, direction)
@@ -36,7 +38,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
 				}
-				err = player_turn_wand(world, direction, wandnum)
+				err = player_turn_wand(world, direction, wandnum, eventLogList)
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
@@ -60,9 +62,14 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 			result := msg.PlayerTurnResult{Success: true}
 
-			// if turn.Msg.Action == "wand" {
-			MonsterTurnSystem(world)
-			// }
+			MonsterTurnSystem(world, eventLogList)
+			println()
+			println("eventLogList: ", eventLogList)
+			println("len(eventLogList): ", len(*eventLogList))
+			for _, logEntry := range *eventLogList {
+				fmt.Printf("X: %d, Y: %d, Event: %d\n",
+					logEntry.X, logEntry.Y, logEntry.Event)
+			}
 
 			return result, nil
 		})
@@ -98,7 +105,7 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 	}
 }
 
-func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int) error {
+func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int, eventLogList *[]comp.GameEventLog) error {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return err
@@ -126,12 +133,22 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	}
 
 	potentialAbilities := &[comp.TotalAbilities]bool{}
-	err = recordPotentialAbilities(world, &spell, spellPos, potentialAbilities)
+	updateChainState := false
+	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
+	err = resolveAbilities(world, &spell, spellPos, potentialAbilities, updateChainState, dummy)
 	if err != nil {
 		return err
 	}
 	// TODO: call seismic client to resolve abilities
-	// TODO: acivate abilities returned by Seismic
+	seismic_response := &[comp.TotalAbilities]bool{false, true}
+
+	// acivate abilities returned by Seismic
+	updateChainState = true
+	spell.Expired = false
+	err = resolveAbilities(world, &spell, spellPos, seismic_response, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
+	if err != nil {
+		return err
+	}
 	// TODO: emit activated abilities and spell log to client
 
 	return nil
@@ -166,70 +183,6 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction) error
 	}
 
 	cardinal.SetComponent[comp.Position](world, playerID, updatePos)
-
-	return nil
-}
-
-func recordPotentialAbilities(
-	world cardinal.WorldContext,
-	spell *comp.Spell,
-	spellPos *comp.Position,
-	potentialAbilities *[comp.TotalAbilities]bool,
-) error {
-	for !spell.Expired {
-		// record abilities that could activate a current square
-		err := recordCurrentPotentialAbilities(world, spellPos, spell.Direction, potentialAbilities)
-		if err != nil {
-			return err
-		}
-
-		// get next spell position
-		spellPos, err = spellPos.GetUpdateFromDirection(spell.Direction)
-		if err != nil {
-			spell.Expired = true
-		}
-		if spellPos == nil {
-			spell.Expired = true
-			break
-		}
-
-		// if wall entity at spellPos, stop
-		found, id, err := spellPos.GetEntityIDByPosition(world)
-		if err != nil {
-			return err
-		}
-		if found {
-			colType, err := cardinal.GetComponent[comp.Collidable](world, id)
-			if err != nil {
-				return err
-			}
-			if colType.Type == comp.WallCollide {
-				spell.Expired = true
-			}
-		}
-	}
-	return nil
-}
-
-func recordCurrentPotentialAbilities(
-	world cardinal.WorldContext,
-	spellPos *comp.Position,
-	direction comp.Direction,
-	potentialAbilities *[comp.TotalAbilities]bool,
-) error {
-	for i := 0; i < len(*potentialAbilities); i++ {
-		println("i: ", i)
-		a := comp.AbilityMap[i+1]
-		if a == nil {
-			return errors.New("unknown ability called")
-		}
-		activated, err := a.Resolve(world, spellPos, direction, true)
-		// only overwrite if ability activated
-		(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
-		if err != nil {
-			return err
-		}
-	}
 
 	return nil
 }

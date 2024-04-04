@@ -36,7 +36,8 @@ extends Area2D
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
 
-var animation_speed = 1
+var animation_speed = 4
+
 var moving = false
 var tile_size = 64
 var inputs = {
@@ -99,7 +100,7 @@ func move(dir):
 		await tween.finished
 		moving = false
 	else:
-		$PlayerUI/AnimationPlayer.play("hit_wall")
+		$AnimationPlayer.play("hit_wall")
 
 
 func _on_area_entered(area):
