@@ -113,5 +113,22 @@ func (p *Position) GetEntityIDByPosition(
 
 func (p *Position) ManhattenDistance(other *Position) int {
 	return int(math.Abs(float64(p.X-other.X)) + math.Abs(float64(p.Y-other.Y)))
+}
 
+func (p *Position) Towards(other *Position) (Direction, error) {
+	dx := other.X - p.X
+	dy := other.Y - p.Y
+
+	switch {
+	case dx == 0 && dy < 0:
+		return UP, nil
+	case dx == 0 && dy > 0:
+		return DOWN, nil
+	case dx < 0 && dy == 0:
+		return LEFT, nil
+	case dx > 0 && dy == 0:
+		return RIGHT, nil
+	default:
+		return -1, errors.New("other position is not in a single direction")
+	}
 }
