@@ -1,14 +1,14 @@
 package msg
 
 import (
+	"cinco-paus/seismic/client"
 	"errors"
 	"fmt"
 	"strconv"
-
-	comp "cinco-paus/component"
 )
 
 type PlayerTurnMsg struct {
+	GameIDStr string `json:"gameIDStr"`
 	Action    string `json:"action"`
 	Direction string `json:"direction"`
 	WandNum   string `json:"wandnum"`
@@ -44,7 +44,7 @@ func (m PlayerTurnMsg) ValFmt() error {
 	if err != nil {
 		return fmt.Errorf("error converting string to int: %w", err)
 	}
-	if m.Action == "wand" && (wandnum < 0 || wandnum >= comp.NumWands) {
+	if m.Action == "wand" && (wandnum < 0 || wandnum >= client.NumWands) {
 		return fmt.Errorf("invalid wand number: %d", wandnum)
 	}
 
