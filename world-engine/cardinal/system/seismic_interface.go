@@ -13,8 +13,8 @@ import (
 var (
 	proofRequestCh  = make(chan client.ProofRequest)
 	proofReturnCh   = make(chan client.ProofReqResponse)
-	revealRequestCh = make(chan int)
-	revealReturnCh  = make(chan int)
+	revealRequestCh = make(chan client.RevealRequest)
+	revealReturnCh  = make(chan client.RevealReqResponse)
 )
 
 func Initialize(world *cardinal.World) *client.SeismicClient {

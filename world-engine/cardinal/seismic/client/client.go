@@ -10,11 +10,16 @@ type SeismicClient struct {
 	prover          *SeismicProver
 	proofRequestCh  chan ProofRequest
 	proofReturnCh   chan ProofReqResponse
-	revealRequestCh chan int
-	revealReturnCh  chan int
+	revealRequestCh chan RevealRequest
+	revealReturnCh  chan RevealReqResponse
 }
 
-func New(proofRequestCh chan ProofRequest, proofReturnCh chan ProofReqResponse, revealRequestCh chan int, revealReturnCh chan int) *SeismicClient {
+func New(
+	proofRequestCh chan ProofRequest,
+	proofReturnCh chan ProofReqResponse,
+	revealRequestCh chan RevealRequest,
+	revealReturnCh chan RevealReqResponse,
+) *SeismicClient {
 	store := NewGameStateStore()
 	prover, err := NewProver()
 	if err != nil {
@@ -60,7 +65,11 @@ func (sc *SeismicClient) Start() {
 
 			case req := <-sc.revealRequestCh:
 				// TODO: legit response here, depending on game implementation
-				sc.revealReturnCh <- 42
+
+				sc.revealReturnCh <- RevealReqResponse{
+					PersonaTag: req.PersonaTag,
+					GameID:     req.GameID,
+				}
 				fmt.Println("commit-reveal req:", req)
 			}
 		}
