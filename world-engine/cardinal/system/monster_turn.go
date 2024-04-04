@@ -23,8 +23,10 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 		filter.Contains(comp.Monster{}),
 	).Each(func(id types.EntityID) bool {
 		// get original monster position
+		fmt.Printf("Monster id: %d\n", id)
 		origMonsterPos, err := cardinal.GetComponent[comp.Position](world, id)
 		if err != nil {
+			fmt.Println("MonsterTurn err 1")
 			turnErr = err
 			return false // if error, break out of search
 		}
@@ -35,6 +37,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 			// attack since player is in range
 			playerID, err := queryPlayerID(world)
 			if err != nil {
+				fmt.Println("MonsterTurn err 2")
 				turnErr = err
 				return false
 			}
@@ -43,24 +46,31 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 			// add event to event log
 			*eventLogList = append(*eventLogList, comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: comp.GameEventMonsterAttack})
 		} else {
+
 			// get move options (places that are legal, not moving into a wall, etc),
 			direction, err := decideMonsterMovementDirection(world, origMonsterPos, playerPos)
 			if err != nil {
+				fmt.Println("MonsterTurn err 3")
 				turnErr = err
 				return false // if error, break out of search
 			}
+
 			// calculate new monster position
 			newMonsterPos, err := origMonsterPos.GetUpdateFromDirection(direction)
 			if err != nil {
+				fmt.Println("MonsterTurn err 4")
 				turnErr = err
 				return false // if error, break out of search
 			}
+
 			// update monster position onchain
 			err = cardinal.SetComponent[comp.Position](world, id, newMonsterPos)
 			if err != nil {
+				fmt.Println("MonsterTurn err 5")
 				turnErr = err
 				return false // if error, break out of search
 			}
+
 			// add event to event log
 			*eventLogList = append(*eventLogList, comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: directionToMonsterAttack(direction)})
 		}
@@ -106,17 +116,22 @@ func CheckMonsterMovementUtility(
 ) (valid bool, manDist int, err error) {
 	newMonsterPos, err := monsterPos.GetUpdateFromDirection(direction)
 	if err != nil {
+		fmt.Println("CheckMonsterMovementUtility err 1: GetUpdateFromDirection failed")
 		return false, 0, nil // invalid postion, but don't return error, just check next direction
 	}
 	manDist = monsterPos.ManhattenDistance(playerPos)
 
 	found, id, err := newMonsterPos.GetEntityIDByPosition(world)
 	if err != nil {
+		fmt.Println("CheckMonsterMovementUtility err 2: GetEntityIDByPosition failed")
 		return false, 0, err
 	}
 	if found {
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
+			fmt.Println("here")
+			fmt.Println("id", id)
+			fmt.Println("CheckMonsterMovementUtility err 3: GetComponent failed")
 			return false, 0, err
 		}
 		switch colType.Type {

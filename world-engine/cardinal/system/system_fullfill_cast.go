@@ -16,8 +16,8 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.FulfillCastMsg, msg.FulfillCastMsgResult](
 		world,
 		func(turn message.TxData[msg.FulfillCastMsg]) (msg.FulfillCastMsgResult, error) {
+			// debug prints
 			fmt.Println("starting fulfill cast system")
-
 			resultJSON, err := json.Marshal(turn.Msg.Result)
 			if err != nil {
 				fmt.Println("failed!!!!")
@@ -36,10 +36,16 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
+			// remove cast entity
+			err = cardinal.Remove(world, turn.Msg.Result.CastID)
+			if err != nil {
+				return msg.FulfillCastMsgResult{}, err
+			}
 
 			//  Check salts and that &turn.Msg.Abilities makes sense
-			for i, canCast := range turn.Msg.Result.Abilities {
-				if canCast {
+			for i, canCastAbilityI := range turn.Msg.Result.Abilities {
+				if canCastAbilityI {
+					// fmt.Println("canCast", i)
 					i64 := int64(i)
 					salt := big.NewInt(0)
 					salt.SetString(turn.Msg.Result.Salts[i], 10)
@@ -52,7 +58,9 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 					if err != nil {
 						return msg.FulfillCastMsgResult{}, err
 					}
-					if (*game.Commitments)[spell.WandNumber][i] != commitment.String() {
+					// fmt.Println("game.Commitments dimensions", len(*game.Commitments), len((*game.Commitments)[0]))
+					// fmt.Printf("wand num: %d, i: %d\n", spell.WandNumber, i)
+					if (*game.Commitments)[spell.WandNumber][0] != commitment.String() { // hardcoded to first index because wands have 1 ability rn
 						return msg.FulfillCastMsgResult{}, fmt.Errorf("commitment %d does not match", i)
 					}
 				}
@@ -75,12 +83,6 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			for _, logEntry := range *eventLogList {
 				fmt.Printf("X: %d, Y: %d, Event: %d\n",
 					logEntry.X, logEntry.Y, logEntry.Event)
-			}
-
-			// remove cast entity
-			err = cardinal.Remove(world, turn.Msg.Result.CastID)
-			if err != nil {
-				return msg.FulfillCastMsgResult{}, err
 			}
 
 			// return successfully
