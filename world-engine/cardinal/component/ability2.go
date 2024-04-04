@@ -19,6 +19,7 @@ func (a Ability2) Resolve(
 	spellPosition *Position,
 	direction Direction,
 	executeUpdates bool,
+	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
 	perpDirOne := (direction + 1) % 4
 	damageDealtOne := false
@@ -27,6 +28,9 @@ func (a Ability2) Resolve(
 		damageDealtOne, err = damageAtPostion(world, adjOne, executeUpdates, false)
 		if err != nil {
 			return false, err
+		}
+		if damageDealtOne {
+			*eventLogList = append(*eventLogList, GameEventLog{X: adjOne.X, Y: adjOne.Y, Event: GameEventSpellBeam})
 		}
 	}
 
@@ -37,6 +41,9 @@ func (a Ability2) Resolve(
 		damageDealtTwo, err = damageAtPostion(world, adjTwo, executeUpdates, false)
 		if err != nil {
 			return false, err
+		}
+		if damageDealtTwo {
+			*eventLogList = append(*eventLogList, GameEventLog{X: adjTwo.X, Y: adjTwo.Y, Event: GameEventSpellBeam})
 		}
 	}
 
