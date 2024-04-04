@@ -121,13 +121,80 @@ animations = [{
 
 [node name="WandAnimations" type="Node2D"]
 
-[node name="LightningStrike" type="AnimatedSprite2D" parent="."]
+[node name="LightningStrikeRight" type="AnimatedSprite2D" parent="."]
+z_index = 1
 position = Vector2(1, -37)
-scale = Vector2(0.308666, 0.140603)
+rotation = 1.5708
+scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
 frame = 6
 frame_progress = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="LightningStrikeRight"]
+visible = false
+offset_left = -81.5
+offset_top = -437.021
+offset_right = 86.5
+offset_bottom = 409.979
+color = Color(1, 1, 1, 0.0627451)
+
+[node name="LightningStrikeLeft" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(-1, -37)
+rotation = -1.5708
+scale = Vector2(2, 0.913)
+sprite_frames = SubResource("SpriteFrames_68x3c")
+animation = &"play"
+frame = 6
+frame_progress = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="LightningStrikeLeft"]
+visible = false
+offset_left = -81.5
+offset_top = -437.021
+offset_right = 86.5
+offset_bottom = 409.979
+color = Color(1, 1, 1, 0.0627451)
+metadata/_edit_use_anchors_ = true
+
+[node name="LightningStrikeTop" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(-1, -37)
+rotation = 4.71239
+scale = Vector2(2, 0.913)
+sprite_frames = SubResource("SpriteFrames_68x3c")
+animation = &"play"
+frame = 6
+frame_progress = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="LightningStrikeTop"]
+visible = false
+offset_left = -81.5
+offset_top = -437.021
+offset_right = 86.5
+offset_bottom = 409.979
+color = Color(1, 1, 1, 0.0627451)
+metadata/_edit_use_anchors_ = true
+
+[node name="LightningStrikeBottom" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(-1, -37)
+rotation = 4.71239
+scale = Vector2(2, 0.913)
+sprite_frames = SubResource("SpriteFrames_68x3c")
+animation = &"play"
+frame = 6
+frame_progress = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="LightningStrikeBottom"]
+visible = false
+offset_left = -81.5
+offset_top = -437.021
+offset_right = 86.5
+offset_bottom = 409.979
+color = Color(1, 1, 1, 0.0627451)
+metadata/_edit_use_anchors_ = true
 
 [node name="LightningFizzle" type="AnimatedSprite2D" parent="."]
 position = Vector2(3.05176e-05, -9.53674e-07)
