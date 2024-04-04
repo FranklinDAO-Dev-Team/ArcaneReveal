@@ -27,22 +27,28 @@ animations = [{
 
 [node name="Door" type="StaticBody2D"]
 script = ExtResource("1_gcq3c")
+metadata/_edit_vertical_guides_ = [0.0, 32.0]
+metadata/_edit_horizontal_guides_ = [0.0, 0.0, 32.0]
 
 [node name="DoorZone" type="Area2D" parent="."]
 
 [node name="DoorCollision" type="CollisionShape2D" parent="DoorZone"]
+position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_7yt81")
 
 [node name="DoorCollision2" type="CollisionShape2D" parent="DoorZone"]
+position = Vector2(16, 16)
 rotation = 1.57093
 shape = SubResource("RectangleShape2D_7yt81")
 
 [node name="OpenDoor" type="Sprite2D" parent="."]
-position = Vector2(1, -12)
+scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_jjrss")
+centered = false
 
 [node name="ClosedDoor" type="Sprite2D" parent="."]
-position = Vector2(0, -10)
+position = Vector2(16.5, 11.5)
+scale = Vector2(0.87, 0.821)
 texture = ExtResource("3_5k5hl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
