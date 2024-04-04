@@ -100,7 +100,7 @@ func move(dir):
 		await tween.finished
 		moving = false
 	else:
-		$PlayerUI/AnimationPlayer.play("hit_wall")
+		$AnimationPlayer.play("hit_wall")
 
 
 func _on_area_entered(area):
