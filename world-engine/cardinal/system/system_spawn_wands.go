@@ -2,12 +2,13 @@ package system
 
 import (
 	comp "cinco-paus/component"
+	"cinco-paus/seismic/client"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
 
 func SpawnWandsSystem(world cardinal.WorldContext) error {
-	for i := 0; i < comp.NumWands; i++ {
+	for i := 0; i < client.NumWands; i++ {
 		w := comp.NewRandomWandCore()
 		_, err := cardinal.Create(world,
 			comp.WandCore{

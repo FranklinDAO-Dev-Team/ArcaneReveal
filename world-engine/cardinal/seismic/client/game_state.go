@@ -26,23 +26,23 @@ func NewGameState(playerSource *big.Int) (*GameState, error) {
 		return nil, fmt.Errorf("failed to generate random seed: %v", err)
 	}
 
-	attributes := make([][]string, NStaffs)
-	salts := make([][]string, NStaffs)
-	commitments := make([][]string, NStaffs)
+	attributes := make([][]string, NumWands)
+	salts := make([][]string, NumWands)
+	commitments := make([][]string, NumWands)
 
 	matchSource, err := poseidon.Hash([]*big.Int{playerSource, seismicSource})
 	if err != nil {
 		return nil, fmt.Errorf("failed to hash sourced randomness: %v", err)
 	}
 
-	allSpells := Permutate(matchSource, NAllSpells)
+	allSpells := Permutate(matchSource, TotalAbilities)
 
 	for i := range attributes {
-		attributes[i] = make([]string, NStaffSpells)
-		salts[i] = make([]string, NStaffSpells)
-		commitments[i] = make([]string, NStaffSpells)
+		attributes[i] = make([]string, NumAbilities)
+		salts[i] = make([]string, NumAbilities)
+		commitments[i] = make([]string, NumAbilities)
 		for j := range attributes[i] {
-			index := i*NStaffSpells + j
+			index := i*NumAbilities + j
 			attribute := big.NewInt(int64(allSpells[index]))
 			salt, err := poseidon.Hash([]*big.Int{big.NewInt(int64(index)), seismicSource})
 			if err != nil {

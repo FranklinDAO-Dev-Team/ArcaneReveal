@@ -1,19 +1,16 @@
 package component
 
 import (
+	"cinco-paus/seismic/client"
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
 )
 
-const NumWands int = 2
-const NumAbilities int = 1
-const TotalAbilities int = 2
-
 type WandCore struct {
 	Number    int
-	Abilities [NumAbilities]int // Array of 5 integers
-	Revealed  [NumAbilities]int // Slice of integers
+	Abilities [client.NumAbilities]int // Array of 5 integers
+	Revealed  [client.NumAbilities]int // Slice of integers
 }
 
 func (WandCore) Name() string {
@@ -30,8 +27,8 @@ func NewRandomWandCore() WandCore {
 
 	// Generate unique random numbers for Abilities
 	uniqueNumbers := make(map[int]bool)
-	for i := 0; i < NumAbilities; {
-		num, err := cryptoRandInt(1, TotalAbilities) // Random number between 1 and 50
+	for i := 0; i < client.NumAbilities; {
+		num, err := cryptoRandInt(1, client.TotalAbilities) // Random number between 1 and 50
 		if err != nil {
 			panic(err)
 		}

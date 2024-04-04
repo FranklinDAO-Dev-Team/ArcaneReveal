@@ -3,6 +3,7 @@ package system
 import (
 	comp "cinco-paus/component"
 	"cinco-paus/msg"
+	"cinco-paus/seismic/client"
 	"errors"
 	"fmt"
 	"strconv"
@@ -151,14 +152,14 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		Direction: direction,
 	}
 
-	potentialAbilities := &[comp.TotalAbilities]bool{}
+	potentialAbilities := &[client.TotalAbilities]bool{}
 	updateChainState := false
 	err = resolveAbilities(world, &spell, spellPos, potentialAbilities, updateChainState)
 	if err != nil {
 		return err
 	}
 	// TODO: call seismic client to resolve abilities
-	seismic_response := &[comp.TotalAbilities]bool{true, false}
+	seismic_response := &[client.TotalAbilities]bool{true, false}
 
 	// acivate abilities returned by Seismic
 	updateChainState = true
@@ -209,7 +210,7 @@ func resolveAbilities(
 	world cardinal.WorldContext,
 	spell *comp.Spell,
 	spellPos *comp.Position,
-	potentialAbilities *[comp.TotalAbilities]bool,
+	potentialAbilities *[client.TotalAbilities]bool,
 	updateChainState bool,
 ) error {
 	for !spell.Expired {
@@ -251,7 +252,7 @@ func resolveAbilitiesAtPosition(
 	world cardinal.WorldContext,
 	spellPos *comp.Position,
 	direction comp.Direction,
-	potentialAbilities *[comp.TotalAbilities]bool,
+	potentialAbilities *[client.TotalAbilities]bool,
 	updateChainState bool,
 ) error {
 	for i := 0; i < len(*potentialAbilities); i++ {
