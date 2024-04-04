@@ -30,7 +30,7 @@ func (a Ability2) Resolve(
 			return false, err
 		}
 		if damageDealtOne {
-			*eventLogList = append(*eventLogList, GameEventLog{X: adjOne.X, Y: adjOne.Y, Event: GameEventSpellBeam})
+			*eventLogList = append(*eventLogList, GameEventLog{X: adjOne.X, Y: adjOne.Y, Event: GameEventSpellDamage})
 		}
 	}
 
@@ -43,7 +43,7 @@ func (a Ability2) Resolve(
 			return false, err
 		}
 		if damageDealtTwo {
-			*eventLogList = append(*eventLogList, GameEventLog{X: adjTwo.X, Y: adjTwo.Y, Event: GameEventSpellBeam})
+			*eventLogList = append(*eventLogList, GameEventLog{X: adjTwo.X, Y: adjTwo.Y, Event: GameEventSpellDamage})
 		}
 	}
 

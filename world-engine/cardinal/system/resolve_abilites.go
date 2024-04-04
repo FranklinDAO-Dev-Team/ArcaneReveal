@@ -73,15 +73,17 @@ func resolveAbilitiesAtPosition(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for i := 0; i < len(*potentialAbilities); i++ {
-		a := comp.AbilityMap[i+1]
-		if a == nil {
-			return errors.New("unknown ability called")
-		}
-		activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
-		// only overwrite if ability activated
-		(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
-		if err != nil {
-			return err
+		if (*potentialAbilities)[i] { // if ability should be activated/checked
+			a := comp.AbilityMap[i+1]
+			if a == nil {
+				return errors.New("unknown ability called")
+			}
+			activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
+			// only overwrite if ability activated
+			(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
+			if err != nil {
+				return err
+			}
 		}
 	}
 

@@ -140,7 +140,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		return err
 	}
 	// TODO: call seismic client to resolve abilities
-	seismic_response := &[comp.TotalAbilities]bool{true, false}
+	seismic_response := &[comp.TotalAbilities]bool{false, true}
 
 	// acivate abilities returned by Seismic
 	updateChainState = true
