@@ -1,14 +1,17 @@
 package component
 
 import (
-	"fmt"
-
 	"pkg.world.dev/world-engine/cardinal"
 )
 
 type Ability interface {
 	GetAbilityID() int
-	Resolve(cardinal.WorldContext, *Position, Direction, bool) (bool, error)
+	Resolve(
+		world cardinal.WorldContext,
+		spellPosition *Position,
+		direction Direction,
+		executeUpdates bool,
+	) (reveal bool, err error)
 }
 
 var AbilityMap = map[int]Ability{
@@ -35,7 +38,6 @@ func damageAtPostion(
 		}
 		switch colType.Type {
 		case MonsterCollide:
-			fmt.Println("damage delt at ", pos)
 			if executeUpdates {
 				err := DecrementHealth(world, id)
 				if err != nil {
@@ -45,7 +47,6 @@ func damageAtPostion(
 			}
 		case PlayerCollide:
 			if includePlayer {
-				fmt.Println("damage delt at ", pos)
 				if executeUpdates {
 					err := DecrementHealth(world, id)
 					if err != nil {
