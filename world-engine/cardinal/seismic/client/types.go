@@ -40,6 +40,7 @@ func NewProofFailResponse(req ProofRequest, msg string) ProofReqResponse {
 type RevealRequest struct {
 	PersonaTag         string
 	GameID             worldEngineTypes.EntityID
+	CastID             worldEngineTypes.EntityID
 	WandNum            int
 	PotentialAbilities [TotalAbilities]bool
 }
@@ -47,6 +48,7 @@ type RevealRequest struct {
 type RevealReqResponse struct {
 	PersonaTag string
 	GameID     worldEngineTypes.EntityID
+	CastID     worldEngineTypes.EntityID
 	Success    bool
 	Error      string
 	Abilities  [TotalAbilities]bool

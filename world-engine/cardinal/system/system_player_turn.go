@@ -45,17 +45,27 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
 				}
-				_, potentialAbilities, err := player_turn_wand(world, direction, wandnum, eventLogList) // use castID here TODO
+				castID, potentialAbilities, err := player_turn_wand(world, direction, wandnum, eventLogList)
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
+
+				fmt.Println("gameidstr:", turn.Msg.GameIDStr)
+
+				gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
+				if err != nil {
+					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
+				}
 				revealRequest := client.RevealRequest{
 					PersonaTag:         turn.Tx.PersonaTag,
-					GameID:             turn.Msg.GameID,
+					GameID:             types.EntityID(gameID),
+					CastID:             castID,
 					WandNum:            wandnum,
 					PotentialAbilities: *potentialAbilities,
 				}
+				revealRequest.PotentialAbilities = [2]bool{true, true}
 				revealRequestCh <- revealRequest
+				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
 			case "move":
 				err = playerTurnMove(world, direction)
@@ -123,6 +133,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		return 0, nil, err
 	}
 
+	// TODO: do I need this? abilities should all start as true?
 	wandID, wand, available, err := getWandByNumber(world, wandnum)
 	if err != nil {
 		return 0, nil, err
@@ -149,10 +160,11 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 		return 0, nil, err
 	}
 
+	// create a new entity for the cast to later be resolved
 	castID, err = cardinal.Create(
 		world,
 		comp.AwaitingReveal{IsAvailable: true},
-		spell,
+		wand,
 		spellPos,
 	)
 

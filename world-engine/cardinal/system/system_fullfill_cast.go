@@ -3,6 +3,7 @@ package system
 import (
 	comp "cinco-paus/component"
 	"cinco-paus/msg"
+	"encoding/json"
 	"fmt"
 
 	"pkg.world.dev/world-engine/cardinal"
@@ -13,25 +14,54 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.FulfillCastMsg, msg.FulfillCastMsgResult](
 		world,
 		func(turn message.TxData[msg.FulfillCastMsg]) (msg.FulfillCastMsgResult, error) {
+			fmt.Println("starting fulfill cast system")
+
+			resultJSON, err := json.Marshal(turn.Msg.Result)
+			if err != nil {
+				fmt.Println("failed!!!!")
+				return msg.FulfillCastMsgResult{}, fmt.Errorf("failed to marshal result to JSON: %v", err)
+			}
+			fmt.Printf("Result JSON: %s\n", resultJSON)
+
 			// get relevant info about the cast
-			spell, err := cardinal.GetComponent[comp.Spell](world, turn.Msg.CastID)
+			spell, err := cardinal.GetComponent[comp.Spell](world, turn.Msg.Result.CastID)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
 			spell.Expired = false
 
-			spellPos, err := cardinal.GetComponent[comp.Position](world, turn.Msg.CastID)
+			spellPos, err := cardinal.GetComponent[comp.Position](world, turn.Msg.Result.CastID)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
 
-			// TODO: Check salts and that &turn.Msg.Abilities makes sense
-			println("TODO: Check salts and that &turn.Msg.Abilities makes sense")
+			//  Check salts and that &turn.Msg.Abilities makes sense
+			// println("TODO: Check salts and that &turn.Msg.Abilities makes sense")
+			// for i, canCast := range turn.Msg.Result.Abilities {
+			// 	if canCast {
+			// 		i64 := int64(i)
+			// 		salt := big.NewInt(0)
+			// 		salt.SetString(turn.Msg.Result.Salts[i], 10)
+			// 		commitment, error := poseidon.Hash([]*big.Int{big.NewInt(i64), salt})
+			// 		if error != nil {
+			// 			return msg.FulfillCastMsgResult{}, fmt.Errorf("failed to hash salt: %v", error)
+			// 		}
+
+			// 		game, err := cardinal.GetComponent[comp.Game](world, turn.Msg.Result.GameID)
+			// 		if err != nil {
+			// 			return msg.FulfillCastMsgResult{}, err
+			// 		}
+			// 		if game.Commitments[i] != commitment {
+			// 			return msg.FulfillCastMsgResult{}, fmt.Errorf("commitment %d does not match", i)
+			// 		}
+			// 	}
+			// }
+			// fmt.Println("Commitments verified")
 
 			// resolve abilities and update chain state
 			eventLogList := &[]comp.GameEventLog{}
 			updateChainState := true
-			err = resolveAbilities(world, spell, spellPos, &turn.Msg.Abilities, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
+			err = resolveAbilities(world, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
@@ -47,7 +77,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			}
 
 			// remove cast entity
-			err = cardinal.Remove(world, turn.Msg.CastID)
+			err = cardinal.Remove(world, turn.Msg.Result.CastID)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}

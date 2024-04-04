@@ -30,6 +30,7 @@ func main() {
 		cardinal.RegisterComponent[component.WandCore](w),
 		cardinal.RegisterComponent[component.Available](w),
 		cardinal.RegisterComponent[component.Spell](w),
+		cardinal.RegisterComponent[component.AwaitingReveal](w),
 		cardinal.RegisterComponent[component.Health](w),
 		cardinal.RegisterComponent[component.Position](w),
 	)
@@ -42,7 +43,6 @@ func main() {
 		cardinal.RegisterMessage[msg.RequestGameMsg, msg.RequestGameMsgResult](w, "request-game"),
 		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
 		cardinal.RegisterMessage[msg.FulfillCastMsg, msg.FulfillCastMsgResult](w, "fulfill-cast"),
-
 		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
 	)
 
@@ -59,7 +59,7 @@ func main() {
 	Must(cardinal.RegisterSystems(w,
 		system.RequestGameSystem,
 		system.FulfillCreateGameSystem,
-
+		system.FulfillCastSystem,
 		system.PlayerTurnSystem,
 		// system.MonsterTurnSystem,
 	))

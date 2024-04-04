@@ -70,6 +70,7 @@ func (sc *SeismicClient) Start() {
 					sc.revealReturnCh <- RevealReqResponse{
 						PersonaTag: req.PersonaTag,
 						GameID:     req.GameID,
+						CastID:     req.CastID,
 						Success:    false,
 						Error:      "no game found",
 					}
@@ -87,6 +88,7 @@ func (sc *SeismicClient) Start() {
 				sc.revealReturnCh <- RevealReqResponse{
 					PersonaTag: req.PersonaTag,
 					GameID:     req.GameID,
+					CastID:     req.CastID,
 					Success:    true,
 					Abilities:  castedAbilities,
 					Salts:      salts,
