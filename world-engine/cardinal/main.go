@@ -44,6 +44,7 @@ func main() {
 		cardinal.RegisterMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](w, "fulfill-create-game"),
 		cardinal.RegisterMessage[msg.FulfillCastMsg, msg.FulfillCastMsgResult](w, "fulfill-cast"),
 		cardinal.RegisterMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](w, "player-turn"),
+		cardinal.RegisterMessage[msg.EventTestMsg, msg.EventTestMsgResult](w, "event-test"),
 	)
 
 	// Register queries
@@ -61,7 +62,7 @@ func main() {
 		system.FulfillCreateGameSystem,
 		system.FulfillCastSystem,
 		system.PlayerTurnSystem,
-		// system.MonsterTurnSystem,
+		system.EventTestSystem, // for testing
 	))
 
 	Must(cardinal.RegisterInitSystems(w,
