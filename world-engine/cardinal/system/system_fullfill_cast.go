@@ -5,7 +5,9 @@ import (
 	"cinco-paus/msg"
 	"encoding/json"
 	"fmt"
+	"math/big"
 
+	"github.com/iden3/go-iden3-crypto/poseidon"
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/message"
 )
@@ -36,27 +38,26 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			}
 
 			//  Check salts and that &turn.Msg.Abilities makes sense
-			// println("TODO: Check salts and that &turn.Msg.Abilities makes sense")
-			// for i, canCast := range turn.Msg.Result.Abilities {
-			// 	if canCast {
-			// 		i64 := int64(i)
-			// 		salt := big.NewInt(0)
-			// 		salt.SetString(turn.Msg.Result.Salts[i], 10)
-			// 		commitment, error := poseidon.Hash([]*big.Int{big.NewInt(i64), salt})
-			// 		if error != nil {
-			// 			return msg.FulfillCastMsgResult{}, fmt.Errorf("failed to hash salt: %v", error)
-			// 		}
+			for i, canCast := range turn.Msg.Result.Abilities {
+				if canCast {
+					i64 := int64(i)
+					salt := big.NewInt(0)
+					salt.SetString(turn.Msg.Result.Salts[i], 10)
+					commitment, error := poseidon.Hash([]*big.Int{big.NewInt(i64), salt})
+					if error != nil {
+						return msg.FulfillCastMsgResult{}, fmt.Errorf("failed to hash salt: %v", error)
+					}
 
-			// 		game, err := cardinal.GetComponent[comp.Game](world, turn.Msg.Result.GameID)
-			// 		if err != nil {
-			// 			return msg.FulfillCastMsgResult{}, err
-			// 		}
-			// 		if game.Commitments[i] != commitment {
-			// 			return msg.FulfillCastMsgResult{}, fmt.Errorf("commitment %d does not match", i)
-			// 		}
-			// 	}
-			// }
-			// fmt.Println("Commitments verified")
+					game, err := cardinal.GetComponent[comp.Game](world, turn.Msg.Result.GameID)
+					if err != nil {
+						return msg.FulfillCastMsgResult{}, err
+					}
+					if (*game.Commitments)[spell.WandNumber][i] != commitment.String() {
+						return msg.FulfillCastMsgResult{}, fmt.Errorf("commitment %d does not match", i)
+					}
+				}
+			}
+			fmt.Println("Commitments verified")
 
 			// resolve abilities and update chain state
 			eventLogList := &[]comp.GameEventLog{}

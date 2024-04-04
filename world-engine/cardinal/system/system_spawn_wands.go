@@ -9,12 +9,12 @@ import (
 
 func SpawnWandsSystem(world cardinal.WorldContext) error {
 	for i := 0; i < client.NumWands; i++ {
-		w := comp.NewRandomWandCore()
+		// w := comp.NewRandomWandCore()
 		_, err := cardinal.Create(world,
 			comp.WandCore{
-				Number:    i,
-				Abilities: w.Abilities,
-				Revealed:  w.Revealed,
+				Number: i,
+				// Abilities: w.Abilities,
+				// Revealed:  w.Revealed,
 			},
 			comp.Available{IsAvailable: true},
 		)

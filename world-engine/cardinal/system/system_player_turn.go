@@ -45,10 +45,12 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
 				}
-				castID, potentialAbilities, err := player_turn_wand(world, direction, wandnum, eventLogList)
+				castID, potentialAbilities, err := player_turn_wand(world, direction, wandnum)
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
+				fmt.Println("castID: ", castID)
+				fmt.Println("potentialAbilities: ", potentialAbilities)
 
 				fmt.Println("gameidstr:", turn.Msg.GameIDStr)
 
@@ -123,7 +125,7 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 	}
 }
 
-func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int, eventLogList *[]comp.GameEventLog) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
+func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return 0, nil, err
@@ -132,30 +134,34 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	if err != nil {
 		return 0, nil, err
 	}
-
-	// TODO: do I need this? abilities should all start as true?
-	wandID, wand, available, err := getWandByNumber(world, wandnum)
+	wandID, _, available, err := getWandByNumber(world, wandnum)
 	if err != nil {
 		return 0, nil, err
 	}
+
+	// handle wand availability
 	if !available.IsAvailable {
 		return 0, nil, fmt.Errorf("wand %d already expired", wandnum)
 	}
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
 
+	// set all abilities to true since we don't know which ones will be activated
+	allAbilities := &[client.TotalAbilities]bool{}
+	for i := range allAbilities {
+		allAbilities[i] = true
+	}
 	spell := &comp.Spell{
-		Expired:   false,
-		Abilities: wand.Abilities,
-		Direction: direction,
+		WandNumber: wandnum,
+		Expired:    false,
+		Abilities:  allAbilities,
+		Direction:  direction,
 	}
 
-	potentialAbilities = &[client.TotalAbilities]bool{}
+	// simulate a cast to determine potential ability activations
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
-
-	// simulate a cast to determine potential ability activations
-	err = resolveAbilities(world, spell, spellPos, potentialAbilities, updateChainState, dummy)
+	err = resolveAbilities(world, spell, spellPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -164,11 +170,14 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	castID, err = cardinal.Create(
 		world,
 		comp.AwaitingReveal{IsAvailable: true},
-		wand,
+		spell,
 		spellPos,
 	)
+	if err != nil {
+		return 0, nil, err
+	}
 
-	return castID, potentialAbilities, nil
+	return castID, spell.Abilities, nil
 
 }
 
