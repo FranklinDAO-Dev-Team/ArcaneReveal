@@ -4,7 +4,6 @@ services:
     container_name: cardinal
     build:
       context: ./cardinal
-      target: runtime
     depends_on:
       - redis
     expose:
@@ -16,34 +15,6 @@ services:
       - CARDINAL_NAMESPACE=${CARDINAL_NAMESPACE}
       - CARDINAL_MODE=${CARDINAL_MODE}
       - CARDINAL_LOG_LEVEL=${CARDINAL_LOG_LEVEL}
-      - REDIS_ADDRESS=${REDIS_ADDRESS:-redis:6379}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_MODE=normal
-      - ROUTER_KEY=${ROUTER_KEY}
-    restart: unless-stopped
-
-  cardinal-debug:
-    container_name: cardinal-debug
-    build:
-      context: ./cardinal
-      target: runtime-debug
-    ## Additional capabilities flag for debugging
-    cap_add:
-      - SYS_PTRACE
-    security_opt:
-      - "seccomp:unconfined"
-    depends_on:
-      - redis
-    expose:
-      - "4040"
-      - "40000"
-    ports:
-      - "4040:4040"
-      - "40000:40000"
-    environment:
-      - CARDINAL_PORT=${CARDINAL_PORT:-4040}
-      - CARDINAL_NAMESPACE=${CARDINAL_NAMESPACE}
-      - CARDINAL_MODE=${CARDINAL_MODE}
       - REDIS_ADDRESS=${REDIS_ADDRESS:-redis:6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_MODE=normal
@@ -82,7 +53,7 @@ services:
 
   nakama:
     platform: linux/amd64
-    image: us-docker.pkg.dev/argus-labs/world-engine/relay/nakama@sha256:8c7344643e4d993b105e2d0f151787df0533cc9ca85c4b5f67bb01bd3748341f
+    image: ghcr.io/argus-labs/world-engine-nakama:v1.2.2
     container_name: nakama
     depends_on:
       nakama-db:
