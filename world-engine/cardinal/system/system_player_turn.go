@@ -125,7 +125,6 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
 
-	// hardcoding the ability for now instead of using wands
 	spell := comp.Spell{
 		Expired:   false,
 		Abilities: wand.Abilities,
@@ -135,6 +134,8 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	potentialAbilities = &[client.TotalAbilities]bool{}
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
+
+	// simulate a cast to determine potential ability activations
 	err = resolveAbilities(world, &spell, spellPos, potentialAbilities, updateChainState, dummy)
 	if err != nil {
 		return nil, err
