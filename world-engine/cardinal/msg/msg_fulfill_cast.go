@@ -8,10 +8,12 @@ import (
 
 type FulfillCastMsg struct {
 	Result    client.RevealReqResponse      `json:"res"`
-	GameID    types.EntityID                `json:"gameID"`
+	CastID    types.EntityID                `json:"gameID"`
 	Success   bool                          `json:"success"`
 	Abilities [client.TotalAbilities]bool   `json:"abilities"`
 	Salts     [client.TotalAbilities]string `json:"salts"`
 }
 
-type FulfillCastMsgResult struct{}
+type FulfillCastMsgResult struct {
+	Success bool
+}

@@ -10,12 +10,14 @@ import (
 
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/message"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 func PlayerTurnSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](
 		world,
 		func(turn message.TxData[msg.PlayerTurnMsg]) (msg.PlayerTurnResult, error) {
+			fmt.Println("starting player turn system")
 			err := turn.Msg.ValFmt()
 			if err != nil {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
@@ -34,12 +36,16 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
+				MonsterTurnSystem(world, eventLogList)
+				// TODO: emit events to client
+				fmt.Println("TODO: emit activated abilities and spell log to client")
+
 			case "wand":
 				wandnum, err := strconv.Atoi(turn.Msg.WandNum)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
 				}
-				potentialAbilities, err := player_turn_wand(world, direction, wandnum, eventLogList)
+				_, potentialAbilities, err := player_turn_wand(world, direction, wandnum, eventLogList) // use castID here TODO
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
@@ -56,6 +62,8 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
+				MonsterTurnSystem(world, eventLogList)
+				fmt.Println("TODO: emit activated abilities and spell log to client")
 			default:
 				return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: Invalid action")
 			}
@@ -105,27 +113,27 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 	}
 }
 
-func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int, eventLogList *[]comp.GameEventLog) (potentialAbilities *[client.TotalAbilities]bool, err error) {
+func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int, eventLogList *[]comp.GameEventLog) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	spellPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 
 	wandID, wand, available, err := getWandByNumber(world, wandnum)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	if !available.IsAvailable {
-		return nil, fmt.Errorf("wand %d already expired", wandnum)
+		return 0, nil, fmt.Errorf("wand %d already expired", wandnum)
 	}
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
 
-	spell := comp.Spell{
+	spell := &comp.Spell{
 		Expired:   false,
 		Abilities: wand.Abilities,
 		Direction: direction,
@@ -136,12 +144,19 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
 
 	// simulate a cast to determine potential ability activations
-	err = resolveAbilities(world, &spell, spellPos, potentialAbilities, updateChainState, dummy)
+	err = resolveAbilities(world, spell, spellPos, potentialAbilities, updateChainState, dummy)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 
-	return potentialAbilities, nil
+	castID, err = cardinal.Create(
+		world,
+		comp.AwaitingReveal{IsAvailable: true},
+		spell,
+		spellPos,
+	)
+
+	return castID, potentialAbilities, nil
 
 }
 
