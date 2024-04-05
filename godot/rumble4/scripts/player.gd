@@ -33,12 +33,15 @@
 	
 extends Area2D
 
+
+
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
+var previous_move
 
 var animation_speed = 4
 
-var moving = false
+@export var moving = false
 var tile_size = 64
 var inputs = {
 	"right": Vector2.RIGHT,
@@ -150,12 +153,11 @@ func _input(event: InputEvent) -> void:
 	
 
 
-func damage() -> void:
-	health -= 1
+func damage(damage) -> void:
+	health -= damage
 	if health == 0:
 		queue_free()
 		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
-
 	update_health_ui()
 
 
@@ -173,10 +175,11 @@ func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
 	if !ray.is_colliding():
+		previous_move = dir 
 		#position += inputs[dir] * tile_size
 		var tween = get_tree().create_tween()
 		tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
-		moving = true
+		moving = true 
 		await tween.finished
 		moving = false
 	else:
@@ -184,5 +187,15 @@ func move(dir):
 
 
 func _on_area_entered(area):
-	if area.name == "EnemyV2":
-		print('player')
+	print("do stuff")
+	if (area.name == "Enemy1" or area.name == "Enemy2") && moving == true:
+		area.damage()
+		match area.previous_move:
+			"right": area.move("left")
+			"left": area.move("right")
+			"up": area.move("down")
+			"down": area.move("up")
+		
+		
+		
+
