@@ -1,0 +1,100 @@
+[gd_scene load_steps=10 format=3 uid="uid://canltqds4yu1c"]
+
+[ext_resource type="Texture2D" uid="uid://cfvdrw72xeiin" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile000.png" id="2_v8tst"]
+[ext_resource type="Texture2D" uid="uid://dlbb46tn5gs4f" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile001.png" id="3_ok7sd"]
+[ext_resource type="Texture2D" uid="uid://c7juupd8vntir" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile002.png" id="4_pnx8w"]
+[ext_resource type="Texture2D" uid="uid://myhbjko7p51m" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile003.png" id="5_jqcps"]
+[ext_resource type="Texture2D" uid="uid://cv2x17j65m58k" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile004.png" id="6_tviqg"]
+[ext_resource type="Texture2D" uid="uid://dld0bn31rdrnx" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Run/ezgif-2-7c884e7e94-png-64x64-sprite-png/tile005.png" id="7_csed1"]
+
+[sub_resource type="GDScript" id="GDScript_7o8hv"]
+script/source = "extends RigidBody2D
+
+# Enemy stats
+var health = 100
+var move_speed = 10  # Speed at which the enemy moves
+var move_time = 1.0  # Time in seconds the enemy moves in one direction
+var timer = 0.0  # Tracks time for movement
+
+# Movement direction
+var move_direction = Vector2.ZERO
+
+func _ready():
+	randomize()  # Initialize the random number generator
+	timer = move_time
+	choose_random_direction()
+
+func _process(delta):
+	timer -= delta
+	if timer <= 0:
+		timer = move_time
+		choose_random_direction()
+
+	move_local_x(move_direction.x * move_speed * delta)
+	move_local_y(move_direction.y * move_speed * delta)
+
+func choose_random_direction():
+	var directions = [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]
+	move_direction = directions[randi() % directions.size()]
+
+func take_damage(amount):
+	health -= amount
+	if health <= 0:
+		die()
+
+func die():
+	queue_free()
+
+"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aid77"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_v8tst")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ok7sd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_pnx8w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_jqcps")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tviqg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_csed1")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 3.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rbx4l"]
+radius = 4.0
+height = 20.0
+
+[node name="Node2D" type="Node2D"]
+
+[node name="enemy" type="RigidBody2D" parent="."]
+collision_mask = 0
+gravity_scale = 0.0
+script = SubResource("GDScript_7o8hv")
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="enemy"]
+position = Vector2(0, -6)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_aid77")
+animation = &"walk"
+frame = 5
+frame_progress = 0.81388
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="enemy"]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_rbx4l")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="enemy"]

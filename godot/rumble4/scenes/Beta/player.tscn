@@ -187,6 +187,7 @@ libraries = {
 "": SubResource("AnimationLibrary_3iu28")
 }
 
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [node name="StaffPositionTop" type="Node2D" parent="."]
 position = Vector2(1, -8)
 

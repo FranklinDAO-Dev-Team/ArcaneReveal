@@ -1,25 +1,25 @@
 [gd_scene load_steps=9 format=3 uid="uid://cqrcx4mk6o7fv"]
 
-[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_fcab3"]
-[ext_resource type="Texture2D" uid="uid://b77xty3tq2uyx" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Rogue/Idle/Idle-Sheet.png" id="2_4p5im"]
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_woegi"]
+[ext_resource type="Texture2D" uid="uid://b77xty3tq2uyx" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Rogue/Idle/Idle-Sheet.png" id="2_oc0vo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
 size = Vector2(30, 30)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xa186"]
-atlas = ExtResource("2_4p5im")
+atlas = ExtResource("2_oc0vo")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dpr0h"]
-atlas = ExtResource("2_4p5im")
+atlas = ExtResource("2_oc0vo")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wp85u"]
-atlas = ExtResource("2_4p5im")
+atlas = ExtResource("2_oc0vo")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2va1g"]
-atlas = ExtResource("2_4p5im")
+atlas = ExtResource("2_oc0vo")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kri47"]
@@ -44,7 +44,7 @@ animations = [{
 
 [node name="EnemyV2" type="Area2D"]
 position = Vector2(-1, -1)
-script = ExtResource("1_fcab3")
+script = ExtResource("1_woegi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(16, 16)

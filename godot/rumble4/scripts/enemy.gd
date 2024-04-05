@@ -1,37 +1,76 @@
-extends RigidBody2D
+extends Area2D
 
-# Enemy stats
-var health = 100
-var move_speed = 10  # Speed at which the enemy moves
-var move_time = 1.0  # Time in seconds the enemy moves in one direction
-var timer = 0.0  # Tracks time for movement
+@export var attack_damage = 1
 
-# Movement direction
-var move_direction = Vector2.ZERO
+var previous_move
+
+var animation_speed = 4
+var moving = false
+var tile_size = 64
+const max_health = 5
+var health = max_health
+var inputs = {
+	"enemy_right": Vector2.RIGHT,
+	"enemy_left": Vector2.LEFT,
+	"enemy_up": Vector2.UP,
+	"enemy_down": Vector2.DOWN
+}
+
+@onready var ray = $RayCast2D
+@onready var health_bar = $healthbar
+@onready var player = $Player
 
 func _ready():
-	randomize()  # Initialize the random number generator
-	timer = move_time
-	choose_random_direction()
-
+	update_health()
+	position = position.snapped(Vector2.ONE * tile_size)
+		
+	
+func update_health():
+	var healthbar = $healthbar  
+	healthbar.value = health
+	if health < max_health:
+		healthbar.visible = false
+	else:
+		healthbar.visible = true
+		
+func damage() -> void:
+	print("hello")
+	print(health)
+	health -= 1
+	if health == 0:
+		self.visible = false
+	$healthbar.value = health
+	print(health)
+	
 func _process(delta):
-	timer -= delta
-	if timer <= 0:
-		timer = move_time
-		choose_random_direction()
-
-	move_local_x(move_direction.x * move_speed * delta)
-	move_local_y(move_direction.y * move_speed * delta)
-
-func choose_random_direction():
-	var directions = [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]
-	move_direction = directions[randi() % directions.size()]
-
-func take_damage(amount):
-	health -= amount
-	if health <= 0:
-		die()
-
-func die():
-	queue_free()
-
+	$Sprite.play("idle")
+		
+func _unhandled_input(event):
+	if moving:
+		return
+	for dir in inputs.keys():
+		if event.is_action_pressed(dir):
+			move(dir)
+			
+func move(dir):
+	ray.target_position = inputs[dir] * tile_size
+	ray.force_raycast_update()
+	if !ray.is_colliding():
+		previous_move = dir 
+		var tween = get_tree().create_tween()
+		tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
+		moving = true
+		await tween.finished
+		moving = false
+		
+func _on_area_entered(area):
+	print(area)
+	if area.name == "Player" and moving == true:
+		area.damage(attack_damage)
+		print(previous_move)
+		match area.previous_move:
+			"right": area.move("left")
+			"left": area.move("right")
+			"up": area.move("down")
+			"down": area.move("up")
+		

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_64lna"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_rpmh3"]
 [ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Beta/wall.tscn" id="3_ov2pl"]
-[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyV2.tscn" id="5_lpbc5"]
+[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyPrefab.tscn" id="5_lpbc5"]
 [ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Beta/player.tscn" id="7_s1muq"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Beta/tile_piece.tscn" id="8_mct5s"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_2nx3l"]
