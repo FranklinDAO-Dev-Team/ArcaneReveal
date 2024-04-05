@@ -82,28 +82,24 @@ animations = [{
 "speed": 10.0
 }]
 
-
 [sub_resource type="Animation" id="Animation_cebg2"]
 length = 1.1
-
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D2:frame")
+tracks/0/path = NodePath("AnimatedSprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5]
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D2:animation")
+tracks/1/path = NodePath("AnimatedSprite2D:animation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -112,34 +108,9 @@ tracks/1/keys = {
 "update": 1,
 "values": ["default"]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:animation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": ["default"]
-}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_275b3"]
 _data = {
-
 "default": SubResource("Animation_cebg2")
 }
 
@@ -707,39 +678,11 @@ _data = {
 "default": SubResource("Animation_tw0mj")
 }
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_pp8wb"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": null
-}, {
-"duration": 1.0,
-"texture": ExtResource("2_qd67e")
-}, {
-"duration": 3.0,
-"texture": ExtResource("3_crrv4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("4_agmyd")
-}, {
-"duration": 1.0,
-"texture": ExtResource("5_j5d1c")
-}, {
-"duration": 1.0,
-"texture": null
-}],
-"loop": false,
-"name": &"default",
-"speed": 17.0
-}]
-
 [node name="BasicLightning" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.0625, 0.0625)
 sprite_frames = SubResource("SpriteFrames_dnb1k")
-frame = 10
-frame_progress = 1.0
 centered = false
 
 [node name="Blank" type="AnimationPlayer" parent="."]
@@ -776,10 +719,3 @@ centered = false
 libraries = {
 "": SubResource("AnimationLibrary_vk0de")
 }
-
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="."]
-position = Vector2(16, 15.5)
-scale = Vector2(0.16, 0.18)
-sprite_frames = SubResource("SpriteFrames_pp8wb")
-frame = 3
-frame_progress = 1.0
