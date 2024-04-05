@@ -28,7 +28,7 @@ var inputs = {
 func _ready():
 	if node_name == "Enemy1":
 		var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
-		print(resp)
+		#print(resp)
 	update_health()
 	position = position.snapped(Vector2.ONE * tile_size)
 		
@@ -42,13 +42,13 @@ func update_health():
 		healthbar.visible = true
 		
 func damage() -> void:
-	print("hello")
-	print(health)
+	#print("hello")
+	#print(health)
 	health -= 1
 	if health == 0:
 		queue_free()
 	$healthbar.value = health
-	print(health)
+	#print(health)
 	
 func _process(delta):
 	$Sprite.play("idle")
@@ -79,9 +79,9 @@ func move(dir):
 		moving = false
 		
 func _on_area_entered(area):
-	print("sugma")
+	#print("sugma")
 	if area.name == "Player" && moving == true:
 		area.damage(attack_damage)
-		print(previous_move)
+		#print(previous_move)
 		attack_animation()
 
