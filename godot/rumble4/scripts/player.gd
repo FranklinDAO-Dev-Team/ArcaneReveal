@@ -33,12 +33,15 @@
 	
 extends Area2D
 
+
+
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
+var previous_move
 
 var animation_speed = 4
 
-var moving = false
+@export var moving = false
 var tile_size = 64
 var inputs = {
 	"right": Vector2.RIGHT,
@@ -72,24 +75,17 @@ func update_health_ui():
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
-		damage()
+		#damage()
 		wand_animations.position = Vector2(20, -23)
 		wand_animations.play("lightning_strike")
-	if event.is_action_pressed("enemy_left"):
-		$AnimationPlayer.play("attack_left")
-	if event.is_action_pressed("enemy_right"):
-		$AnimationPlayer.play("attack_right")
-	if event.is_action_pressed("enemy_down"):
-		$AnimationPlayer.play("attack_down")
-	if event.is_action_pressed("enemy_up"):
-		$AnimationPlayer.play("attack_up")
 	
 
 
-func damage() -> void:
-	health -= 1
-	if health < 0:
-		health = MAX_HEALTH
+func damage(damage) -> void:
+	health -= damage
+	if health == 0:
+		self.visible = false
+		
 	update_health_ui()
 
 
@@ -105,10 +101,11 @@ func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
 	if !ray.is_colliding():
+		previous_move = dir 
 		#position += inputs[dir] * tile_size
 		var tween = get_tree().create_tween()
 		tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
-		moving = true
+		moving = true 
 		await tween.finished
 		moving = false
 	else:
@@ -116,5 +113,15 @@ func move(dir):
 
 
 func _on_area_entered(area):
-	if area.name == "EnemyV2":
-		print('player')
+	print("do stuff")
+	if (area.name == "Enemy - 2 damage" or area.name == "Enemy - 1 damage") && moving == true:
+		area.damage()
+		match area.previous_move:
+			"right": area.move("left")
+			"left": area.move("right")
+			"up": area.move("down")
+			"down": area.move("up")
+		
+		
+		
+

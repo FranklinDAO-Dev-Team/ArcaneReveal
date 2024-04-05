@@ -1,11 +1,9 @@
-
-[gd_scene load_steps=19 format=3 uid="uid://ccski0bqh1gbo"]
+[gd_scene load_steps=18 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
 [ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Beta/wall.tscn" id="3_ekmmf"]
-[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyV2.tscn" id="4_1sovk"]
-[ext_resource type="PackedScene" uid="uid://dkuggb0i87g8k" path="res://scenes/Beta/player_ZILE.tscn" id="5_448f8"]
+[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Beta/player.tscn" id="5_5f1lg"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Beta/tile_piece.tscn" id="6_x7epu"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Beta/life_bar.tscn" id="8_th4ig"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_imb6i"]
@@ -15,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://bidv3x2nek36l" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_3.png" id="13_bbuce"]
 [ext_resource type="Texture2D" uid="uid://dfnuetr2xjowj" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_4.png" id="14_s27op"]
 [ext_resource type="Texture2D" uid="uid://dy747avdl4u3m" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_5.png" id="15_3oab1"]
+[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyV2.tscn" id="15_qc0p8"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
 texture = ExtResource("2_vpu8v")
@@ -312,6 +311,9 @@ animations = [{
 [node name="TestMain" type="Node2D"]
 script = ExtResource("1_kqd0p")
 
+[node name="EnemyTest3" parent="." instance=ExtResource("15_qc0p8")]
+position = Vector2(36, 66)
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(176, 175)
 scale = Vector2(0.5, 0.5)
@@ -486,10 +488,8 @@ position = Vector2(160, 320)
 [node name="Wall56" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(96, 320)
 
-[node name="EnemyV2" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(192, 128)
-
-[node name="Player_ZILE" parent="." instance=ExtResource("5_448f8")]
+[node name="Player" parent="." instance=ExtResource("5_5f1lg")]
+position = Vector2(58, 125)
 
 [node name="TilePiece" parent="." instance=ExtResource("6_x7epu")]
 position = Vector2(176, -120)
@@ -557,6 +557,14 @@ position = Vector2(112, -6)
 scale = Vector2(0.234615, 0.0931817)
 sprite_frames = SubResource("SpriteFrames_eh1nc")
 animation = &"lightning_strike"
+
+[node name="Enemy - 2 damage" parent="." instance=ExtResource("15_qc0p8")]
+visible = false
+position = Vector2(3, 1)
+attack_damage = 2
+
+[node name="Enemy - 1 damage" parent="." instance=ExtResource("15_qc0p8")]
+position = Vector2(66, 2)
 
 [connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
 [connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]
