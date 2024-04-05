@@ -38,8 +38,9 @@ extends Area2D
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
 var previous_move
-
 var animation_speed = 4
+
+
 
 @export var moving = false
 var tile_size = 64
@@ -51,6 +52,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
+@onready var game_node = get_parent()
 
 	
 func _ready():
@@ -67,6 +69,14 @@ func _ready():
 	$StaffPositionLeft.position = Vector2(0, 16)  # Adjust this offset
 	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
 	#position += Vector2.ONE * tile_size / 
+
+	if game_node == null:
+		print("game_node is null, cannot access session")
+		return
+
+	if game_node.session == null:
+		print("game_node.session is null, cannot proceed")
+		return
 
 
 
@@ -167,6 +177,12 @@ func _unhandled_input(event):
 	for dir in inputs.keys():
 		if event.is_action_pressed(dir):
 			move(dir)
+			var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+				"GameIDStr": "71",
+				"Action": "move",
+				"Direction": dir,
+				"WandNum": "0",
+				}))
 
 
 func move(dir):
