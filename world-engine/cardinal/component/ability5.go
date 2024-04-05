@@ -19,8 +19,8 @@ func (a Ability5) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	// if not on right side of the map, don't do anything
-	if spellPosition.X != 10 {
+	// if not on top side of the map, don't do anything
+	if spellPosition.Y != 0 {
 		return false, nil
 	}
 

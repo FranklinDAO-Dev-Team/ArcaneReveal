@@ -19,6 +19,31 @@ func (a Ability8) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	panic("implement me")
-	return false, nil
+	// if not on left side of the map, don't do anything
+	if spellPosition.X != 0 {
+		return false, nil
+	}
+
+	playerID, err := QueryPlayerID(world)
+	if err != nil {
+		return false, err
+	}
+
+	playerHealth, err := cardinal.GetComponent[Health](world, playerID)
+	if err != nil {
+		return false, err
+	}
+	if playerHealth.CurrHealth == playerHealth.MaxHealth {
+		return false, err // ability cannot activate if player is at max health
+	}
+
+	if executeUpdates {
+		err := IncrementHealth(world, playerID)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellWallActivation})
+	return true, nil
 }

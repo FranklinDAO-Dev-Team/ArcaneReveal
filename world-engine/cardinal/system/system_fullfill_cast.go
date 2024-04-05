@@ -60,7 +60,8 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 					}
 					// fmt.Println("game.Commitments dimensions", len(*game.Commitments), len((*game.Commitments)[0]))
 					// fmt.Printf("wand num: %d, i: %d\n", spell.WandNumber, i)
-					if (*game.Commitments)[spell.WandNumber][0] != commitment.String() { // hardcoded to first index because wands have 1 ability rn
+
+					if !contains((*game.Commitments)[spell.WandNumber], commitment.String()) { // hardcoded to first index because wands have 1 ability rn
 						return msg.FulfillCastMsgResult{}, fmt.Errorf("commitment %d does not match", i)
 					}
 				}
@@ -70,11 +71,6 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			// resolve abilities and update chain state
 			eventLogList := &[]comp.GameEventLog{}
 			updateChainState := true
-
-			// debug := true
-			// if debug {
-			// 	Ab
-			// }
 
 			err = resolveAbilities(world, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
 			if err != nil {
@@ -101,4 +97,14 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 				LogEntry: *eventLogList,
 			}, nil
 		})
+}
+
+// Function to check if a string is in an array
+func contains(array []string, value string) bool {
+	for _, v := range array {
+		if v == value {
+			return true
+		}
+	}
+	return false
 }

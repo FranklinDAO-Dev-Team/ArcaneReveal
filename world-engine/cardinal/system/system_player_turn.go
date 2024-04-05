@@ -65,7 +65,10 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 					WandNum:            wandnum,
 					PotentialAbilities: *potentialAbilities,
 				}
-				revealRequest.PotentialAbilities = [client.TotalAbilities]bool{true, true}
+				// set all abilities to true since we don't know which ones will be activated
+				for i := 0; i < len(revealRequest.PotentialAbilities); i++ {
+					revealRequest.PotentialAbilities[i] = true
+				}
 				revealRequestCh <- revealRequest
 				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
@@ -175,7 +178,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	// simulate a cast to determine potential ability activations
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
-	err = resolveAbilities(world, spell, spellPos, spell.Abilities, updateChainState, dummy)
+	err = resolveAbilities(world, spell, playerPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
 		return 0, nil, err
 	}

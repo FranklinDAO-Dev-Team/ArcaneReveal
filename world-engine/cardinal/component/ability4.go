@@ -19,6 +19,6 @@ func (a Ability4) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	panic("implement me")
+	// panic("implement me a4")
 	return false, nil
 }

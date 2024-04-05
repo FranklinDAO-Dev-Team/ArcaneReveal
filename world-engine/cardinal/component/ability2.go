@@ -1,8 +1,6 @@
 package component
 
 import (
-	"fmt"
-
 	"pkg.world.dev/world-engine/cardinal"
 )
 
@@ -51,7 +49,7 @@ func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, per
 	}
 	if !hitWall { // this spell cannot hit through walls
 		adjPlayablePos, err := adjPos.GetUpdateFromDirection(perpDir)
-		fmt.Println("adjPlayablePos", adjPlayablePos)
+		// fmt.Println("adjPlayablePos", adjPlayablePos)
 		if err == nil {
 			damageDealt, err := damageAtPostion(world, adjPlayablePos, executeUpdates, false)
 			if err != nil {
