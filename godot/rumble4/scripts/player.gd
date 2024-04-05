@@ -42,6 +42,8 @@ var previous_position
 
 var animation_speed = 4
 
+
+
 @export var moving = false
 var tile_size = 64
 var inputs = {
@@ -52,6 +54,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
+@onready var game_node = get_parent()
 @onready var animation_player = $"../BasicLightning"
 
 	
@@ -70,9 +73,13 @@ func _ready():
 	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
 	#position += Vector2.ONE * tile_size / 
 
+	if game_node == null:
+		print("game_node is null, cannot access session")
+		return
 
-
-
+	if game_node.session == null:
+		print("game_node.session is null, cannot proceed")
+		return
 
 func readJSON(json_file_path):
 	var file = FileAccess.open(json_file_path, FileAccess.READ)
@@ -112,22 +119,31 @@ func process_data():
 		# Add the instance as a child to the main scene
 		$"../".add_child(basic_lightning_instance)
 		
-		# Access the AnimationPlayer in the BasicLightning scene
-		var animation_player = basic_lightning_instance.get_node("AnimationPlayer")
+		var animation_player = basic_lightning_instance.get_node("Blank")
+		
 		if animation_player != null:
 			# Initiate corresponding animation based on action
 			match action:
 				0:
 					# Animate lightning bolt from the sky attack
+					# Access the AnimationPlayer in the BasicLightning scene
+					animation_player = basic_lightning_instance.get_node("Blank")
 					animation_player.play("default")
 					print("lightning at: " + str(position.x) + ", " + str(position.y))
 				1:
 					# Animate explosion
-					animation_player.play("explosion")
+					animation_player = basic_lightning_instance.get_node("Explosion")
+					animation_player.play("default")
 					print("explosion at: " + str(position.x) + ", " + str(position.y))
 				2:
 					# Animate lightning bolt dissipating
-					animation_player.play("lightning_dissipate")
+					animation_player = basic_lightning_instance.get_node("Spark")
+					animation_player.play("default")
+					print("dissipate at: " + str(position.x) + ", " + str(position.y))
+				3:
+					# Animate lightning bolt dissipating
+					animation_player = basic_lightning_instance.get_node("WallActivation")
+					animation_player.play("default")
 					print("dissipate at: " + str(position.x) + ", " + str(position.y))
 				_:
 					# Handle unexpected action
@@ -188,6 +204,12 @@ func _unhandled_input(event):
 	for dir in inputs.keys():
 		if event.is_action_pressed(dir):
 			move(dir)
+			var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+				"GameIDStr": "71",
+				"Action": "move",
+				"Direction": dir,
+				"WandNum": "0",
+				}))
 
 
 func move(dir):

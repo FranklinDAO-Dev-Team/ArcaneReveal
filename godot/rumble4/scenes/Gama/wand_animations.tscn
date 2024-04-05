@@ -122,13 +122,14 @@ animations = [{
 [node name="WandAnimations" type="Node2D"]
 
 [node name="LightningStrikeRight" type="AnimatedSprite2D" parent="."]
+visible = false
 z_index = 1
 position = Vector2(1, -37)
 rotation = 1.5708
 scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
-frame = 6
+frame = 4
 frame_progress = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="LightningStrikeRight"]
@@ -140,13 +141,14 @@ offset_bottom = 409.979
 color = Color(1, 1, 1, 0.0627451)
 
 [node name="LightningStrikeLeft" type="AnimatedSprite2D" parent="."]
+visible = false
 z_index = 1
 position = Vector2(-1, -37)
 rotation = -1.5708
 scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
-frame = 6
+frame = 4
 frame_progress = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="LightningStrikeLeft"]
@@ -160,9 +162,9 @@ metadata/_edit_use_anchors_ = true
 
 [node name="LightningStrikeTop" type="AnimatedSprite2D" parent="."]
 z_index = 1
-position = Vector2(-1, -37)
+position = Vector2(-17, 2)
 rotation = 4.71239
-scale = Vector2(2, 0.913)
+scale = Vector2(-0.621165, 0.217644)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
 frame = 6
@@ -178,17 +180,17 @@ color = Color(1, 1, 1, 0.0627451)
 metadata/_edit_use_anchors_ = true
 
 [node name="LightningStrikeBottom" type="AnimatedSprite2D" parent="."]
+visible = false
 z_index = 1
-position = Vector2(-1, -37)
+position = Vector2(-1, -1)
 rotation = 4.71239
 scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
-frame = 6
+frame = 4
 frame_progress = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="LightningStrikeBottom"]
-visible = false
 offset_left = -81.5
 offset_top = -437.021
 offset_right = 86.5
