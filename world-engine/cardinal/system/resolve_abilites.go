@@ -55,6 +55,7 @@ func resolveAbilities(
 			}
 			if colType.Type == comp.WallCollide {
 				spell.Expired = true
+				*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellDisappate})
 			}
 		}
 	}

@@ -65,9 +65,9 @@ func main() {
 	))
 
 	Must(cardinal.RegisterInitSystems(w,
-		system.SpawnPlayerSystem,
-		system.SpawnWandsSystem,
+		// system.SpawnPlayerSystem,
 		system.PopulateBoardSystem,
+		system.SpawnWandsSystem,
 	))
 
 	seismicClient := system.Initialize(w)

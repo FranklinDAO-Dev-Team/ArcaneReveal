@@ -78,12 +78,12 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			// Monster Turn occurs after abilities are resolved
 			MonsterTurnSystem(world, eventLogList)
 
-			// TODO: emit activated abilities and spell log to client
-			println("TODO: emit activated abilities and spell log to client")
+			// Emit activated abilities and spell log to client
 			eventMap := make(map[string]any)
 			eventMap["turnEvent"] = *eventLogList
 			world.EmitEvent(eventMap)
 
+			// log to console
 			for _, logEntry := range *eventLogList {
 				fmt.Printf("X: %d, Y: %d, Event: %d\n",
 					logEntry.X, logEntry.Y, logEntry.Event)

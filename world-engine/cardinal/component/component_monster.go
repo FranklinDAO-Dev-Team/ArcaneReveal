@@ -4,6 +4,7 @@ type MonsterType int
 
 const (
 	LIGHT MonsterType = iota
+	MEDIUM
 	HEAVY
 )
 

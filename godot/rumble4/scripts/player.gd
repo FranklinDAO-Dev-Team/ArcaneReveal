@@ -33,12 +33,15 @@
 	
 extends Area2D
 
+
+
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
+var previous_move
 
 var animation_speed = 4
 
-var moving = false
+@export var moving = false
 var tile_size = 64
 var inputs = {
 	"right": Vector2.RIGHT,
@@ -48,6 +51,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
+@onready var animation_player = $"../BasicLightning"
 
 	
 func _ready():
@@ -93,32 +97,51 @@ func process_data():
 		print(str(x_pos) + " " + str(y_pos) + " " + str(action))
 		
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
-		var position = Vector2(x_pos * 32, y_pos * 32)
+		var position = Vector2(x_pos * 32 - 32, y_pos * 32 - 32)
 		
-		# Instantiate animation player at the position
-		var animation_player = AnimationPlayer.new()
-		add_child(animation_player)
-		#animation_player.global_position = position
+		# Load the BasicLightning scene
+		var basic_lightning_scene = load("res://scenes/Gama/BasicLightning.tscn")
 		
-		# Initiate corresponding animation based on action
-		match action:
-			0:
-				# Animate lightning bolt from the sky attack
-				#animation_player.play("lightning_bolt_attack")
-				print("lightning at: " + str(position.x) + ", " + str(position.y))
-			1:
-				# Animate explosion
-				#animation_player.play("explosion")
-				print("explosion at: " + str(position.x) + ", " + str(position.y))
-			2:
-				# Animate lightning bolt dissipating
-				#animation_player.play("lightning_dissipate")
-				print("dissipate at: " + str(position.x) + ", " + str(position.y))
-			_:
-				# Handle unexpected action
-				print("Unexpected action:", action)
+		# Create an instance of the BasicLightning scene
+		var basic_lightning_instance = basic_lightning_scene.instantiate()
+		
+		# Set the global position of the instance to the specified position
+		basic_lightning_instance.global_position = position
+		
+		# Add the instance as a child to the main scene
+		$"../".add_child(basic_lightning_instance)
+		
+		# Access the AnimationPlayer in the BasicLightning scene
+		var animation_player = basic_lightning_instance.get_node("AnimationPlayer")
+		if animation_player != null:
+			# Initiate corresponding animation based on action
+			match action:
+				0:
+					# Animate lightning bolt from the sky attack
+					animation_player.play("default")
+					print("lightning at: " + str(position.x) + ", " + str(position.y))
+				1:
+					# Animate explosion
+					animation_player.play("explosion")
+					print("explosion at: " + str(position.x) + ", " + str(position.y))
+				2:
+					# Animate lightning bolt dissipating
+					animation_player.play("lightning_dissipate")
+					print("dissipate at: " + str(position.x) + ", " + str(position.y))
+				_:
+					# Handle unexpected action
+					print("Unexpected action:", action)
+			
+			# Queue the instance for deletion after the animation finishes
+			#animation_player.queue_free()
+			#animation_player.connect("animation_finished", basic_lightning_instance, "_on_animation_finished")
+		else:
+			print("AnimationPlayer not found in BasicLightning scene")
 
-
+# Callback function to delete the instance after the animation finishes
+#func _on_animation_finished():
+	#var instance = get_parent()
+	#instance.queue_free()
 
 
 
@@ -150,12 +173,11 @@ func _input(event: InputEvent) -> void:
 	
 
 
-func damage() -> void:
-	health -= 1
+func damage(damage) -> void:
+	health -= damage
 	if health == 0:
 		queue_free()
 		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
-
 	update_health_ui()
 
 
@@ -173,10 +195,11 @@ func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
 	if !ray.is_colliding():
+		previous_move = dir 
 		#position += inputs[dir] * tile_size
 		var tween = get_tree().create_tween()
 		tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
-		moving = true
+		moving = true 
 		await tween.finished
 		moving = false
 	else:
@@ -184,5 +207,15 @@ func move(dir):
 
 
 func _on_area_entered(area):
-	if area.name == "EnemyV2":
-		print('player')
+	print("do stuff")
+	if (area.name == "Enemy1" or area.name == "Enemy2") && moving == true:
+		area.damage()
+		match area.previous_move:
+			"right": area.move("left")
+			"left": area.move("right")
+			"up": area.move("down")
+			"down": area.move("up")
+		
+		
+		
+

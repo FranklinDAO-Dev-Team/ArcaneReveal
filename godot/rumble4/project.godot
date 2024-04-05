@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Test Game"
-run/main_scene="res://scenes/Beta/testMain.tscn"
+run/main_scene="res://scenes/Gama/testMain.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://assets/icon.svg"
 
@@ -27,6 +27,10 @@ window/size/viewport_height=2500
 window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/stretch/scale=2.5
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
 
 [input]
 
