@@ -16,6 +16,11 @@ const (
 	GameEventMonsterRight                         // 6
 	GameEventMonsterDown                          // 7
 	GameEventMonsterLeft                          // 8
+	GameEventPlayerAttack                         // 9
+	GameEventPlayerUp                             // 10
+	GameEventPlayerRight                          // 11
+	GameEventPlayerDown                           // 12
+	GameEventPlayerLeft                           // 13
 )
 
 type GameEventLog struct {

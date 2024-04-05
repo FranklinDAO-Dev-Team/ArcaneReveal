@@ -32,7 +32,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 			switch turn.Msg.Action {
 			case "attack":
-				err = player_turn_attack(world, direction)
+				err = player_turn_attack(world, direction, eventLogList)
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
@@ -70,7 +70,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
 			case "move":
-				err = playerTurnMove(world, direction)
+				err = playerTurnMove(world, direction, eventLogList)
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
@@ -89,21 +89,33 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				return msg.PlayerTurnResult{}, err
 			}
 
+			// debug prints
+			for _, logEntry := range *eventLogList {
+				fmt.Printf("X: %d, Y: %d, Event: %d\n",
+					logEntry.X, logEntry.Y, logEntry.Event)
+			}
+
 			result := msg.PlayerTurnResult{Success: true}
 			return result, nil
 
 		})
+
 }
 
-func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) error {
+func player_turn_attack(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return err
 	}
-	attackPos, err := playerPos.GetUpdateFromDirection(direction)
+	blankPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
 		return err
 	}
+	attackPos, err := blankPos.GetUpdateFromDirection(direction)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("attackPos: %v\n", attackPos)
 
 	found, id, err := attackPos.GetEntityIDByPosition(world)
 	if err != nil {
@@ -114,8 +126,10 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction) e
 		if err != nil {
 			return err
 		}
+		fmt.Printf("colType: %v\n", colType)
 		switch colType.Type {
 		case comp.MonsterCollide:
+			*eventLogList = append(*eventLogList, comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: comp.GameEventPlayerAttack})
 			return comp.DecrementHealth(world, id)
 		default:
 			return fmt.Errorf("attempting to attack %s", colType.ToString())
@@ -181,35 +195,56 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 
 }
 
-func playerTurnMove(world cardinal.WorldContext, direction comp.Direction) error {
+func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
 	playerID, err := queryPlayerID(world)
 	if err != nil {
 		return err
 	}
-	currPos, err := cardinal.GetComponent[comp.Position](world, playerID)
+	playerPos, err := cardinal.GetComponent[comp.Position](world, playerID)
 	if err != nil {
 		return err
 	}
-	updatePos, err := currPos.GetUpdateFromDirection(direction)
+	*eventLogList = append(*eventLogList, comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: directionToGameEventPlayerMove(direction)})
+
+	newPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
 		return err
+	}
+	valid, err := isCollisonThere(world, *newPos)
+	if err != nil {
+		return err
+	} else if valid {
+		return fmt.Errorf("would collide at %v", newPos) // invalid postion, but don't return error, just check next direction
+	}
+	*eventLogList = append(*eventLogList, comp.GameEventLog{X: newPos.X, Y: newPos.Y, Event: directionToGameEventPlayerMove(direction)})
+
+	newNewPos, err := newPos.GetUpdateFromDirection(direction)
+	if err != nil {
+		return err
+	}
+	valid, err = isCollisonThere(world, *newNewPos)
+	if err != nil {
+		return err
+	} else if valid {
+		return fmt.Errorf("would collide at %v", newNewPos) // invalid postion, but don't return error, just check next direction
 	}
 
-	found, id, err := updatePos.GetEntityIDByPosition(world)
-	if err != nil {
-		return err
-	}
-	if found {
-		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
-		if err != nil {
-			return err
-		}
-		if colType.Type != comp.ItemCollide {
-			return fmt.Errorf("attempting to move onto an object of type %s", colType.ToString())
-		}
-	}
-
-	cardinal.SetComponent[comp.Position](world, playerID, updatePos)
+	cardinal.SetComponent[comp.Position](world, playerID, newNewPos)
 
 	return nil
+}
+
+func directionToGameEventPlayerMove(direction comp.Direction) comp.GameEvent {
+	switch direction {
+	case comp.LEFT:
+		return comp.GameEventPlayerLeft
+	case comp.RIGHT:
+		return comp.GameEventPlayerRight
+	case comp.UP:
+		return comp.GameEventPlayerUp
+	case comp.DOWN:
+		return comp.GameEventPlayerDown
+	default:
+		panic("invalid direction")
+	}
 }
