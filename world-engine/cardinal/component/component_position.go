@@ -10,8 +10,8 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-const MaxX = 4
-const MaxY = 4
+const MaxX = 11
+const MaxY = 11
 
 type Position struct {
 	X int `json:"x"`
@@ -49,7 +49,7 @@ func StringToDirection(dirStr string) (Direction, error) {
 func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error) {
 	switch direction {
 	case LEFT:
-		if p.X == 0 {
+		if p.X == -1 {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.X--
@@ -59,7 +59,7 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 		}
 		p.X++
 	case UP:
-		if p.Y == 0 {
+		if p.Y == -1 {
 			return nil, fmt.Errorf("moving out of bounds")
 		}
 		p.Y--

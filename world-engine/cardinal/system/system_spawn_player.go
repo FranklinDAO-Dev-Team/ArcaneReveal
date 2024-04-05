@@ -2,6 +2,7 @@ package system
 
 import (
 	"errors"
+	"fmt"
 
 	"pkg.world.dev/world-engine/cardinal"
 
@@ -22,10 +23,13 @@ func SpawnPlayerSystem(world cardinal.WorldContext) error {
 			CurrHealth: PLAYER_MAX_HEALTH,
 		},
 		comp.Position{
-			X: 0,
-			Y: 0,
+			X: 1,
+			Y: 1,
 		},
 	)
+	fmt.Println("player spawned")
+	p, _ := cardinal.GetComponent[comp.Position](world, 0)
+	fmt.Println(p.X, p.Y)
 
 	if err != nil {
 		return errors.New("failed to create player")
