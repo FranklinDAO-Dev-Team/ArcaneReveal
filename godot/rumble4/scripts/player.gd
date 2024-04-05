@@ -38,8 +38,11 @@ extends Area2D
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
 var previous_move
+var previous_position
 
 var animation_speed = 4
+
+
 
 @export var moving = false
 var tile_size = 64
@@ -51,6 +54,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
+@onready var game_node = get_parent()
 @onready var animation_player = $"../BasicLightning"
 
 	
@@ -69,9 +73,13 @@ func _ready():
 	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
 	#position += Vector2.ONE * tile_size / 
 
+	if game_node == null:
+		print("game_node is null, cannot access session")
+		return
 
-
-
+	if game_node.session == null:
+		print("game_node.session is null, cannot proceed")
+		return
 
 func readJSON(json_file_path):
 	var file = FileAccess.open(json_file_path, FileAccess.READ)
@@ -168,17 +176,17 @@ func update_health_ui():
 		$"../LifeBar".get_child(i).visible = health > i
 
 
-func _input(event: InputEvent) -> void:
-	#if event.is_action_pressed("ui_accept"):
-		#damage()
-	if event.is_action_pressed("enemy_left"):
-		$AnimationPlayer.play("attack_left")
-	if event.is_action_pressed("enemy_right"):
-		$AnimationPlayer.play("attack_right")
-	if event.is_action_pressed("enemy_down"):
-		$AnimationPlayer.play("attack_down")
-	if event.is_action_pressed("enemy_up"):
-		$AnimationPlayer.play("attack_up")
+#func _input(event: InputEvent) -> void:
+	##if event.is_action_pressed("ui_accept"):
+		##damage()
+	#if event.is_action_pressed("enemy_left"):
+		#$AnimationPlayer.play("attack_left")
+	#if event.is_action_pressed("enemy_right"):
+		#$AnimationPlayer.play("attack_right")
+	#if event.is_action_pressed("enemy_down"):
+		#$AnimationPlayer.play("attack_down")
+	#if event.is_action_pressed("enemy_up"):
+		#$AnimationPlayer.play("attack_up")
 	
 
 
@@ -196,14 +204,24 @@ func _unhandled_input(event):
 	for dir in inputs.keys():
 		if event.is_action_pressed(dir):
 			move(dir)
+			var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+				"GameIDStr": "71",
+				"Action": "move",
+				"Direction": dir,
+				"WandNum": "0",
+				}))
 
 
 func move(dir):
 	process_data();
 	print("move")
+	previous_move = dir
+	previous_position = position
+	print(previous_position)
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
 	if !ray.is_colliding():
+		print("no ray collide")
 		previous_move = dir 
 		#position += inputs[dir] * tile_size
 		var tween = get_tree().create_tween()
@@ -211,14 +229,32 @@ func move(dir):
 		moving = true 
 		await tween.finished
 		moving = false
+	elif is_colliding_with_enemy():
+		print("otherstuff")
 	else:
 		$AnimationPlayer.play("hit_wall")
+		
+
+func is_colliding_with_enemy() -> bool:
+	for area in get_overlapping_areas():
+		print(get_overlapping_areas())
+		if area.name == "Enemy1" or area.name == "Enemy2":
+			return true
+	return false
+	
+func recoil():
+	print("recoil triggered")
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position", previous_position, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
+	await tween.finished
+	print(position)
 
 
 func _on_area_entered(area):
 	print("do stuff")
 	if (area.name == "Enemy1" or area.name == "Enemy2") && moving == true:
 		area.damage()
+		self.recoil()
 		match area.previous_move:
 			"right": area.move("left")
 			"left": area.move("right")

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cinco-paus/query"
 	"errors"
 
 	"github.com/rs/zerolog/log"
@@ -49,7 +50,7 @@ func main() {
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
 	Must(
-	// cardinal.RegisterQuery[query.PlayerHealthRequest, query.PlayerHealthResponse](w, "player-health", query.PlayerHealth),
+		cardinal.RegisterQuery[query.GameStateRequest, query.GameStateResponse](w, "game-state", query.GameState),
 	)
 
 	// Each system executes deterministically in the order they are added.
