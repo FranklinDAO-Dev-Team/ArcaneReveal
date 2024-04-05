@@ -111,22 +111,31 @@ func process_data():
 		# Add the instance as a child to the main scene
 		$"../".add_child(basic_lightning_instance)
 		
-		# Access the AnimationPlayer in the BasicLightning scene
-		var animation_player = basic_lightning_instance.get_node("AnimationPlayer")
+		var animation_player = basic_lightning_instance.get_node("Blank")
+		
 		if animation_player != null:
 			# Initiate corresponding animation based on action
 			match action:
 				0:
 					# Animate lightning bolt from the sky attack
+					# Access the AnimationPlayer in the BasicLightning scene
+					animation_player = basic_lightning_instance.get_node("Blank")
 					animation_player.play("default")
 					print("lightning at: " + str(position.x) + ", " + str(position.y))
 				1:
 					# Animate explosion
-					animation_player.play("explosion")
+					animation_player = basic_lightning_instance.get_node("Explosion")
+					animation_player.play("default")
 					print("explosion at: " + str(position.x) + ", " + str(position.y))
 				2:
 					# Animate lightning bolt dissipating
-					animation_player.play("lightning_dissipate")
+					animation_player = basic_lightning_instance.get_node("Spark")
+					animation_player.play("default")
+					print("dissipate at: " + str(position.x) + ", " + str(position.y))
+				3:
+					# Animate lightning bolt dissipating
+					animation_player = basic_lightning_instance.get_node("WallActivation")
+					animation_player.play("default")
 					print("dissipate at: " + str(position.x) + ", " + str(position.y))
 				_:
 					# Handle unexpected action
