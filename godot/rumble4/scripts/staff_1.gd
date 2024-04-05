@@ -8,6 +8,8 @@ var initial_pos: Vector2
 var is_animation_playing = false
 var starting_pos
 
+@onready var game_node = get_parent().get_parent()
+
 @onready var staff_position_top = get_parent().get_node("StaffPositionTop")
 @onready var staff_position_bottom = get_parent().get_node("StaffPositionBottom")
 @onready var staff_position_left = get_parent().get_node("StaffPositionLeft")
@@ -54,10 +56,18 @@ func _process(delta):
 						lightning_animation_top.play("play")
 						is_animation_playing = true
 					body_ref.Direction.BOTTOM:
-						position = get_parent().position + Vector2(16, 32)
-						rotation += PI 
-						lightning_animation_bottom.play("play")
-						is_animation_playing = true
+						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+							"GameIDStr": "73",
+							"Action": "wand",
+							"Direction": "down",
+							"WandNum": "1",
+							}))
+						
+						if resp != null:
+							position = get_parent().position + Vector2(16, 32)
+							rotation += PI 
+							lightning_animation_bottom.play("play")
+							is_animation_playing = true
 					body_ref.Direction.LEFT:
 						position = get_parent().position + Vector2(0, 16)
 						rotation -= PI / 2 

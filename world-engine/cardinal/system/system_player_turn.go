@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/rs/zerolog/log"
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/message"
 	"pkg.world.dev/world-engine/cardinal/types"
@@ -84,11 +85,11 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			}
 
 			err = world.EmitEvent(map[string]any{
-				"event":     "player_turn",
-				"action":    turn.Msg.Action,
-				"direction": direction,
+				"event":     "player-turn",
+				"log": eventLogList,
 			})
 			if err != nil {
+				log.Error().Err(err).Msg("error emitting event")
 				return msg.PlayerTurnResult{}, err
 			}
 

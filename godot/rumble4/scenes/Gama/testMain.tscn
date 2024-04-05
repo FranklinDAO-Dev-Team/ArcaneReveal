@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dc6jw4arwneon"]
+[gd_scene load_steps=12 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
@@ -344,7 +344,25 @@ position = Vector2(320, 96)
 position = Vector2(320, 288)
 
 [node name="Wall21" parent="Walls" instance=ExtResource("3_ekmmf")]
-position = Vector2(288, 64)
+position = Vector2(320, 224)
+
+[node name="Wall58" parent="Walls" instance=ExtResource("3_ekmmf")]
+position = Vector2(224, 320)
+
+[node name="Wall59" parent="Walls" instance=ExtResource("3_ekmmf")]
+position = Vector2(64, 96)
+
+[node name="Wall60" parent="Walls" instance=ExtResource("3_ekmmf")]
+position = Vector2(64, 160)
+
+[node name="Wall61" parent="Walls" instance=ExtResource("3_ekmmf")]
+position = Vector2(160, 64)
+
+[node name="Wall62" parent="Walls" instance=ExtResource("3_ekmmf")]
+position = Vector2(224, 64)
+
+[node name="Wall63" parent="Walls" instance=ExtResource("3_ekmmf")]
+position = Vector2(224, 128)
 
 [node name="Wall22" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 32)
@@ -455,43 +473,22 @@ position = Vector2(96, 320)
 position = Vector2(320, 160)
 
 [node name="Enemy1" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(-1, 0)
+position = Vector2(256, 0)
 
 [node name="Enemy2" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(192, 64)
+position = Vector2(0, 256)
+
+[node name="Enemy3" parent="." instance=ExtResource("4_1sovk")]
+position = Vector2(128, 64)
+
+[node name="Enemy4" parent="." instance=ExtResource("4_1sovk")]
+position = Vector2(192, 128)
+
+[node name="Enemy5" parent="." instance=ExtResource("4_1sovk")]
+position = Vector2(256, 192)
 
 [node name="Player" parent="." instance=ExtResource("5_5f1lg")]
-position = Vector2(64, 128)
-
-[node name="Wall9" parent="." instance=ExtResource("3_ekmmf")]
-position = Vector2(64, 32)
-
-[node name="Wall9" parent="Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(64, 64)
-
-[node name="Wall9" parent="Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(32, -32)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(64, 0)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(-128, 64)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(32, 96)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(64, 64)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(-32, -32)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(128, -64)
-
-[node name="Wall9" parent="Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9/Wall9" instance=ExtResource("3_ekmmf")]
-position = Vector2(-32, -32)
+position = Vector2(0, 0)
 
 [node name="LifeBar" parent="." instance=ExtResource("8_th4ig")]
 offset_left = 40.0

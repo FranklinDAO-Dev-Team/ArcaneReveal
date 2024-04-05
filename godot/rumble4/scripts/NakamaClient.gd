@@ -3,11 +3,9 @@ extends Node
 @onready var enemy1: Area2D = $Enemy1
 @onready var enemy2: Area2D = $Enemy2
 	
-@onready var client : NakamaClient = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
-@onready var socket = Nakama.create_socket_from(client)
-# Get the System's unique device identifier
-@onready var device_id = OS.get_unique_id()
-@onready var session : NakamaSession = await client.authenticate_device_async(device_id)
+@onready var client : NakamaClient
+@onready var socket
+@onready var session : NakamaSession
 
 var enemies_defeated = 0
 
@@ -22,14 +20,17 @@ func _on_enemy_exited(enemy: Area2D):
 func _ready():
 	enemy1.tree_exited.connect(_on_enemy_exited.bind(enemy1))
 	enemy2.tree_exited.connect(_on_enemy_exited.bind(enemy2))
+	
+	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
+	socket = Nakama.create_socket_from(client)
 
 	# Authenticate with the Nakama server using Device Authentication
-	var session_result: NakamaAsyncResult = await client.authenticate_device_async(device_id)
-	if session_result.is_exception():
-		print("An error occurred: %s" % session_result)
+	var device_id = OS.get_unique_id()
+	session = await client.authenticate_device_async(device_id)
+	if session.is_exception():
+		print("An error occurred: %s" % session)
 		return
 
-	session = session_result
 	print("Successfully authenticated: %s" % session)
 
 
@@ -45,16 +46,27 @@ func _ready():
 	var resp = await client.rpc_async(session, "nakama/show-persona")
 	if resp.is_exception():
 		print("An error occured: %s", % resp)
+		# Create persona	
+		resp = await client.rpc_async(session, "nakama/claim-persona", JSON.stringify({"personaTag": "CoolMage"}))
+		if resp.is_exception():
+			print("An error occured while claiming persona: %s", % resp)
+			return
+		print("Created PersonaTag: CoolMage")
 	else:
 		if JSON.parse_string(resp.payload)["status"] == "accepted":
 			print("Device already has a persona, skipping creation")
+	
+	while true:
+		# wait until show persona succeed
+		var personaResp = await client.rpc_async(session, "nakama/show-persona")
+		if personaResp.is_exception():
+			print("persona is not registered yet, waiting")
+			await get_tree().create_timer(0.25)
+			continue
 		else:
-			# Create persona	
-			resp = await client.rpc_async(session, "nakama/claim-persona", JSON.stringify({"personaTag": "CoolMage"}))
-			if resp.is_exception():
-				print("An error occured: %s", % resp)
-				return
-			print("Created PersonaTag: CoolMage")
+			if personaResp.payload != null and JSON.parse_string(personaResp.payload)["status"] == "accepted":
+				print("Device has a persona, continuing")
+				break
 	
 	# Make CreateGame TXN call
 	var random = RandomNumberGenerator.new()

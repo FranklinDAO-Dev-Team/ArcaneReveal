@@ -127,24 +127,24 @@ func process_data():
 				0:
 					# Animate lightning bolt from the sky attack
 					animation_player.play("default")
-					print("lightning at: " + str(position.x) + ", " + str(position.y))
+					#print("lightning at: " + str(position.x) + ", " + str(position.y))
 				1:
 					# Animate explosion
 					animation_player.play("explosion")
-					print("explosion at: " + str(position.x) + ", " + str(position.y))
+					#print("explosion at: " + str(position.x) + ", " + str(position.y))
 				2:
 					# Animate lightning bolt dissipating
 					animation_player.play("lightning_dissipate")
-					print("dissipate at: " + str(position.x) + ", " + str(position.y))
-				_:
+					#print("dissipate at: " + str(position.x) + ", " + str(position.y))
+				#_:
 					# Handle unexpected action
-					print("Unexpected action:", action)
+					#print("Unexpected action:", action)
 			
 			# Queue the instance for deletion after the animation finishes
 			#animation_player.queue_free()
 			#animation_player.connect("animation_finished", basic_lightning_instance, "_on_animation_finished")
-		else:
-			print("AnimationPlayer not found in BasicLightning scene")
+		#else:
+		#	print("AnimationPlayer not found in BasicLightning scene")
 
 # Callback function to delete the instance after the animation finishes
 #func _on_animation_finished():
@@ -153,14 +153,8 @@ func process_data():
 
 
 
-
-
-
-
-
 func _process(delta):
 	$Sprite.play("idle")
-
 
 func update_health_ui():
 	for i in range(MAX_HEALTH):
@@ -194,13 +188,19 @@ func _unhandled_input(event):
 		return
 	for dir in inputs.keys():
 		if event.is_action_pressed(dir):
-			move(dir)
 			var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-				"GameIDStr": "71",
+				"GameIDStr": "73",
 				"Action": "move",
 				"Direction": dir,
 				"WandNum": "0",
 				}))
+				
+			#var resp2 = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
+			##JSON.parse_string(resp2)
+			##print(resp2)
+				
+			if resp != null:
+				move(dir)
 
 
 func move(dir):
