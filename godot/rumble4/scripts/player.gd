@@ -156,7 +156,7 @@ func _input(event: InputEvent) -> void:
 func damage(damage) -> void:
 	health -= damage
 	if health == 0:
-		self.visible = false
+		queue_free()
 		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
 	update_health_ui()
 
@@ -188,7 +188,7 @@ func move(dir):
 
 func _on_area_entered(area):
 	print("do stuff")
-	if (area.name == "Enemy - 2 damage" or area.name == "Enemy - 1 damage") && moving == true:
+	if (area.name == "Enemy1" or area.name == "Enemy2") && moving == true:
 		area.damage()
 		match area.previous_move:
 			"right": area.move("left")
