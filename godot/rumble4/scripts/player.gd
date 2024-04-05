@@ -51,6 +51,7 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
+@onready var animation_player = $"../BasicLightning"
 
 	
 func _ready():
@@ -98,33 +99,49 @@ func process_data():
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
 		var position = Vector2(x_pos * 32 - 32, y_pos * 32 - 32)
 		
-		# Instantiate animation player at the position
-		var animation_player = $"../SpellAnimation"
-		#add_child(animation_player)
-		#animation_player.position = position
+		# Load the BasicLightning scene
+		var basic_lightning_scene = load("res://scenes/Gama/BasicLightning.tscn")
 		
-		# Initiate corresponding animation based on action
-		match action:
-			0:
-				# Animate lightning bolt from the sky attack
-				#var animation = $"../SpellAnimation/AnimatedSprite2D".new
-				#animation.position = Vector2(position.x, position.y)
-				#animation.play("blank")
-				#$"../SpellAnimation/AnimationPlayer".play("default")
-				print("lightning at: " + str(position.x) + ", " + str(position.y))
-			1:
-				# Animate explosion
-				#animation_player.play("explosion")
-				print("explosion at: " + str(position.x) + ", " + str(position.y))
-			2:
-				# Animate lightning bolt dissipating
-				#animation_player.play("lightning_dissipate")
-				print("dissipate at: " + str(position.x) + ", " + str(position.y))
-			_:
-				# Handle unexpected action
-				print("Unexpected action:", action)
+		# Create an instance of the BasicLightning scene
+		var basic_lightning_instance = basic_lightning_scene.instantiate()
+		
+		# Set the global position of the instance to the specified position
+		basic_lightning_instance.global_position = position
+		
+		# Add the instance as a child to the main scene
+		$"../".add_child(basic_lightning_instance)
+		
+		# Access the AnimationPlayer in the BasicLightning scene
+		var animation_player = basic_lightning_instance.get_node("AnimationPlayer")
+		if animation_player != null:
+			# Initiate corresponding animation based on action
+			match action:
+				0:
+					# Animate lightning bolt from the sky attack
+					animation_player.play("default")
+					print("lightning at: " + str(position.x) + ", " + str(position.y))
+				1:
+					# Animate explosion
+					animation_player.play("explosion")
+					print("explosion at: " + str(position.x) + ", " + str(position.y))
+				2:
+					# Animate lightning bolt dissipating
+					animation_player.play("lightning_dissipate")
+					print("dissipate at: " + str(position.x) + ", " + str(position.y))
+				_:
+					# Handle unexpected action
+					print("Unexpected action:", action)
+			
+			# Queue the instance for deletion after the animation finishes
+			#animation_player.queue_free()
+			#animation_player.connect("animation_finished", basic_lightning_instance, "_on_animation_finished")
+		else:
+			print("AnimationPlayer not found in BasicLightning scene")
 
-
+# Callback function to delete the instance after the animation finishes
+#func _on_animation_finished():
+	#var instance = get_parent()
+	#instance.queue_free()
 
 
 

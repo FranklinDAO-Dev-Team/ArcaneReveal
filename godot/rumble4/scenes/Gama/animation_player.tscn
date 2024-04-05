@@ -37,3 +37,5 @@ _data = {
 libraries = {
 "": SubResource("AnimationLibrary_tpi2w")
 }
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

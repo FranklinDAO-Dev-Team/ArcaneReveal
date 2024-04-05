@@ -28,6 +28,10 @@ window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/stretch/scale=2.5
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
+
 [input]
 
 up={
