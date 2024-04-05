@@ -1,8 +1,6 @@
 package component
 
-import (
-	"pkg.world.dev/world-engine/cardinal"
-)
+import "pkg.world.dev/world-engine/cardinal"
 
 const Ability3ID = 3
 
@@ -21,29 +19,45 @@ func (a Ability3) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	found, id, err := spellPosition.GetEntityIDByPosition(world)
+	perpDirOne := (direction + 1) % 4
+	perpDirTwo := (direction + 3) % 4
+
+	damageDealtOne, err := resolveOneA3Check(world, spellPosition, perpDirOne, executeUpdates, eventLogList)
 	if err != nil {
 		return false, err
 	}
-	if found {
-		colType, err := cardinal.GetComponent[Collidable](world, id)
-		if err != nil {
-			return false, err
-		}
-		if colType.Type == WallCollide {
-			for i := 0; i < 3; i++ {
-				for j := 0; j < 3; j++ {
-					damageDealt, err := damageAtPostion(world, spellPosition, executeUpdates, false)
-					if err != nil {
-						return false, err
-					}
-					if damageDealt {
-						*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellDamage})
-					}
-					reveal = true
-				}
+	damageDealtTwo, err := resolveOneA3Check(world, spellPosition, perpDirTwo, executeUpdates, eventLogList)
+	if err != nil {
+		return false, err
+	}
+
+	reveal = damageDealtOne || damageDealtTwo
+
+	return reveal, nil
+}
+
+func resolveOneA3Check(world cardinal.WorldContext, spellPosition *Position, perpDir Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
+	adjPos, err := spellPosition.GetUpdateFromDirection(perpDir)
+	if err != nil {
+		return false, err
+	}
+	hitWall, err := IsCollisonThere(world, *adjPos)
+	if err != nil {
+		return false, err
+	}
+	if hitWall { // this spell MUST hit through walls
+		adjPlayablePos, err := adjPos.GetUpdateFromDirection(perpDir)
+		// fmt.Println("adjPlayablePos", adjPlayablePos)
+		if err == nil {
+			damageDealt, err := damageAtPostion(world, adjPlayablePos, executeUpdates, false)
+			if err != nil {
+				return false, err
+			}
+			if damageDealt {
+				*eventLogList = append(*eventLogList, GameEventLog{X: adjPlayablePos.X, Y: adjPlayablePos.Y, Event: GameEventSpellDamage})
+				return true, nil
 			}
 		}
 	}
-	return reveal, nil
+	return false, nil
 }

@@ -41,9 +41,9 @@ type Ability interface {
 }
 
 var AbilityMap = map[int]Ability{
-	1: &Ability1{}, // damage
-	2: &Ability2{}, // side damage
-	3: &Ability3{}, // wall damage
+	1: &Ability1{}, // damage attack
+	2: &Ability2{}, // side damage attack
+	3: &Ability3{}, // wall damage attack
 	4: &Ability4{}, // explosion
 	5: &Ability5{}, // up heal
 	6: &Ability6{}, // right heal
