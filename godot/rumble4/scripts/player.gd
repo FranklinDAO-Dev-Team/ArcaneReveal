@@ -84,10 +84,13 @@ func process_data():
 	
 	var json_file_path = "res://testInput.json"
 	var data_received = readJSON(json_file_path);
-	for data in data_received:
-		var x_pos = data[0]
-		var y_pos = data[1]
-		var action = data[2]
+	print(data_received.data)
+	for data in data_received.data:
+		var x_pos = int(data[0])
+		var y_pos = int(data[1])
+		var action = int(data[2])
+		
+		print(str(x_pos) + " " + str(y_pos) + " " + str(action))
 		
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
 		var position = Vector2(x_pos * 32, y_pos * 32)
@@ -95,25 +98,26 @@ func process_data():
 		# Instantiate animation player at the position
 		var animation_player = AnimationPlayer.new()
 		add_child(animation_player)
-		animation_player.global_position = position
+		#animation_player.global_position = position
 		
 		# Initiate corresponding animation based on action
 		match action:
 			0:
 				# Animate lightning bolt from the sky attack
 				#animation_player.play("lightning_bolt_attack")
-				print("lightning at: " + position)
+				print("lightning at: " + str(position.x) + ", " + str(position.y))
 			1:
 				# Animate explosion
 				#animation_player.play("explosion")
-				print("explosion at: " + position)
+				print("explosion at: " + str(position.x) + ", " + str(position.y))
 			2:
 				# Animate lightning bolt dissipating
 				#animation_player.play("lightning_dissipate")
-				print("dissipate at: " + position)
+				print("dissipate at: " + str(position.x) + ", " + str(position.y))
 			_:
 				# Handle unexpected action
 				print("Unexpected action:", action)
+
 
 
 
