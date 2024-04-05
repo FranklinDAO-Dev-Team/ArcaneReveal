@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dc6jw4arwneon"]
+[gd_scene load_steps=13 format=3 uid="uid://dc6jw4arwneon"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_x7epu"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="8_th4ig"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="9_imb6i"]
+[ext_resource type="PackedScene" path="res://scenes/Gama/BasicLightning.tscn" id="10_kbkyr"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="10_xqvk1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
@@ -526,6 +527,8 @@ offset_top = 328.0
 offset_right = 272.0
 offset_bottom = 368.0
 text = "                YOU WIN!"
+
+[node name="BasicLightning" parent="." instance=ExtResource("10_kbkyr")]
 
 [connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
 [connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]
