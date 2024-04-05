@@ -64,7 +64,7 @@ func move(dir):
 		moving = false
 		
 func _on_area_entered(area):
-	print(area)
+	print("sugma")
 	if area.name == "Player" and moving == true:
 		area.damage(attack_damage)
 		print(previous_move)
@@ -73,4 +73,15 @@ func _on_area_entered(area):
 			"left": area.move("right")
 			"up": area.move("down")
 			"down": area.move("up")
-		
+
+func _input(event: InputEvent) -> void:
+	#if event.is_action_pressed("ui_accept"):
+		#damage()
+	if event.is_action_pressed("enemy_left"):
+		$AnimationPlayer.play("attack_left")
+	if event.is_action_pressed("enemy_right"):
+		$AnimationPlayer.play("attack_right")
+	if event.is_action_pressed("enemy_down"):
+		$AnimationPlayer.play("attack_down")
+	if event.is_action_pressed("enemy_up"):
+		$AnimationPlayer.play("attack_up")

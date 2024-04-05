@@ -38,7 +38,7 @@ extends Area2D
 const MAX_HEALTH = 5
 var health = MAX_HEALTH
 var previous_move
-
+var previous_position = Vector2()
 var animation_speed = 4
 
 @export var moving = false
@@ -190,31 +190,33 @@ func _unhandled_input(event):
 
 
 func move(dir):
-	process_data();
-	print("move")
-	ray.target_position = inputs[dir] * tile_size
-	ray.force_raycast_update()
-	if !ray.is_colliding():
-		previous_move = dir 
-		#position += inputs[dir] * tile_size
-		var tween = get_tree().create_tween()
-		tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
-		moving = true 
-		await tween.finished
-		moving = false
-	else:
-		$AnimationPlayer.play("hit_wall")
+	var initial_position = position  # Store the current position before moving
+	previous_move = dir
+
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed)
+	tween.set_trans(Tween.TRANS_SINE)
+	moving = true
+	await tween.finished
+	moving = false
+
+	# Check collision after moving
+	if is_colliding_with_enemy():
+		position = initial_position  # Move back to the previous position if collided with an enemy
+
+func is_colliding_with_enemy() -> bool:
+	for area in get_overlapping_areas():
+		if area.name == "Enemy1" or area.name == "Enemy2":
+			return true
+	return false
+
 
 
 func _on_area_entered(area):
 	print("do stuff")
 	if (area.name == "Enemy1" or area.name == "Enemy2") && moving == true:
 		area.damage()
-		match area.previous_move:
-			"right": area.move("left")
-			"left": area.move("right")
-			"up": area.move("down")
-			"down": area.move("up")
+		
 		
 		
 		
