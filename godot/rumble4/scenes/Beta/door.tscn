@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3 uid="uid://r62u7glqoqtw"]
+
+[ext_resource type="Script" path="res://scripts/door.gd" id="1_gcq3c"]
+[ext_resource type="Texture2D" uid="uid://con4we8uha0cn" path="res://assets/open_door.tres" id="2_jjrss"]
+[ext_resource type="Texture2D" uid="uid://vod1ym06vwqj" path="res://assets/closed_door.tres" id="3_5k5hl"]
+[ext_resource type="Texture2D" uid="uid://bjjbcxi8eile8" path="res://assets/TX Props.png" id="4_cm4wi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7yt81"]
+size = Vector2(54, 20)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7jqdr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_cm4wi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_5k5hl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_jjrss")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Door" type="StaticBody2D"]
+script = ExtResource("1_gcq3c")
+metadata/_edit_vertical_guides_ = [0.0, 32.0]
+metadata/_edit_horizontal_guides_ = [0.0, 0.0, 32.0]
+
+[node name="DoorZone" type="Area2D" parent="."]
+
+[node name="DoorCollision" type="CollisionShape2D" parent="DoorZone"]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_7yt81")
+
+[node name="DoorCollision2" type="CollisionShape2D" parent="DoorZone"]
+position = Vector2(16, 16)
+rotation = 1.57093
+shape = SubResource("RectangleShape2D_7yt81")
+
+[node name="OpenDoor" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_jjrss")
+centered = false
+
+[node name="ClosedDoor" type="Sprite2D" parent="."]
+position = Vector2(16.5, 11.5)
+scale = Vector2(0.87, 0.821)
+texture = ExtResource("3_5k5hl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_7jqdr")
+
+[connection signal="area_entered" from="DoorZone" to="." method="_on_door_zone_area_entered"]
+[connection signal="area_exited" from="DoorZone" to="." method="_on_door_zone_area_exited"]

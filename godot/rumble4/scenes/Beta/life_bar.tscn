@@ -1,0 +1,50 @@
+[gd_scene load_steps=4 format=3 uid="uid://cflwrb4c6hj8h"]
+
+[ext_resource type="Texture2D" path="res://assets/heart2.tres" id="1_e0jun"]
+[ext_resource type="Texture2D" path="res://assets/heart3.tres" id="2_rix3q"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gdfsd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_e0jun")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_rix3q")
+}],
+"loop": true,
+"name": &"hearts",
+"speed": 5.0
+}]
+
+[node name="LifeBar" type="HBoxContainer"]
+
+[node name="Life1" type="AnimatedSprite2D" parent="."]
+position = Vector2(23, 19)
+scale = Vector2(2.5625, 2.875)
+sprite_frames = SubResource("SpriteFrames_gdfsd")
+animation = &"hearts"
+
+[node name="Life2" type="AnimatedSprite2D" parent="."]
+position = Vector2(71, 19)
+scale = Vector2(2.5625, 2.875)
+sprite_frames = SubResource("SpriteFrames_gdfsd")
+animation = &"hearts"
+
+[node name="Life3" type="AnimatedSprite2D" parent="."]
+position = Vector2(119, 19)
+scale = Vector2(2.5625, 2.875)
+sprite_frames = SubResource("SpriteFrames_gdfsd")
+animation = &"hearts"
+
+[node name="Life4" type="AnimatedSprite2D" parent="."]
+position = Vector2(167, 19)
+scale = Vector2(2.5625, 2.875)
+sprite_frames = SubResource("SpriteFrames_gdfsd")
+animation = &"hearts"
+
+[node name="Life5" type="AnimatedSprite2D" parent="."]
+position = Vector2(215, 19)
+scale = Vector2(2.5625, 2.875)
+sprite_frames = SubResource("SpriteFrames_gdfsd")
+animation = &"hearts"
