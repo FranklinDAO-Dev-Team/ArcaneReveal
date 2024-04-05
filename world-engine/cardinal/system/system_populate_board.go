@@ -36,7 +36,7 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 	// create monsters
 	createMonster(world, 9, 1, comp.LIGHT)
 	createMonster(world, 1, 9, comp.LIGHT)
-	createMonster(world, 5, 3, comp.MEDIUM)
+	createMonster(world, 3, 3, comp.MEDIUM)
 	createMonster(world, 7, 5, comp.LIGHT)
 	createMonster(world, 9, 7, comp.MEDIUM)
 

@@ -1,6 +1,8 @@
 package component
 
 import (
+	"fmt"
+
 	"pkg.world.dev/world-engine/cardinal"
 )
 
@@ -24,6 +26,8 @@ func (a Ability2) Resolve(
 	perpDirOne := (direction + 1) % 4
 	damageDealtOne := false
 	adjOne, err := spellPosition.GetUpdateFromDirection(perpDirOne)
+	adjPlayableOne, err := adjOne.GetUpdateFromDirection(perpDirOne)
+	fmt.Println("adjOne", adjOne)
 	if err == nil {
 		damageDealtOne, err = damageAtPostion(world, adjOne, executeUpdates, false)
 		if err != nil {
@@ -37,6 +41,7 @@ func (a Ability2) Resolve(
 	perpDirTwo := (direction + 3) % 4
 	damageDealtTwo := false
 	adjTwo, err := spellPosition.GetUpdateFromDirection(perpDirTwo)
+	fmt.Println("adjTwo", adjTwo)
 	if err == nil {
 		damageDealtTwo, err = damageAtPostion(world, adjTwo, executeUpdates, false)
 		if err != nil {
