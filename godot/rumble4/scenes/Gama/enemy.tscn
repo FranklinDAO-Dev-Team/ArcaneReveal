@@ -50,12 +50,11 @@ script = ExtResource("1_fcab3")
 position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_t6hbu")
 
-[node name="Anim" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(5, 5)
 scale = Vector2(0.75, 0.71875)
 sprite_frames = SubResource("SpriteFrames_kri47")
 animation = &"idle"
-frame_progress = 0.274074
 centered = false
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
