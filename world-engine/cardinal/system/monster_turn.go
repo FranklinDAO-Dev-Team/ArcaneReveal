@@ -54,7 +54,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 				turnErr = err
 				return false // if error, break out of search
 			}
-			fmt.Printf("monsterID: %d, origMonsterPos: %v, direction: %d\n", id, origMonsterPos, direction)
+			*eventLogList = append(*eventLogList, comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: directionToMonsterAttack(direction)})
 
 			// calculate new monster position
 			newMonsterPos, err := origMonsterPos.GetUpdateFromDirection(direction)
@@ -63,6 +63,8 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 				turnErr = err
 				return false // if error, break out of search
 			}
+			*eventLogList = append(*eventLogList, comp.GameEventLog{X: newMonsterPos.X, Y: newMonsterPos.Y, Event: directionToMonsterAttack(direction)})
+
 			// calculate new monster position
 			newNewMonsterPos, err := newMonsterPos.GetUpdateFromDirection(direction)
 			if err != nil {
@@ -70,7 +72,6 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 				turnErr = err
 				return false // if error, break out of search
 			}
-			fmt.Printf("newMonsterPos: %v, newNewMonsterPos: %v\n", newMonsterPos, newNewMonsterPos)
 
 			// update monster position onchain
 			err = cardinal.SetComponent[comp.Position](world, id, newNewMonsterPos)
@@ -79,9 +80,8 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 				turnErr = err
 				return false // if error, break out of search
 			}
-
-			// add event to event log
-			*eventLogList = append(*eventLogList, comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: directionToMonsterAttack(direction)})
+			// debug print
+			fmt.Printf("origMonsterPos: %v, newMonsterPos: %v, newNewMonsterPos: %v\n", origMonsterPos, newMonsterPos, newNewMonsterPos)
 		}
 		return true // always return true to move on to the next monster
 	})
