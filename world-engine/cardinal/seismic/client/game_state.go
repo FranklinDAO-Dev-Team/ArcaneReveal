@@ -60,6 +60,8 @@ func NewGameState(playerSource *big.Int) (*GameState, error) {
 		}
 	}
 
+	fmt.Println("In seismic/client/game_state.go. Debug print attributes:", attributes)
+
 	return &GameState{
 		PlayerSource:  playerSource.String(),
 		SeismicSource: seismicSource.String(),
