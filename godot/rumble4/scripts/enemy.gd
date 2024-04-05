@@ -38,7 +38,7 @@ func damage() -> void:
 	print(health)
 	health -= 1
 	if health == 0:
-		self.visible = false
+		queue_free()
 	$healthbar.value = health
 	print(health)
 	
