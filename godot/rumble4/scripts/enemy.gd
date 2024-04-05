@@ -60,6 +60,13 @@ func _unhandled_input(event):
 		if event.is_action_pressed(dir):
 			move(dir)
 			
+			
+func attack_animation():
+	$Sprite.stop()
+	$Sprite.play("attack")
+	$Sprite.play("idle")
+
+	
 func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
@@ -73,11 +80,8 @@ func move(dir):
 		
 func _on_area_entered(area):
 	print("sugma")
-	if area.name == "Player" and moving == true:
+	if area.name == "Player" && moving == true:
 		area.damage(attack_damage)
 		print(previous_move)
-		match area.previous_move:
-			"right": area.move("left")
-			"left": area.move("right")
-			"up": area.move("down")
-			"down": area.move("up")
+		attack_animation()
+
