@@ -96,18 +96,21 @@ func process_data():
 		print(str(x_pos) + " " + str(y_pos) + " " + str(action))
 		
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
-		var position = Vector2(x_pos * 32, y_pos * 32)
+		var position = Vector2(x_pos * 32 - 32, y_pos * 32 - 32)
 		
 		# Instantiate animation player at the position
-		var animation_player = AnimationPlayer.new()
-		add_child(animation_player)
-		#animation_player.global_position = position
+		var animation_player = $"../SpellAnimation"
+		#add_child(animation_player)
+		animation_player.position = position
 		
 		# Initiate corresponding animation based on action
 		match action:
 			0:
 				# Animate lightning bolt from the sky attack
-				#animation_player.play("lightning_bolt_attack")
+				#var animation = $"../SpellAnimation/AnimatedSprite2D".new
+				#animation.position = Vector2(position.x, position.y)
+				#animation.play("blank")
+				$"../SpellAnimation/AnimationPlayer".play("default")
 				print("lightning at: " + str(position.x) + ", " + str(position.y))
 			1:
 				# Animate explosion
