@@ -35,7 +35,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 
 		if manDist == 2 {
 			// attack since player is in range
-			playerID, err := queryPlayerID(world)
+			playerID, err := comp.QueryPlayerID(world)
 			if err != nil {
 				fmt.Println("MonsterTurn err 2")
 				turnErr = err

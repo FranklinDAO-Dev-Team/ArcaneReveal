@@ -1,6 +1,9 @@
 package component
 
-import "pkg.world.dev/world-engine/cardinal"
+import (
+	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
+)
 
 func IsCollisonThere(world cardinal.WorldContext, pos Position) (bool, error) {
 	found, id, err := pos.GetEntityIDByPosition(world)
@@ -23,4 +26,8 @@ func IsCollisonThere(world cardinal.WorldContext, pos Position) (bool, error) {
 	}
 	// no entity found, so it's not a wall
 	return false, nil
+}
+
+func QueryPlayerID(world cardinal.WorldContext) (types.EntityID, error) {
+	return 0, nil // current hardcoded, player is always first entity created
 }

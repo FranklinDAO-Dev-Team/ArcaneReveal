@@ -37,3 +37,23 @@ func DecrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err 
 
 	return nil
 }
+
+func IncrementHealth(world cardinal.WorldContext, entityID types.EntityID) (inc bool, err error) {
+	health, err := cardinal.GetComponent[Health](world, entityID)
+	if err != nil {
+		return false, err
+	}
+
+	if health.CurrHealth != health.MaxHealth {
+		health.CurrHealth++
+
+		err = cardinal.SetComponent[Health](world, entityID, health)
+		if err != nil {
+			return false, err
+		}
+
+		return true, nil
+	} else {
+		return false, nil
+	}
+}

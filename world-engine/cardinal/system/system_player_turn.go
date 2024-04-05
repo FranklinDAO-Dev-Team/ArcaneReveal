@@ -196,7 +196,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 }
 
 func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
-	playerID, err := queryPlayerID(world)
+	playerID, err := comp.QueryPlayerID(world)
 	if err != nil {
 		return err
 	}
