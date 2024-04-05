@@ -1,41 +1,65 @@
-[gd_scene load_steps=9 format=3 uid="uid://cqrcx4mk6o7fv"]
+[gd_scene load_steps=16 format=3 uid="uid://cqrcx4mk6o7fv"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_fcab3"]
-[ext_resource type="Texture2D" uid="uid://b77xty3tq2uyx" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Rogue/Idle/Idle-Sheet.png" id="2_4p5im"]
+[ext_resource type="Texture2D" uid="uid://dj61foprisa50" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal1.png" id="2_02pmt"]
+[ext_resource type="Texture2D" uid="uid://c73rer3i3mv30" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal2.png" id="3_58o5e"]
+[ext_resource type="Texture2D" uid="uid://dcs8seaulu5eb" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal3.png" id="4_ocv7m"]
+[ext_resource type="Texture2D" uid="uid://dbhxxukaugvu" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal4.png" id="5_w83i4"]
+[ext_resource type="Texture2D" uid="uid://b5p1ll7pxjsob" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal5.png" id="6_luyb0"]
+[ext_resource type="Texture2D" uid="uid://bd1suk2pc53dq" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal6.png" id="7_kybbu"]
+[ext_resource type="Texture2D" uid="uid://7hqgg7rxskhg" path="res://assets/Little Mage/Idle/Idle1.png" id="8_amci7"]
+[ext_resource type="Texture2D" uid="uid://bk0m37kmn5h1k" path="res://assets/Little Mage/Idle/Idle2.png" id="9_1hwyd"]
+[ext_resource type="Texture2D" uid="uid://dw5glqi6743hl" path="res://assets/Little Mage/Idle/Idle3.png" id="10_neqhw"]
+[ext_resource type="Texture2D" uid="uid://deku44ra7d12x" path="res://assets/Little Mage/Idle/Idle4.png" id="11_5uc1a"]
+[ext_resource type="Texture2D" uid="uid://7x0vh0xpmk60" path="res://assets/Little Mage/Idle/Idle5.png" id="12_1jd60"]
+[ext_resource type="Texture2D" uid="uid://bmux3p13jry11" path="res://assets/Little Mage/Idle/Idle6.png" id="13_he3cl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
 size = Vector2(30, 30)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xa186"]
-atlas = ExtResource("2_4p5im")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dpr0h"]
-atlas = ExtResource("2_4p5im")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wp85u"]
-atlas = ExtResource("2_4p5im")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2va1g"]
-atlas = ExtResource("2_4p5im")
-region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kri47"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xa186")
+"texture": ExtResource("2_02pmt")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dpr0h")
+"texture": ExtResource("3_58o5e")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wp85u")
+"texture": ExtResource("4_ocv7m")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_2va1g")
+"texture": ExtResource("5_w83i4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_luyb0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_kybbu")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_amci7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_1hwyd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_neqhw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_5uc1a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_1jd60")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_he3cl")
 }],
 "loop": true,
 "name": &"idle",
@@ -51,10 +75,11 @@ position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_t6hbu")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(5, 5)
-scale = Vector2(0.75, 0.71875)
+position = Vector2(1, 1)
+scale = Vector2(1.875, 1.875)
 sprite_frames = SubResource("SpriteFrames_kri47")
-animation = &"idle"
+animation = &"attack"
+frame_progress = 0.149807
 centered = false
 
 [node name="RayCast2D" type="RayCast2D" parent="."]

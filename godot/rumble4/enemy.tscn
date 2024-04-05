@@ -1,0 +1,123 @@
+[gd_scene load_steps=16 format=3 uid="uid://cn33ldjo7gt78"]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_wo51w"]
+[ext_resource type="Texture2D" uid="uid://ci7iksysfmdpg" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal1.png" id="2_31fsy"]
+[ext_resource type="Texture2D" uid="uid://cfmugxrkwqdrb" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal2.png" id="3_ns2eh"]
+[ext_resource type="Texture2D" uid="uid://c60cjr7iqafvt" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal3.png" id="4_67h3o"]
+[ext_resource type="Texture2D" uid="uid://dhl217603semn" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal4.png" id="5_p6gjx"]
+[ext_resource type="Texture2D" uid="uid://chfix2pof1s3b" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal5.png" id="6_3a2he"]
+[ext_resource type="Texture2D" uid="uid://ib0vbe3a1r81" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal6.png" id="7_kpylr"]
+[ext_resource type="Texture2D" uid="uid://7hqgg7rxskhg" path="res://assets/Little Mage/Idle/Idle1.png" id="8_dbm0w"]
+[ext_resource type="Texture2D" uid="uid://bk0m37kmn5h1k" path="res://assets/Little Mage/Idle/Idle2.png" id="9_4xv8i"]
+[ext_resource type="Texture2D" uid="uid://dw5glqi6743hl" path="res://assets/Little Mage/Idle/Idle3.png" id="10_bmlxo"]
+[ext_resource type="Texture2D" uid="uid://deku44ra7d12x" path="res://assets/Little Mage/Idle/Idle4.png" id="11_auqim"]
+[ext_resource type="Texture2D" uid="uid://7x0vh0xpmk60" path="res://assets/Little Mage/Idle/Idle5.png" id="12_o8aur"]
+[ext_resource type="Texture2D" uid="uid://bmux3p13jry11" path="res://assets/Little Mage/Idle/Idle6.png" id="13_cp2sq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
+size = Vector2(30, 30)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kri47"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_31fsy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ns2eh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_67h3o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_p6gjx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_3a2he")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_kpylr")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_31fsy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ns2eh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_67h3o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_p6gjx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_3a2he")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_kpylr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_dbm0w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_4xv8i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_bmlxo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_auqim")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_o8aur")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_cp2sq")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="EnemyV2" type="Area2D"]
+position = Vector2(-1, -1)
+script = ExtResource("1_wo51w")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_t6hbu")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, 1)
+scale = Vector2(0.9375, 0.9375)
+sprite_frames = SubResource("SpriteFrames_kri47")
+animation = &"attack"
+centered = false
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2(16, 16)
+enabled = false
+target_position = Vector2(2.08165e-12, 32)
+
+[node name="healthbar" type="ProgressBar" parent="."]
+modulate = Color(0, 1, 0.0784314, 1)
+offset_top = 1.0
+offset_right = 310.0
+offset_bottom = 28.0
+scale = Vector2(0.1, 0.1)
+max_value = 5.0
+step = 1.0
+show_percentage = false
+
+[node name="TextureRect" type="TextureRect" parent="healthbar"]
+layout_mode = 0
+offset_top = -10.0
+offset_right = 40.0
+offset_bottom = 30.0
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
