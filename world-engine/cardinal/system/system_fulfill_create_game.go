@@ -5,6 +5,7 @@ import (
 	"cinco-paus/msg"
 	"cinco-paus/seismic/client"
 	"fmt"
+
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/message"
 )
@@ -50,13 +51,18 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 				}
 			}
 
-			_, err := cardinal.Create(world, component.Game{
+			gameID, err := cardinal.Create(world, component.Game{
 				PersonaTag:  req.Msg.Result.PersonaTag,
 				Commitments: &commitments,
 			})
 			if err != nil {
 				return msg.FulfillCreateGameMsgResult{}, fmt.Errorf("failed to create Game component: %v", err)
 			}
+
+			world.EmitEvent(map[string]any{
+				"event": "game-created",
+				"gameID": gameID,
+			})
 
 			return msg.FulfillCreateGameMsgResult{}, nil
 		})
