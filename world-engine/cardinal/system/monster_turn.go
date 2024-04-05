@@ -128,7 +128,7 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = isCollisonThere(world, *newMonsterPos)
+	valid, err = comp.IsCollisonThere(world, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
 	} else if valid {
@@ -140,7 +140,7 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = isCollisonThere(world, *newMonsterPos)
+	valid, err = comp.sCollisonThere(world, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
 	} else if valid {
@@ -165,27 +165,4 @@ func directionToMonsterAttack(direction comp.Direction) comp.GameEvent {
 	default:
 		panic("invalid direction")
 	}
-}
-
-func isCollisonThere(world cardinal.WorldContext, pos comp.Position) (bool, error) {
-	found, id, err := pos.GetEntityIDByPosition(world)
-	if err != nil {
-		return false, err
-	}
-	if found {
-		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
-		if err != nil {
-			return false, err
-		}
-		switch colType.Type {
-		case comp.ItemCollide:
-			// ok to overlap items
-			return false, nil
-		default:
-			// not ok to overlap other types of collidable
-			return true, nil
-		}
-	}
-	// no entity found, so it's not a wall
-	return false, nil
 }

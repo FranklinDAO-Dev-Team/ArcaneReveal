@@ -210,7 +210,7 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	}
-	valid, err := isCollisonThere(world, *newPos)
+	valid, err := comp.IsCollisonThere(world, *newPos)
 	if err != nil {
 		return err
 	} else if valid {
@@ -222,7 +222,7 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	}
-	valid, err = isCollisonThere(world, *newNewPos)
+	valid, err = comp.IsCollisonThere(world, *newNewPos)
 	if err != nil {
 		return err
 	} else if valid {

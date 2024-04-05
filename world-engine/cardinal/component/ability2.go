@@ -26,15 +26,21 @@ func (a Ability2) Resolve(
 	perpDirOne := (direction + 1) % 4
 	damageDealtOne := false
 	adjOne, err := spellPosition.GetUpdateFromDirection(perpDirOne)
-	adjPlayableOne, err := adjOne.GetUpdateFromDirection(perpDirOne)
-	fmt.Println("adjOne", adjOne)
-	if err == nil {
-		damageDealtOne, err = damageAtPostion(world, adjOne, executeUpdates, false)
-		if err != nil {
-			return false, err
-		}
-		if damageDealtOne {
-			*eventLogList = append(*eventLogList, GameEventLog{X: adjOne.X, Y: adjOne.Y, Event: GameEventSpellDamage})
+	if err != nil {
+		return false, err
+	}
+	hitWall, err := IsCollisonThere(world, *adjOne)
+	if !hitWall { // this spell cannot hit through walls
+		adjPlayableOne, err := adjOne.GetUpdateFromDirection(perpDirOne)
+		fmt.Println("adjOne", adjPlayableOne)
+		if err == nil {
+			damageDealtOne, err = damageAtPostion(world, adjPlayableOne, executeUpdates, false)
+			if err != nil {
+				return false, err
+			}
+			if damageDealtOne {
+				*eventLogList = append(*eventLogList, GameEventLog{X: adjPlayableOne.X, Y: adjPlayableOne.Y, Event: GameEventSpellDamage})
+			}
 		}
 	}
 
