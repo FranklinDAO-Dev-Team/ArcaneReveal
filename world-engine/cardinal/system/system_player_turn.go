@@ -65,7 +65,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 					WandNum:            wandnum,
 					PotentialAbilities: *potentialAbilities,
 				}
-				revealRequest.PotentialAbilities = [2]bool{true, true}
+				revealRequest.PotentialAbilities = [client.TotalAbilities]bool{true, true}
 				revealRequestCh <- revealRequest
 				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 

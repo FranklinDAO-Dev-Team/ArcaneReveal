@@ -2,17 +2,17 @@ package component
 
 import "pkg.world.dev/world-engine/cardinal"
 
-const Ability4ID = 4
+const Ability7ID = 7
 
-type Ability4 struct{}
+type Ability7 struct{}
 
-var _ Ability = &Ability4{}
+var _ Ability = &Ability7{}
 
-func (Ability4) GetAbilityID() int {
-	return Ability4ID
+func (Ability7) GetAbilityID() int {
+	return Ability7ID
 }
 
-func (a Ability4) Resolve(
+func (a Ability7) Resolve(
 	world cardinal.WorldContext,
 	spellPosition *Position,
 	direction Direction,

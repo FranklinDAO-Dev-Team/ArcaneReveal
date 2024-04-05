@@ -38,22 +38,22 @@ func DecrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err 
 	return nil
 }
 
-func IncrementHealth(world cardinal.WorldContext, entityID types.EntityID) (inc bool, err error) {
+func IncrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err error) {
 	health, err := cardinal.GetComponent[Health](world, entityID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if health.CurrHealth != health.MaxHealth {
+		// Health is not at max, increment it
 		health.CurrHealth++
-
 		err = cardinal.SetComponent[Health](world, entityID, health)
 		if err != nil {
-			return false, err
+			return err
 		}
-
-		return true, nil
+		return nil
 	} else {
-		return false, nil
+		// health is at max, don't increment
+		return nil
 	}
 }

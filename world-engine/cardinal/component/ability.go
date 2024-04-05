@@ -43,6 +43,12 @@ type Ability interface {
 var AbilityMap = map[int]Ability{
 	1: &Ability1{},
 	2: &Ability2{},
+	3: &Ability3{},
+	4: &Ability4{},
+	5: &Ability5{},
+	6: &Ability6{},
+	7: &Ability7{},
+	8: &Ability8{},
 }
 
 func damageAtPostion(

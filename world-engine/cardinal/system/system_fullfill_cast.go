@@ -70,6 +70,12 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			// resolve abilities and update chain state
 			eventLogList := &[]comp.GameEventLog{}
 			updateChainState := true
+
+			// debug := true
+			// if debug {
+			// 	Ab
+			// }
+
 			err = resolveAbilities(world, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err

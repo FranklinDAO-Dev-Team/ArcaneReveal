@@ -19,12 +19,9 @@ func (a Ability5) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
+	// if not on right side of the map, don't do anything
 	if spellPosition.X != 10 {
 		return false, nil
-	}
-
-	if !executeUpdates {
-		return true, nil
 	}
 
 	playerID, err := QueryPlayerID(world)
@@ -32,15 +29,21 @@ func (a Ability5) Resolve(
 		return false, err
 	}
 
-	inc, err := IncrementHealth(world, playerID)
+	playerHealth, err := cardinal.GetComponent[Health](world, playerID)
 	if err != nil {
 		return false, err
 	}
-	if inc {
-		*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellWallActivation})
-	} else {
-		*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellDisappate})
+	if playerHealth.CurrHealth == playerHealth.MaxHealth {
+		return false, err // ability cannot activate if player is at max health
 	}
 
-	return inc, nil
+	if executeUpdates {
+		err := IncrementHealth(world, playerID)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellWallActivation})
+	return true, nil
 }
