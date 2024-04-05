@@ -6,8 +6,10 @@ extends Node
 @onready var client : NakamaClient
 @onready var socket
 @onready var session : NakamaSession
+@onready var ray = $RayCast3D
 
 var enemies_defeated = 0
+var tile_size = 32
 
 func _on_enemy_exited(enemy: Area2D):
 	if not enemy.is_inside_tree():
@@ -87,3 +89,6 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	var notification = JSON.new()
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
+	if notification.data.has("event") and notification.data["event"] == "player-turn":
+		var turnLogs = notification.data["log"]
+		print("caught player turn event")

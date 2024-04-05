@@ -19,6 +19,14 @@ var starting_pos
 @onready var lightning_animation_top = $"SpellTop/WandAnimations/LightningStrikeTop"
 @onready var lightning_animation_bottom = $"SpellTop/WandAnimations/LightningStrikeTop"
 
+var tile_size = 64
+var inputs = {
+	"right": Vector2.RIGHT,
+	"left": Vector2.LEFT,
+	"up": Vector2.UP,
+	"down": Vector2.DOWN
+}
+
 func _ready():
 	starting_pos = self.position
 	self.top_level = true
@@ -62,6 +70,20 @@ func _process(delta):
 							"Direction": "down",
 							"WandNum": "1",
 							}))
+							
+						var raycast = get_parent().get_node("RayCast2DMagic")
+						raycast.target_position = inputs["down"] * tile_size
+						raycast.force_raycast_update()
+
+						print(raycast.is_colliding())
+			
+						print(raycast.get_collider())
+			
+						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							var obj = raycast.get_collider()
+							if obj != null:
+								obj.damage()
+							
 						
 						if resp != null:
 							position = get_parent().position + Vector2(16, 32)

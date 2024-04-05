@@ -37,7 +37,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
-				MonsterTurnSystem(world, eventLogList)
+				// MonsterTurnSystem(world, eventLogList)
 				// TODO: emit events to client
 				fmt.Println("TODO: emit activated abilities and spell log to client")
 
@@ -78,7 +78,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
-				MonsterTurnSystem(world, eventLogList)
+				// MonsterTurnSystem(world, eventLogList)
 				fmt.Println("TODO: emit activated abilities and spell log to client")
 			default:
 				return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: Invalid action")

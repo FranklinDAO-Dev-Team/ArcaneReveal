@@ -78,7 +78,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			}
 
 			// Monster Turn occurs after abilities are resolved
-			MonsterTurnSystem(world, eventLogList)
+			// MonsterTurnSystem(world, eventLogList)
 
 			// Emit activated abilities and spell log to client
 			eventMap := make(map[string]any)

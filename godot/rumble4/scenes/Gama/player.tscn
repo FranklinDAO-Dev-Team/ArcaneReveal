@@ -177,6 +177,11 @@ sprite_frames = SubResource("SpriteFrames_klfs3")
 animation = &"idle"
 centered = false
 
+[node name="RayCast2DEnemy" type="RayCast2D" parent="."]
+position = Vector2(16, 16)
+target_position = Vector2(2.08165e-12, 32)
+collide_with_areas = true
+
 [node name="RayCast2D" type="RayCast2D" parent="."]
 position = Vector2(16, 16)
 enabled = false
@@ -210,5 +215,11 @@ scale = Vector2(1.2, 1.2)
 [node name="Staff3" parent="." instance=ExtResource("3_6po7h")]
 position = Vector2(49, -157)
 scale = Vector2(1.2, 1.2)
+
+[node name="RayCast2DMagic" type="RayCast2D" parent="."]
+position = Vector2(16, 16)
+scale = Vector2(0.833333, 0.833333)
+target_position = Vector2(2.08165e-12, 32)
+collide_with_areas = true
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

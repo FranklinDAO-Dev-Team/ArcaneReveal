@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	w, err := cardinal.NewWorld(cardinal.WithDisableSignatureVerification(), cardinal.WithTickChannel(time.Tick(500 * time.Millisecond)))
+	w, err := cardinal.NewWorld(cardinal.WithDisableSignatureVerification(), cardinal.WithTickChannel(time.Tick(20 * time.Millisecond)), cardinal.WithCustomLogger(log.Logger), cardinal.WithReceiptHistorySize(10000))
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}

@@ -66,7 +66,7 @@ func attack_animation():
 	$Sprite.play("attack")
 	$Sprite.play("idle")
 
-	
+
 func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()

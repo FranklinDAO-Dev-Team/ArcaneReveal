@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dc6jw4arwneon"]
+[gd_scene load_steps=13 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
@@ -477,16 +477,16 @@ position = Vector2(320, 160)
 position = Vector2(256, 0)
 
 [node name="Enemy2" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(0, 256)
+position = Vector2(-1, 256)
 
 [node name="Enemy3" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(128, 64)
+position = Vector2(64, 64)
 
 [node name="Enemy4" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(192, 128)
+position = Vector2(256, 192)
 
 [node name="Enemy5" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(256, 192)
+position = Vector2(65, 256)
 
 [node name="Player" parent="." instance=ExtResource("5_5f1lg")]
 position = Vector2(0, 0)
