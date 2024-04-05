@@ -7,14 +7,14 @@ import (
 type GameEvent int
 
 const (
-	GameEventSpellBeam GameEvent = iota
-	GameEventSpellDamage
-	GameEventSpellDisappate
-	GameEventMonsterAttack
-	GameEventMonsterUp
-	GameEventMonsterRight
-	GameEventMonsterDown
-	GameEventMonsterLeft
+	GameEventSpellBeam      GameEvent = iota // 0
+	GameEventSpellDamage                     // 1
+	GameEventSpellDisappate                  // 2
+	GameEventMonsterAttack                   // 3
+	GameEventMonsterUp                       // 4
+	GameEventMonsterRight                    // 5
+	GameEventMonsterDown                     // 6
+	GameEventMonsterLeft                     // 7
 )
 
 type GameEventLog struct {

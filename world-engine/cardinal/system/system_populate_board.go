@@ -7,15 +7,45 @@ import (
 )
 
 func PopulateBoardSystem(world cardinal.WorldContext) error {
-	// update player pos
-	p_id, err := queryPlayerID(world)
+	// spawn player
+	_, err := cardinal.Create(world,
+		comp.Player{},
+		comp.Collidable{Type: comp.PlayerCollide},
+		comp.Health{
+			MaxHealth:  PLAYER_MAX_HEALTH,
+			CurrHealth: PLAYER_MAX_HEALTH,
+		},
+		comp.Position{
+			X: 1,
+			Y: 1,
+		},
+	)
 	if err != nil {
 		return err
 	}
-	err = cardinal.SetComponent[comp.Position](world, p_id, &comp.Position{X: 0, Y: 0})
-	if err != nil {
-		return err
-	}
+
+	// p_id, err := queryPlayerID(world)
+	// if err != nil {
+	// 	return err
+	// }
+	// err = cardinal.SetComponent[comp.Position](world, p_id, &comp.Position{X: 0, Y: 0})
+	// if err != nil {
+	// 	return err
+	// }
+
+	// create monsters
+	createMonster(world, 9, 1, comp.LIGHT)
+	createMonster(world, 1, 9, comp.LIGHT)
+	createMonster(world, 5, 3, comp.MEDIUM)
+	createMonster(world, 7, 5, comp.LIGHT)
+	createMonster(world, 9, 7, comp.MEDIUM)
+
+	// other walls
+	createWall(world, 3, 2)
+	createWall(world, 5, 2)
+	createWall(world, 2, 5)
+	createWall(world, 2, 7)
+	createWall(world, 4, 7)
 
 	// create outer walls and dead squares
 	for i := 0; i < 11; i++ {
@@ -35,19 +65,6 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			}
 		}
 	}
-	// other walls
-	createWall(world, 3, 2)
-	createWall(world, 5, 2)
-	createWall(world, 2, 5)
-	createWall(world, 2, 7)
-	createWall(world, 4, 7)
-
-	// create monsters
-	createMonster(world, 1, 9, comp.LIGHT)
-	createMonster(world, 9, 1, comp.LIGHT)
-	createMonster(world, 7, 5, comp.LIGHT)
-	createMonster(world, 5, 3, comp.MEDIUM)
-	createMonster(world, 9, 7, comp.MEDIUM)
 
 	return nil
 }
