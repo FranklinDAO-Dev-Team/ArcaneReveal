@@ -8,10 +8,6 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-func queryPlayerID(world cardinal.WorldContext) (types.EntityID, error) {
-	return 0, nil // current hardcoded, player is always first entity created
-}
-
 func getWandByNumber(world cardinal.WorldContext, targetNum int) (wandID types.EntityID, wandCore *comp.WandCore, available *comp.Available, err error) {
 	searchErr := cardinal.NewSearch(world, filter.Contains(comp.WandCore{})).Each(
 		func(id types.EntityID) bool {
