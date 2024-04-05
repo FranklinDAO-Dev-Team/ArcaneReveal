@@ -84,9 +84,8 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			}
 
 			err = world.EmitEvent(map[string]any{
-				"event":     "player_turn",
-				"action":    turn.Msg.Action,
-				"direction": direction,
+				"event": "player_turn",
+				"log":   eventLogList,
 			})
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
