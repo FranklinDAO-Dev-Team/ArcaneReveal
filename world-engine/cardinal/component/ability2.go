@@ -30,6 +30,9 @@ func (a Ability2) Resolve(
 		return false, err
 	}
 	hitWall, err := IsCollisonThere(world, *adjOne)
+	if err != nil {
+		return false, err
+	}
 	if !hitWall { // this spell cannot hit through walls
 		adjPlayableOne, err := adjOne.GetUpdateFromDirection(perpDirOne)
 		fmt.Println("adjOne", adjPlayableOne)
@@ -61,4 +64,7 @@ func (a Ability2) Resolve(
 	reveal = damageDealtOne || damageDealtTwo
 
 	return reveal, nil
+}
+
+func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, direction Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
 }

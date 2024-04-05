@@ -140,7 +140,7 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.sCollisonThere(world, *newMonsterPos)
+	valid, err = comp.IsCollisonThere(world, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
 	} else if valid {
