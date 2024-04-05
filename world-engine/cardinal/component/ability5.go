@@ -42,5 +42,5 @@ func (a Ability5) Resolve(
 		*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellDisappate})
 	}
 
-	return true, nil
+	return inc, nil
 }
