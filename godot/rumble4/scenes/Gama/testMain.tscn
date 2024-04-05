@@ -1,17 +1,14 @@
-
 [gd_scene load_steps=12 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
-[ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Beta/wall.tscn" id="3_ekmmf"]
-
-[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyV2.tscn" id="4_1sovk"]
-[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Beta/player.tscn" id="5_5f1lg"]
-[ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Beta/tile_piece.tscn" id="6_x7epu"]
-[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Beta/life_bar.tscn" id="8_th4ig"]
-[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_imb6i"]
-[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Beta/door.tscn" id="10_xqvk1"]
-
+[ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Gama/wall.tscn" id="3_ekmmf"]
+[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Gama/enemy.tscn" id="4_1sovk"]
+[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Gama/player.tscn" id="5_5f1lg"]
+[ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_x7epu"]
+[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="8_th4ig"]
+[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="9_imb6i"]
+[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="10_xqvk1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
 texture = ExtResource("2_vpu8v")
@@ -280,9 +277,6 @@ sources/0 = SubResource("TileSetAtlasSource_ebk6o")
 [node name="TestMain" type="Node2D"]
 script = ExtResource("1_kqd0p")
 
-[node name="EnemyTest3" parent="." instance=ExtResource("15_qc0p8")]
-position = Vector2(36, 66)
-
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(176, 175)
 scale = Vector2(0.5, 0.5)
@@ -457,12 +451,11 @@ position = Vector2(160, 320)
 [node name="Wall56" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(96, 320)
 
-
 [node name="Wall57" parent="Walls" instance=ExtResource("3_ekmmf")]
 position = Vector2(320, 160)
 
-[node name="EnemyV2" parent="." instance=ExtResource("4_1sovk")]
-position = Vector2(192, 128)
+[node name="Enemy - 1 damage" parent="." instance=ExtResource("4_1sovk")]
+position = Vector2(-1, 0)
 
 [node name="Player" parent="." instance=ExtResource("5_5f1lg")]
 position = Vector2(64, 128)
@@ -519,14 +512,6 @@ offset_top = 328.0
 offset_right = 272.0
 offset_bottom = 368.0
 text = "                GAME OVER"
-
-[node name="Enemy - 2 damage" parent="." instance=ExtResource("15_qc0p8")]
-visible = false
-position = Vector2(3, 1)
-attack_damage = 2
-
-[node name="Enemy - 1 damage" parent="." instance=ExtResource("15_qc0p8")]
-position = Vector2(66, 2)
 
 [connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
 [connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]

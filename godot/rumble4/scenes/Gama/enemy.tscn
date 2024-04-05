@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cqrcx4mk6o7fv"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_fcab3"]
-[ext_resource type="Texture2D" uid="uid://b77xty3tq2uyx" path="res://assets/Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Rogue/Idle/Idle-Sheet.png" id="2_4p5im"]
+[ext_resource type="Texture2D" uid="uid://b77xty3tq2uyx" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Rogue/Idle/Idle-Sheet.png" id="2_4p5im"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
 size = Vector2(30, 30)

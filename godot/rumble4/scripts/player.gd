@@ -157,7 +157,7 @@ func damage(damage) -> void:
 	health -= damage
 	if health == 0:
 		self.visible = false
-    $"../GameOverLabel".visible = true  # Hide the GameOverLabel node
+		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
 	update_health_ui()
 
 
