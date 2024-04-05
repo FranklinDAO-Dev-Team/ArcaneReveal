@@ -101,7 +101,7 @@ func process_data():
 		# Instantiate animation player at the position
 		var animation_player = $"../SpellAnimation"
 		#add_child(animation_player)
-		animation_player.position = position
+		#animation_player.position = position
 		
 		# Initiate corresponding animation based on action
 		match action:
@@ -110,7 +110,7 @@ func process_data():
 				#var animation = $"../SpellAnimation/AnimatedSprite2D".new
 				#animation.position = Vector2(position.x, position.y)
 				#animation.play("blank")
-				$"../SpellAnimation/AnimationPlayer".play("default")
+				#$"../SpellAnimation/AnimationPlayer".play("default")
 				print("lightning at: " + str(position.x) + ", " + str(position.y))
 			1:
 				# Animate explosion
