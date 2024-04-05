@@ -14,7 +14,7 @@ func _on_enemy_exited(enemy: Area2D):
 		enemies_defeated += 1
 		if enemies_defeated == 2:
 			# Display WIN text or perform any other desired action
-			$GameWinLabel.visible = true 
+			$GameWinLabel.visible = true
 
 #
 #@onready var client : NakamaClient = Nakama.create_client("defaultkey", "shiny-pens-wave.loca.lt", 443, "https")

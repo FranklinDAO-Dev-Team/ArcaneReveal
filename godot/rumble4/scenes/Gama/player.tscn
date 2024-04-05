@@ -188,27 +188,27 @@ libraries = {
 }
 
 [node name="StaffPositionTop" type="Node2D" parent="."]
-position = Vector2(1, -8)
+position = Vector2(16, 16)
 
 [node name="StaffPositionBottom" type="Node2D" parent="."]
-position = Vector2(1, -8)
+position = Vector2(16, 16)
 
 [node name="StaffPositionLeft" type="Node2D" parent="."]
-position = Vector2(1, -8)
+position = Vector2(16, 16)
 
 [node name="StaffPositionRight" type="Node2D" parent="."]
-position = Vector2(1, -8)
+position = Vector2(16, 16)
 
 [node name="Staff1" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(16, -203)
+position = Vector2(152, -157)
 scale = Vector2(1.2, 1.2)
 
 [node name="Staff2" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(121, -203)
+position = Vector2(257, -157)
 scale = Vector2(1.2, 1.2)
 
 [node name="Staff3" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(-87, -203)
+position = Vector2(49, -157)
 scale = Vector2(1.2, 1.2)
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

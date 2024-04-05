@@ -72,8 +72,6 @@ func _ready():
 
 
 
-
-
 func readJSON(json_file_path):
 	var file = FileAccess.open(json_file_path, FileAccess.READ)
 	var content = file.get_as_text()
