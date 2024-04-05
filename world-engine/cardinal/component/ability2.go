@@ -26,7 +26,7 @@ func (a Ability2) Resolve(
 	perpDirOne := (direction + 1) % 4
 	damageDealtOne := false
 	adjOne, err := spellPosition.GetUpdateFromDirection(perpDirOne)
-	adjPlayableOne, err := adjOne.GetUpdateFromDirection(perpDirOne)
+	// adjPlayableOne, err := adjOne.GetUpdateFromDirection(perpDirOne)
 	fmt.Println("adjOne", adjOne)
 	if err == nil {
 		damageDealtOne, err = damageAtPostion(world, adjOne, executeUpdates, false)
