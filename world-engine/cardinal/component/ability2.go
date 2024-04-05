@@ -66,5 +66,5 @@ func (a Ability2) Resolve(
 	return reveal, nil
 }
 
-func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, direction Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
-}
+// func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, direction Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
+// }
