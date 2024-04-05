@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dlb8v6ch4vqht"]
 
-[ext_resource type="PackedScene" uid="uid://51v48w8llc" path="res://scenes/Beta/collision_piece.tscn" id="1_ahbqp"]
+[ext_resource type="PackedScene" uid="uid://51v48w8llc" path="res://scenes/Gama/collision_piece.tscn" id="1_ahbqp"]
 
 [node name="TilePiece" type="Node2D"]
 metadata/_edit_group_ = true

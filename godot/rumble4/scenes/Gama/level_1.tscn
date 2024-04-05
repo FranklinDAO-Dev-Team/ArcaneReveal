@@ -2,14 +2,14 @@
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_64lna"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_rpmh3"]
-[ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Beta/wall.tscn" id="3_ov2pl"]
-[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Beta/enemyPrefab.tscn" id="5_lpbc5"]
-[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Beta/player.tscn" id="7_s1muq"]
-[ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Beta/tile_piece.tscn" id="8_mct5s"]
-[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Beta/key.tscn" id="9_2nx3l"]
-[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Beta/staff_1.tscn" id="9_wqbqc"]
-[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Beta/life_bar.tscn" id="10_f7uf3"]
-[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Beta/door.tscn" id="10_q0qe5"]
+[ext_resource type="PackedScene" uid="uid://5dcoq1ojrjcf" path="res://scenes/Gama/wall.tscn" id="3_ov2pl"]
+[ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Gama/enemy.tscn" id="5_lpbc5"]
+[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Gama/player.tscn" id="7_s1muq"]
+[ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="8_mct5s"]
+[ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="9_2nx3l"]
+[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Gama/staff_1.tscn" id="9_wqbqc"]
+[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="10_f7uf3"]
+[ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="10_q0qe5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
 texture = ExtResource("2_rpmh3")

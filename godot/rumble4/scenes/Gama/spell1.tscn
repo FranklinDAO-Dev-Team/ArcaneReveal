@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bu0gr54ywawxt"]
 
-[ext_resource type="PackedScene" uid="uid://dd11hdfpdubc7" path="res://scenes/Beta/wand_animations.tscn" id="1_3bmej"]
+[ext_resource type="PackedScene" uid="uid://dd11hdfpdubc7" path="res://scenes/Gama/wand_animations.tscn" id="1_3bmej"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dyc6s"]
 size = Vector2(632, 80)

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/staff_1.gd" id="1_cqpl4"]
 [ext_resource type="Texture2D" uid="uid://b4pq5fqc5r47q" path="res://assets/tile001.png" id="2_lmve5"]
-[ext_resource type="PackedScene" uid="uid://bu0gr54ywawxt" path="res://scenes/Beta/spell1.tscn" id="3_kmh55"]
+[ext_resource type="PackedScene" uid="uid://bu0gr54ywawxt" path="res://scenes/Gama/spell1.tscn" id="3_kmh55"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_nltpd"]
 animations = [{

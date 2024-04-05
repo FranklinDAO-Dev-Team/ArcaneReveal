@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://bcsx64x4kkk7w"]
 
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="2_8jmnq"]
-[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Beta/staff_1.tscn" id="3_828w4"]
+[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Gama/staff_1.tscn" id="3_828w4"]
 
 [sub_resource type="GDScript" id="GDScript_mcu0p"]
 script/source = "#var currPos = [0, 0]
