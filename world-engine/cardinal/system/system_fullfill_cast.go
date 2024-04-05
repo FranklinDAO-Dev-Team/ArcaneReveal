@@ -109,3 +109,5 @@ func contains(array []string, value string) bool {
 	}
 	return false
 }
+
+func printWhatActivated([TotalAbilities]bool Abilities)
