@@ -12,7 +12,7 @@ import (
 )
 
 func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEventLog) error {
-	fmt.Println("MonsterTurnSystem")
+	// fmt.Println("MonsterTurnSystem")
 	var turnErr error
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
@@ -23,10 +23,9 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 		filter.Contains(comp.Monster{}),
 	).Each(func(id types.EntityID) bool {
 		// get original monster position
-		fmt.Printf("Monster id: %d\n", id)
 		origMonsterPos, err := cardinal.GetComponent[comp.Position](world, id)
 		if err != nil {
-			fmt.Println("MonsterTurn err 1")
+			// fmt.Println("MonsterTurn err 1")
 			turnErr = err
 			return false // if error, break out of search
 		}
@@ -37,7 +36,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 			// attack since player is in range
 			playerID, err := comp.QueryPlayerID(world)
 			if err != nil {
-				fmt.Println("MonsterTurn err 2")
+				// fmt.Println("MonsterTurn err 2")
 				turnErr = err
 				return false
 			}

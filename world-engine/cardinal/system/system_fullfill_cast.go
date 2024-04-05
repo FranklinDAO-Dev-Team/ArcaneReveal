@@ -20,7 +20,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			fmt.Println("starting fulfill cast system")
 			resultJSON, err := json.Marshal(turn.Msg.Result)
 			if err != nil {
-				fmt.Println("failed!!!!")
+				// fmt.Println("failed!!!!")
 				return msg.FulfillCastMsgResult{}, fmt.Errorf("failed to marshal result to JSON: %v", err)
 			}
 			fmt.Printf("Result JSON: %s\n", resultJSON)
@@ -84,6 +84,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			eventMap := make(map[string]any)
 			eventMap["turnEvent"] = *eventLogList
 			world.EmitEvent(eventMap)
+			PrintStateToTerminal(world)
 
 			// log to console
 			for _, logEntry := range *eventLogList {

@@ -57,7 +57,7 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 		world,
 		filter.Contains()).
 		Each(func(id types.EntityID) bool {
-			fmt.Printf("id: %v\n", id)
+			// fmt.Printf("id: %v\n", id)
 			player, _ := cardinal.GetComponent[comp.Player](world, id) // don't error check, want to ignore unfound errors
 			if player != nil {
 				pos, err := cardinal.GetComponent[comp.Position](world, id)
@@ -135,11 +135,11 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 		return nil, outsideErr
 	}
 
-	fmt.Println("GameStateResponse")
-	fmt.Println(PlayerData)
-	fmt.Println(Wands)
-	fmt.Println(Walls)
-	fmt.Println(Monsters)
+	// fmt.Println("GameStateResponse")
+	// fmt.Println(PlayerData)
+	// fmt.Println(Wands)
+	// fmt.Println(Walls)
+	// fmt.Println(Monsters)
 	return &GameStateResponse{
 		Player:   PlayerData,
 		Wands:    Wands,

@@ -49,10 +49,10 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
-				fmt.Println("castID: ", castID)
-				fmt.Println("potentialAbilities: ", potentialAbilities)
+				// fmt.Println("castID: ", castID)
+				// fmt.Println("potentialAbilities: ", potentialAbilities)
 
-				fmt.Println("gameidstr:", turn.Msg.GameIDStr)
+				// fmt.Println("gameidstr:", turn.Msg.GameIDStr)
 
 				gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
 				if err != nil {
@@ -88,6 +88,8 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				"action":    turn.Msg.Action,
 				"direction": direction,
 			})
+			PrintStateToTerminal(world)
+
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
 			}

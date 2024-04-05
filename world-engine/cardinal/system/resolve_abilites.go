@@ -4,7 +4,6 @@ import (
 	comp "cinco-paus/component"
 	"cinco-paus/seismic/client"
 	"errors"
-	"fmt"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
@@ -84,18 +83,18 @@ func resolveAbilitiesAtPosition(
 			}
 			activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
 			if err != nil {
-				fmt.Println("resolveAbilitiesAtPosition err", err)
+				// fmt.Println("resolveAbilitiesAtPosition err", err)
 				return err
 			}
 
 			// only overwrite if ability activated
 			(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
 
-			if spellPos.Y == 10 && i == 6 {
-				fmt.Println("6+1 = 7 activated", activated)
-				fmt.Println(potentialAbilities)
-				fmt.Println()
-			}
+			// if spellPos.Y == 10 && i == 6 {
+			// 	fmt.Println("6+1 = 7 activated", activated)
+			// 	fmt.Println(potentialAbilities)
+			// 	fmt.Println()
+			// }
 		}
 	}
 
