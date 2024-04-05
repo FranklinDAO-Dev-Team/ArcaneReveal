@@ -65,7 +65,10 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 					WandNum:            wandnum,
 					PotentialAbilities: *potentialAbilities,
 				}
-				revealRequest.PotentialAbilities = [2]bool{true, true}
+				// set all abilities to true since we don't know which ones will be activated
+				for i := 0; i < len(revealRequest.PotentialAbilities); i++ {
+					revealRequest.PotentialAbilities[i] = true
+				}
 				revealRequestCh <- revealRequest
 				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
@@ -175,7 +178,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	// simulate a cast to determine potential ability activations
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
-	err = resolveAbilities(world, spell, spellPos, spell.Abilities, updateChainState, dummy)
+	err = resolveAbilities(world, spell, playerPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -196,7 +199,7 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 }
 
 func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
-	playerID, err := queryPlayerID(world)
+	playerID, err := comp.QueryPlayerID(world)
 	if err != nil {
 		return err
 	}
@@ -210,7 +213,7 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	}
-	valid, err := isCollisonThere(world, *newPos)
+	valid, err := comp.IsCollisonThere(world, *newPos)
 	if err != nil {
 		return err
 	} else if valid {
@@ -222,7 +225,7 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	}
-	valid, err = isCollisonThere(world, *newNewPos)
+	valid, err = comp.IsCollisonThere(world, *newNewPos)
 	if err != nil {
 		return err
 	} else if valid {

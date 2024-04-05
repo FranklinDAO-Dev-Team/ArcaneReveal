@@ -1,20 +1,18 @@
 package component
 
-import (
-	"pkg.world.dev/world-engine/cardinal"
-)
+import "pkg.world.dev/world-engine/cardinal"
 
-const Ability2ID = 2
+const Ability3ID = 3
 
-type Ability2 struct{}
+type Ability3 struct{}
 
-var _ Ability = &Ability2{}
+var _ Ability = &Ability3{}
 
-func (Ability2) GetAbilityID() int {
-	return Ability2ID
+func (Ability3) GetAbilityID() int {
+	return Ability3ID
 }
 
-func (a Ability2) Resolve(
+func (a Ability3) Resolve(
 	world cardinal.WorldContext,
 	spellPosition *Position,
 	direction Direction,
@@ -24,11 +22,11 @@ func (a Ability2) Resolve(
 	perpDirOne := (direction + 1) % 4
 	perpDirTwo := (direction + 3) % 4
 
-	damageDealtOne, err := resolveOneA2Check(world, spellPosition, perpDirOne, executeUpdates, eventLogList)
+	damageDealtOne, err := resolveOneA3Check(world, spellPosition, perpDirOne, executeUpdates, eventLogList)
 	if err != nil {
 		return false, err
 	}
-	damageDealtTwo, err := resolveOneA2Check(world, spellPosition, perpDirTwo, executeUpdates, eventLogList)
+	damageDealtTwo, err := resolveOneA3Check(world, spellPosition, perpDirTwo, executeUpdates, eventLogList)
 	if err != nil {
 		return false, err
 	}
@@ -38,7 +36,7 @@ func (a Ability2) Resolve(
 	return reveal, nil
 }
 
-func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, perpDir Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
+func resolveOneA3Check(world cardinal.WorldContext, spellPosition *Position, perpDir Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
 	adjPos, err := spellPosition.GetUpdateFromDirection(perpDir)
 	if err != nil {
 		return false, err
@@ -47,7 +45,7 @@ func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, per
 	if err != nil {
 		return false, err
 	}
-	if !hitWall { // this spell cannot hit through walls
+	if hitWall { // this spell MUST hit through walls
 		adjPlayablePos, err := adjPos.GetUpdateFromDirection(perpDir)
 		// fmt.Println("adjPlayablePos", adjPlayablePos)
 		if err == nil {

@@ -4,6 +4,7 @@ import (
 	comp "cinco-paus/component"
 	"cinco-paus/seismic/client"
 	"errors"
+	"fmt"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
@@ -25,6 +26,7 @@ func resolveAbilities(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for !spell.Expired {
+
 		// log SpellBeam position
 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellBeam})
 		// record abilities that could activate a current square
@@ -43,21 +45,21 @@ func resolveAbilities(
 			break
 		}
 
-		// if wall entity at spellPos, stop
-		found, id, err := spellPos.GetEntityIDByPosition(world)
-		if err != nil {
-			return err
-		}
-		if found {
-			colType, err := cardinal.GetComponent[comp.Collidable](world, id)
-			if err != nil {
-				return err
-			}
-			if colType.Type == comp.WallCollide {
-				spell.Expired = true
-				*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellDisappate})
-			}
-		}
+		// // if wall entity at spellPos, stop
+		// found, id, err := spellPos.GetEntityIDByPosition(world)
+		// if err != nil {
+		// 	return err
+		// }
+		// if found {
+		// 	colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	if colType.Type == comp.WallCollide {
+		// 		spell.Expired = true
+		// 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellDisappate})
+		// 	}
+		// }
 	}
 	return nil
 }
@@ -81,10 +83,18 @@ func resolveAbilitiesAtPosition(
 				return errors.New("unknown ability called")
 			}
 			activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
+			if err != nil {
+				fmt.Println("resolveAbilitiesAtPosition err", err)
+				return err
+			}
+
 			// only overwrite if ability activated
 			(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
-			if err != nil {
-				return err
+
+			if spellPos.Y == 10 && i == 6 {
+				fmt.Println("6+1 = 7 activated", activated)
+				fmt.Println(potentialAbilities)
+				fmt.Println()
 			}
 		}
 	}
