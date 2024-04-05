@@ -64,7 +64,7 @@ func move(dir):
 		moving = false
 		
 func _on_area_entered(area):
-	print(area)
+	print("sugma")
 	if area.name == "Player" and moving == true:
 		area.damage(attack_damage)
 		print(previous_move)
@@ -73,4 +73,3 @@ func _on_area_entered(area):
 			"left": area.move("right")
 			"up": area.move("down")
 			"down": area.move("up")
-		
