@@ -95,10 +95,10 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			}
 
 			// debug prints
-			for _, logEntry := range *eventLogList {
-				fmt.Printf("X: %d, Y: %d, Event: %d\n",
-					logEntry.X, logEntry.Y, logEntry.Event)
-			}
+			// for _, logEntry := range *eventLogList {
+			// 	fmt.Printf("X: %d, Y: %d, Event: %d\n",
+			// 		logEntry.X, logEntry.Y, logEntry.Event)
+			// }
 
 			result := msg.PlayerTurnResult{Success: true}
 			return result, nil

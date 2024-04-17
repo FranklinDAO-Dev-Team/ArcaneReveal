@@ -8,7 +8,6 @@ import (
 )
 
 func PrintStateToTerminal(world cardinal.WorldContext) {
-	fmt.Println("hello world")
 	gameState, _ := query.GameState(world, &query.GameStateRequest{})
 
 	// TODO:

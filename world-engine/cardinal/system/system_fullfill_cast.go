@@ -3,6 +3,7 @@ package system
 import (
 	comp "cinco-paus/component"
 	"cinco-paus/msg"
+	"cinco-paus/seismic/client"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -72,6 +73,8 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			eventLogList := &[]comp.GameEventLog{}
 			updateChainState := true
 
+			printWhatActivated(turn.Msg.Result.Abilities)
+
 			err = resolveAbilities(world, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList) // pass eventLogList to record executed resolutions
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
@@ -87,10 +90,10 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			PrintStateToTerminal(world)
 
 			// log to console
-			for _, logEntry := range *eventLogList {
-				fmt.Printf("X: %d, Y: %d, Event: %d\n",
-					logEntry.X, logEntry.Y, logEntry.Event)
-			}
+			// for _, logEntry := range *eventLogList {
+			// 	fmt.Printf("X: %d, Y: %d, Event: %d\n",
+			// 		logEntry.X, logEntry.Y, logEntry.Event)
+			// }
 
 			// return successfully
 			// note: this msg returns to Seismic as the caller, not the player client
@@ -110,4 +113,11 @@ func contains(array []string, value string) bool {
 	return false
 }
 
-func printWhatActivated([TotalAbilities]bool Abilities)
+func printWhatActivated(Abilities [client.TotalAbilities]bool) {
+	abilityNameMap := []string{"pureDamage, SideDamage, WallDamage, Explosion, UpHeal, RightHeal, DownHeal, LeftHeal"}
+	for i := 0; i < len(abilityNameMap); i++ {
+		if Abilities[i] {
+			fmt.Println(abilityNameMap[i])
+		}
+	}
+}

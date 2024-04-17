@@ -21,10 +21,10 @@ func NewGameState(playerSource *big.Int) (*GameState, error) {
 	maxBigInt := big.NewInt(0)
 	maxBigInt.SetString(SnarkFieldSize, 10)
 
-	seismicSource, err := GetRandomSource()
-	if err != nil {
-		return nil, fmt.Errorf("failed to generate random seed: %v", err)
-	}
+	seismicSource := big.NewInt(0) //tmp
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to generate random seed: %v", err)
+	// }
 
 	attributes := make([][]string, NumWands)
 	salts := make([][]string, NumWands)

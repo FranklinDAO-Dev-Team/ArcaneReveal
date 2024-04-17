@@ -80,7 +80,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 				return false // if error, break out of search
 			}
 			// debug print
-			fmt.Printf("origMonsterPos: %v, newMonsterPos: %v, newNewMonsterPos: %v\n", origMonsterPos, newMonsterPos, newNewMonsterPos)
+			// fmt.Printf("origMonsterPos: %v, newMonsterPos: %v, newNewMonsterPos: %v\n", origMonsterPos, newMonsterPos, newNewMonsterPos)
 		}
 		return true // always return true to move on to the next monster
 	})

@@ -45,7 +45,6 @@ type GameStateResponse struct {
 }
 
 func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateResponse, error) {
-	fmt.Println("made it to query")
 	PlayerData := PlayerData{}
 	Wands := []WandData{}
 	Walls := []WallData{}
