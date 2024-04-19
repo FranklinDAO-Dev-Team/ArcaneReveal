@@ -31,57 +31,9 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 			eventLogList := &[]comp.GameEventLog{}
 
-			switch turn.Msg.Action {
-			case "attack":
-				err = player_turn_attack(world, direction, eventLogList)
-				if err != nil {
-					return msg.PlayerTurnResult{Success: false}, err
-				}
-				MonsterTurnSystem(world, eventLogList)
-				// TODO: emit events to client
-				log.Println("TODO: emit activated abilities and spell log to client")
-
-			case "wand":
-				wandnum, err := strconv.Atoi(turn.Msg.WandNum)
-				if err != nil {
-					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
-				}
-				castID, potentialAbilities, err := player_turn_wand(world, direction, wandnum)
-				if err != nil {
-					return msg.PlayerTurnResult{Success: false}, err
-				}
-				// log.Println("castID: ", castID)
-				// log.Println("potentialAbilities: ", potentialAbilities)
-
-				// log.Println("gameidstr:", turn.Msg.GameIDStr)
-
-				gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
-				if err != nil {
-					return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
-				}
-				revealRequest := client.RevealRequest{
-					PersonaTag:         turn.Tx.PersonaTag,
-					GameID:             types.EntityID(gameID),
-					CastID:             castID,
-					WandNum:            wandnum,
-					PotentialAbilities: *potentialAbilities,
-				}
-				// set all abilities to true since we don't know which ones will be activated
-				for i := 0; i < len(revealRequest.PotentialAbilities); i++ {
-					revealRequest.PotentialAbilities[i] = true
-				}
-				revealRequestCh <- revealRequest
-				log.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
-
-			case "move":
-				err = playerTurnMove(world, direction, eventLogList)
-				if err != nil {
-					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
-				}
-				MonsterTurnSystem(world, eventLogList)
-				log.Println("TODO: emit activated abilities and spell log to client")
-			default:
-				return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: Invalid action")
+			err = playerTurnAction(world, turn, direction, eventLogList)
+			if err != nil {
+				return msg.PlayerTurnResult{}, err
 			}
 
 			err = world.EmitEvent(map[string]any{
@@ -103,12 +55,83 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 			result := msg.PlayerTurnResult{Success: true}
 			return result, nil
-
 		})
-
 }
 
-func player_turn_attack(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
+func playerTurnAction(
+	world cardinal.WorldContext,
+	turn message.TxData[msg.PlayerTurnMsg],
+	direction comp.Direction,
+	eventLogList *[]comp.GameEventLog,
+) error {
+	var err error
+	switch turn.Msg.Action {
+	case "attack":
+		err = playerTurnAttack(world, direction, eventLogList)
+		if err != nil {
+			return err
+		}
+		err = MonsterTurnSystem(world, eventLogList)
+		if err != nil {
+			return err
+		}
+
+		// TODO: emit events to client
+		log.Println("TODO: emit activated abilities and spell log to client")
+
+	case "wand":
+		wandnum, err := strconv.Atoi(turn.Msg.WandNum)
+		if err != nil {
+			return fmt.Errorf("error converting string to int: %w", err)
+		}
+		castID, potentialAbilities, err := playerTurnWand(world, direction, wandnum)
+		if err != nil {
+			return err
+		}
+		// log.Println("castID: ", castID)
+		// log.Println("potentialAbilities: ", potentialAbilities)
+
+		// log.Println("gameidstr:", turn.Msg.GameIDStr)
+
+		gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
+		if err != nil {
+			return fmt.Errorf("error converting string to int: %w", err)
+		}
+		revealRequest := client.RevealRequest{
+			PersonaTag:         turn.Tx.PersonaTag,
+			GameID:             types.EntityID(gameID),
+			CastID:             castID,
+			WandNum:            wandnum,
+			PotentialAbilities: *potentialAbilities,
+		}
+		// set all abilities to true since we don't know which ones will be activated
+		for i := 0; i < len(revealRequest.PotentialAbilities); i++ {
+			revealRequest.PotentialAbilities[i] = true
+		}
+		revealRequestCh <- revealRequest
+		log.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
+
+	case "move":
+		err = playerTurnMove(world, direction, eventLogList)
+		if err != nil {
+			return fmt.Errorf("PlayerTurnSystem err: %w", err)
+		}
+		err = MonsterTurnSystem(world, eventLogList)
+		if err != nil {
+			return fmt.Errorf("MonsterTurnSystem err: %w", err)
+		}
+		log.Println("TODO: emit activated abilities and spell log to client")
+	default:
+		return fmt.Errorf("PlayerTurnSystem err: Invalid action")
+	}
+	return nil
+}
+
+func playerTurnAttack(
+	world cardinal.WorldContext,
+	direction comp.Direction,
+	eventLogList *[]comp.GameEventLog,
+) error {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return err
@@ -135,7 +158,8 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction, e
 		log.Printf("colType: %v\n", colType)
 		switch colType.Type {
 		case comp.MonsterCollide:
-			*eventLogList = append(*eventLogList, comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: comp.GameEventPlayerAttack})
+			gameEvent := comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: comp.GameEventPlayerAttack}
+			*eventLogList = append(*eventLogList, gameEvent)
 			return comp.DecrementHealth(world, id)
 		default:
 			return fmt.Errorf("attempting to attack %s", colType.ToString())
@@ -145,7 +169,11 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction, e
 	}
 }
 
-func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wandnum int) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
+func playerTurnWand(
+	world cardinal.WorldContext,
+	direction comp.Direction,
+	wandnum int,
+) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return 0, nil, err
@@ -198,7 +226,6 @@ func player_turn_wand(world cardinal.WorldContext, direction comp.Direction, wan
 	}
 
 	return castID, spell.Abilities, nil
-
 }
 
 func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
@@ -210,7 +237,8 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	}
-	*eventLogList = append(*eventLogList, comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: directionToGameEventPlayerMove(direction)})
+	gameEvent := comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: directionToGameEventPlayerMove(direction)}
+	*eventLogList = append(*eventLogList, gameEvent)
 
 	newPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
@@ -220,9 +248,11 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	} else if valid {
-		return fmt.Errorf("would collide at %v", newPos) // invalid position, but don't return error, just check next direction
+		// invalid position, but don't return error, just check next direction
+		return fmt.Errorf("would collide at %s", newPos.String())
 	}
-	*eventLogList = append(*eventLogList, comp.GameEventLog{X: newPos.X, Y: newPos.Y, Event: directionToGameEventPlayerMove(direction)})
+	thing := directionToGameEventPlayerMove(direction)
+	*eventLogList = append(*eventLogList, comp.GameEventLog{X: newPos.X, Y: newPos.Y, Event: thing})
 
 	newNewPos, err := newPos.GetUpdateFromDirection(direction)
 	if err != nil {
@@ -232,7 +262,8 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	} else if valid {
-		return fmt.Errorf("would collide at %v", newNewPos) // invalid position, but don't return error, just check next direction
+		// invalid position, but don't return error, just check next direction
+		return fmt.Errorf("would collide at %s", newNewPos.String())
 	}
 
 	cardinal.SetComponent[comp.Position](world, playerID, newNewPos)

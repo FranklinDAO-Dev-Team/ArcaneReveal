@@ -26,7 +26,6 @@ func resolveAbilities(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for !spell.Expired {
-
 		// log SpellBeam position
 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellBeam})
 		// record abilities that could activate a current square
@@ -57,7 +56,8 @@ func resolveAbilities(
 
 // resolveAbilitiesAtPosition takes information about a spell determines game events it causes at a single position
 // if updateChainState is true, it applies the changes to the world
-// potentialAbilities is a list of booleans that indicate if the ability at that index should be considered for activation
+// potentialAbilities is a list of booleans that indicate if
+// the ability at that index should be considered for activation
 // spellEvents are recorded in eventLogList
 func resolveAbilitiesAtPosition(
 	world cardinal.WorldContext,
@@ -68,7 +68,7 @@ func resolveAbilitiesAtPosition(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for i := 0; i < len(*potentialAbilities); i++ {
-		if (*potentialAbilities)[i] { // if ability should be activated/checked
+		if potentialAbilities[i] { // if ability should be activated/checked
 			a := comp.AbilityMap[i+1]
 			if a == nil {
 				return errors.New("unknown ability called")
@@ -80,7 +80,7 @@ func resolveAbilitiesAtPosition(
 			}
 
 			// only overwrite if ability activated
-			(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
+			potentialAbilities[i] = activated || potentialAbilities[i]
 
 			// if spellPos.Y == 10 && i == 6 {
 			// 	log.Println("6+1 = 7 activated", activated)

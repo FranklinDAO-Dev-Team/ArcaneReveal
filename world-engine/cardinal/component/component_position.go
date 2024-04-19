@@ -147,3 +147,7 @@ func (d Direction) rotateClockwise() Direction {
 		return -1
 	}
 }
+
+func (p Position) String() string {
+	return fmt.Sprintf("(%d, %d)", p.X, p.Y)
+}

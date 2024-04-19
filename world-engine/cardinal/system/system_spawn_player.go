@@ -9,7 +9,7 @@ import (
 	comp "cinco-paus/component"
 )
 
-const PLAYER_MAX_HEALTH = 5
+const PlayerMaxHealth = 5
 
 // PlayerSpawnerSystem spawns players based on `CreatePlayer` transactions.
 // This provides an example of a system that creates a new entity.
@@ -19,8 +19,8 @@ func SpawnPlayerSystem(world cardinal.WorldContext) error {
 		comp.Player{},
 		comp.Collidable{Type: comp.PlayerCollide},
 		comp.Health{
-			MaxHealth:  PLAYER_MAX_HEALTH,
-			CurrHealth: PLAYER_MAX_HEALTH,
+			MaxHealth:  PlayerMaxHealth,
+			CurrHealth: PlayerMaxHealth,
 		},
 		comp.Position{
 			X: 1,
