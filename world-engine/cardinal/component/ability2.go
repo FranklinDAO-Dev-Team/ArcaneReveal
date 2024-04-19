@@ -1,6 +1,8 @@
 package component
 
 import (
+	"log"
+
 	"pkg.world.dev/world-engine/cardinal"
 )
 
@@ -26,10 +28,12 @@ func (a Ability2) Resolve(
 
 	damageDealtOne, err := resolveOneA2Check(world, spellPosition, perpDirOne, executeUpdates, eventLogList)
 	if err != nil {
+		log.Println("Ability2.Resolve err 1: ", err)
 		return false, err
 	}
 	damageDealtTwo, err := resolveOneA2Check(world, spellPosition, perpDirTwo, executeUpdates, eventLogList)
 	if err != nil {
+		log.Println("Ability2.Resolve err 2: ", err)
 		return false, err
 	}
 

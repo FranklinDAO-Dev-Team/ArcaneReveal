@@ -1,6 +1,10 @@
 package component
 
-import "pkg.world.dev/world-engine/cardinal"
+import (
+	"log"
+
+	"pkg.world.dev/world-engine/cardinal"
+)
 
 const Ability3ID = 3
 
@@ -45,6 +49,7 @@ func resolveOneA3Check(
 ) (reveal bool, err error) {
 	adjPos, err := spellPosition.GetUpdateFromDirection(perpDir)
 	if err != nil {
+		log.Println("Ability4.Resolve err: ", err)
 		return false, err
 	}
 	hitWall, err := IsCollisonThere(world, *adjPos)

@@ -4,6 +4,7 @@ import (
 	comp "cinco-paus/component"
 	"cinco-paus/seismic/client"
 	"errors"
+	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
@@ -26,6 +27,8 @@ func resolveAbilities(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for !spell.Expired {
+		// log.Println("resolveAbilities. start Spell position: ", spellPos.X, spellPos.Y)
+
 		// log SpellBeam position
 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellBeam})
 		// record abilities that could activate a current square
@@ -38,6 +41,7 @@ func resolveAbilities(
 			eventLogList,
 		)
 		if err != nil {
+			log.Println("resolveAbilitiesAtPosition err: ", err)
 			return err
 		}
 
@@ -50,6 +54,7 @@ func resolveAbilities(
 			spell.Expired = true
 			break
 		}
+		// log.Println("resolveAbilities. end Spell position: , err; ", spellPos.X, spellPos.Y, err)
 	}
 	return nil
 }

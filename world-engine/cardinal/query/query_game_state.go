@@ -140,27 +140,33 @@ func getWandData(world cardinal.WorldContext, id types.EntityID, wands *[]WandDa
 }
 
 func getWallData(world cardinal.WorldContext, id types.EntityID, walls *[]WallData) error {
-	pos, err := cardinal.GetComponent[comp.Position](world, id)
-	if err != nil {
-		return fmt.Errorf("failed to get position component for wall: %w", err)
+	wall, _ := cardinal.GetComponent[comp.Wall](world, id)
+	if wall != nil {
+		pos, err := cardinal.GetComponent[comp.Position](world, id)
+		if err != nil {
+			return fmt.Errorf("failed to get position component for wall: %w", err)
+		}
+		*walls = append(*walls, WallData{
+			X:    pos.X,
+			Y:    pos.Y,
+			Type: int(comp.WallCollide),
+		})
 	}
-	*walls = append(*walls, WallData{
-		X:    pos.X,
-		Y:    pos.Y,
-		Type: int(comp.WallCollide),
-	})
 	return nil
 }
 
 func getMonsterData(world cardinal.WorldContext, id types.EntityID, monsters *[]MonsterData) error {
-	pos, err := cardinal.GetComponent[comp.Position](world, id)
-	if err != nil {
-		return fmt.Errorf("failed to get position component for monster: %w", err)
+	monster, _ := cardinal.GetComponent[comp.Monster](world, id)
+	if monster != nil {
+		pos, err := cardinal.GetComponent[comp.Position](world, id)
+		if err != nil {
+			return fmt.Errorf("failed to get position component for monster: %w", err)
+		}
+		*monsters = append(*monsters, MonsterData{
+			X:    pos.X,
+			Y:    pos.Y,
+			Type: int(comp.MonsterCollide),
+		})
 	}
-	*monsters = append(*monsters, MonsterData{
-		X:    pos.X,
-		Y:    pos.Y,
-		Type: int(comp.MonsterCollide),
-	})
 	return nil
 }

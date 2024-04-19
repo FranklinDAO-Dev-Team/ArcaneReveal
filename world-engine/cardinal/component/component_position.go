@@ -50,22 +50,22 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 	switch direction {
 	case LEFT:
 		if p.X == -1 {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.X--
 	case RIGHT:
 		if p.X == MaxX {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.X++
 	case UP:
 		if p.Y == -1 {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.Y--
 	case DOWN:
 		if p.Y == MaxY {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.Y++
 	default:
@@ -142,7 +142,7 @@ func (d Direction) rotateClockwise() Direction {
 	case DOWN:
 		return LEFT
 	case LEFT:
-		return RIGHT
+		return UP
 	default:
 		return -1
 	}

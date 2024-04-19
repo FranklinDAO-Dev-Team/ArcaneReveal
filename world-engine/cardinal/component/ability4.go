@@ -1,6 +1,10 @@
 package component
 
-import "pkg.world.dev/world-engine/cardinal"
+import (
+	"log"
+
+	"pkg.world.dev/world-engine/cardinal"
+)
 
 const Ability4ID = 4
 
@@ -22,11 +26,13 @@ func (a Ability4) Resolve(
 	// look up entity at spell position
 	found, id, err := spellPosition.GetEntityIDByPosition(world)
 	if err != nil {
+		log.Println("Ability4.Resolve err: ", err)
 		return false, err
 	}
 	if found {
 		colType, err := cardinal.GetComponent[Collidable](world, id)
 		if err != nil {
+			log.Println("Ability4.Resolve err: ", err)
 			return false, err
 		}
 		// if entity is a wall, then trigger explosion

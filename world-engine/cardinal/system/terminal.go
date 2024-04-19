@@ -2,16 +2,21 @@ package system
 
 import (
 	"cinco-paus/query"
+	"fmt"
 	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
 
 func PrintStateToTerminal(world cardinal.WorldContext) {
-	gameState, _ := query.GameState(world, &query.GameStateRequest{})
+	log.Println("entered PrintStateToTerminal")
+	gameState, err := query.GameState(world, &query.GameStateRequest{})
+	if err != nil {
+		log.Println("query.GameState err: ", err)
+		return
+	}
 
 	// TODO:
-
 	boardSize := 11
 	board := make([][]string, boardSize)
 	for i := range board {
@@ -39,15 +44,15 @@ func PrintStateToTerminal(world cardinal.WorldContext) {
 		for _, cell := range row {
 			switch cell {
 			case "P":
-				log.Print("\033[34mP\033[0m ") // Player in blue
+				fmt.Print("\033[34mP\033[0m ") // Player in blue
 			case "X":
-				log.Print("\033[31mX\033[0m ") // Wall in red
+				fmt.Print("\033[31mX\033[0m ") // Wall in red
 			case "M":
-				log.Print("\033[35mM\033[0m ") // Monster in magenta
+				fmt.Print("\033[35mM\033[0m ") // Monster in magenta
 			default:
-				log.Print(cell + " ")
+				fmt.Print(cell + " ")
 			}
 		}
-		log.Println()
+		fmt.Println()
 	}
 }

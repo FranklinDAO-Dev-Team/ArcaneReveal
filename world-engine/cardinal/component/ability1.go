@@ -1,6 +1,8 @@
 package component
 
 import (
+	"log"
+
 	"pkg.world.dev/world-engine/cardinal"
 )
 
@@ -26,6 +28,7 @@ func (Ability1) Resolve(
 ) (reveal bool, err error) {
 	damageDealt, err := damageAtPosition(world, spellPosition, executeUpdates, false)
 	if err != nil {
+		log.Println("Ability1.Resolve err: ", err)
 		return false, err
 	}
 	if damageDealt {

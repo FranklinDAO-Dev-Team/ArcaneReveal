@@ -174,18 +174,22 @@ func playerTurnWand(
 	direction comp.Direction,
 	wandnum int,
 ) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
+	log.Println("playerTurnWand")
 	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
 	if err != nil {
 		return 0, nil, err
 	}
+	// log.Println("playerTurnWand 1")
 	spellPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
 		return 0, nil, err
 	}
+	// log.Println("playerTurnWand 2")
 	wandID, _, available, err := getWandByNumber(world, wandnum)
 	if err != nil {
 		return 0, nil, err
 	}
+	// log.Println("playerTurnWand 3")
 
 	// handle wand availability
 	if !available.IsAvailable {
@@ -205,6 +209,7 @@ func playerTurnWand(
 		Abilities:  allAbilities,
 		Direction:  direction,
 	}
+	// log.Println("playerTurnWand 4")
 
 	// simulate a cast to determine potential ability activations
 	updateChainState := false
@@ -213,6 +218,7 @@ func playerTurnWand(
 	if err != nil {
 		return 0, nil, err
 	}
+	log.Println("playerTurnWand 5")
 
 	// create a new entity for the cast to later be resolved
 	castID, err = cardinal.Create(
