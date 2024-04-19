@@ -8,7 +8,10 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-func getWandByNumber(world cardinal.WorldContext, targetNum int) (wandID types.EntityID, wandCore *comp.WandCore, available *comp.Available, err error) {
+func getWandByNumber(
+	world cardinal.WorldContext,
+	targetNum int,
+) (wandID types.EntityID, wandCore *comp.WandCore, available *comp.Available, err error) {
 	searchErr := cardinal.NewSearch(world, filter.Contains(comp.WandCore{})).Each(
 		func(id types.EntityID) bool {
 			wandCore, err = cardinal.GetComponent[comp.WandCore](world, id)
@@ -34,7 +37,7 @@ func getWandByNumber(world cardinal.WorldContext, targetNum int) (wandID types.E
 		return 0, nil, nil, err
 	}
 
-	// fmt.Printf("wandID: %s\n", fmt.Sprint(wandID))
-	// fmt.Println("wandCore: ", wandCore)
+	// log.Printf("wandID: %s\n", fmt.Sprint(wandID))
+	// log.Println("wandCore: ", wandCore)
 	return wandID, wandCore, available, nil
 }

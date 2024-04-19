@@ -24,6 +24,15 @@ func (a Ability5) Resolve(
 		return false, nil
 	}
 
+	return ResolveWallHeal(world, spellPosition, executeUpdates, eventLogList)
+}
+
+func ResolveWallHeal(
+	world cardinal.WorldContext,
+	spellPosition *Position,
+	executeUpdates bool,
+	eventLogList *[]GameEventLog,
+) (reveal bool, err error) {
 	playerID, err := QueryPlayerID(world)
 	if err != nil {
 		return false, err
@@ -43,7 +52,7 @@ func (a Ability5) Resolve(
 			return false, err
 		}
 	}
-
-	*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellWallActivation})
+	gameEvent := GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellWallActivation}
+	*eventLogList = append(*eventLogList, gameEvent)
 	return true, nil
 }

@@ -3,7 +3,7 @@ package system
 import (
 	"cinco-paus/msg"
 	"cinco-paus/seismic/client"
-	"fmt"
+	"log"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"pkg.world.dev/world-engine/cardinal"
@@ -20,13 +20,13 @@ var (
 func Initialize(world *cardinal.World) *client.SeismicClient {
 	fulFillCreateMsg, ok := world.GetMessageByFullName("game.fulfill-create-game")
 	if !ok {
-		fmt.Printf("error: no 'fulfill-create-game' message")
+		log.Printf("error: no 'fulfill-create-game' message")
 		return nil
 	}
 
 	fulFillCastMsg, ok := world.GetMessageByFullName("game.fulfill-cast")
 	if !ok {
-		fmt.Printf("error: no 'fulfill-cast' message")
+		log.Printf("error: no 'fulfill-cast' message")
 		return nil
 	}
 
@@ -41,13 +41,13 @@ func Initialize(world *cardinal.World) *client.SeismicClient {
 			case proofRes := <-proofReturnCh:
 				if proofRes.Success {
 					ok := client.Verify(proofRes.Proof)
-					fmt.Println("verification res:", ok)
+					log.Println("verification res:", ok)
 				}
 
 				payload := msg.FulfillCreateGameMsg{Result: proofRes}
 				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, payload)
 				if err != nil {
-					fmt.Printf("failed to sign new tx: %v", err)
+					log.Printf("failed to sign new tx: %v", err)
 				}
 
 				world.AddTransaction(fulFillCreateMsg.ID(), payload, sig)
@@ -56,7 +56,7 @@ func Initialize(world *cardinal.World) *client.SeismicClient {
 				payload := msg.FulfillCastMsg{Result: revealRes}
 				sig, err := sign.NewTransaction(privateKey, "Seismic.Systems", world.Namespace(), 0, payload)
 				if err != nil {
-					fmt.Printf("failed to sign new tx: %v", err)
+					log.Printf("failed to sign new tx: %v", err)
 				}
 
 				world.AddTransaction(fulFillCastMsg.ID(), payload, sig)

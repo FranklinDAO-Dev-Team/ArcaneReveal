@@ -4,14 +4,15 @@ import (
 	comp "cinco-paus/component"
 	"cinco-paus/seismic/client"
 	"errors"
-	"fmt"
+	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
 
 // resolveAbilities takes information about a spell and determines game events it causes
 // if updateChainState is true, it applies the changes to the world
-// potentialAbilities is a list of booleans that indicate if the ability at that index should be considered for activation
+// potentialAbilities is a list of booleans that indicate
+// if the ability at that index should be considered for activation
 // spellEvents are recorded in eventLogList
 // loop executes in 3 steps:
 // 1. record abilities that could activate a current square
@@ -26,12 +27,21 @@ func resolveAbilities(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for !spell.Expired {
+		// log.Println("resolveAbilities. start Spell position: ", spellPos.X, spellPos.Y)
 
 		// log SpellBeam position
 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellBeam})
 		// record abilities that could activate a current square
-		err := resolveAbilitiesAtPosition(world, spellPos, spell.Direction, potentialAbilities, updateChainState, eventLogList)
+		err := resolveAbilitiesAtPosition(
+			world,
+			spellPos,
+			spell.Direction,
+			potentialAbilities,
+			updateChainState,
+			eventLogList,
+		)
 		if err != nil {
+			log.Println("resolveAbilitiesAtPosition err: ", err)
 			return err
 		}
 
@@ -44,29 +54,15 @@ func resolveAbilities(
 			spell.Expired = true
 			break
 		}
-
-		// // if wall entity at spellPos, stop
-		// found, id, err := spellPos.GetEntityIDByPosition(world)
-		// if err != nil {
-		// 	return err
-		// }
-		// if found {
-		// 	colType, err := cardinal.GetComponent[comp.Collidable](world, id)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	if colType.Type == comp.WallCollide {
-		// 		spell.Expired = true
-		// 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellDisappate})
-		// 	}
-		// }
+		// log.Println("resolveAbilities. end Spell position: , err; ", spellPos.X, spellPos.Y, err)
 	}
 	return nil
 }
 
 // resolveAbilitiesAtPosition takes information about a spell determines game events it causes at a single position
 // if updateChainState is true, it applies the changes to the world
-// potentialAbilities is a list of booleans that indicate if the ability at that index should be considered for activation
+// potentialAbilities is a list of booleans that indicate if
+// the ability at that index should be considered for activation
 // spellEvents are recorded in eventLogList
 func resolveAbilitiesAtPosition(
 	world cardinal.WorldContext,
@@ -77,25 +73,25 @@ func resolveAbilitiesAtPosition(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for i := 0; i < len(*potentialAbilities); i++ {
-		if (*potentialAbilities)[i] { // if ability should be activated/checked
+		if potentialAbilities[i] { // if ability should be activated/checked
 			a := comp.AbilityMap[i+1]
 			if a == nil {
 				return errors.New("unknown ability called")
 			}
 			activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
 			if err != nil {
-				fmt.Println("resolveAbilitiesAtPosition err", err)
+				// log.Println("resolveAbilitiesAtPosition err", err)
 				return err
 			}
 
 			// only overwrite if ability activated
-			(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
+			potentialAbilities[i] = activated || potentialAbilities[i]
 
-			if spellPos.Y == 10 && i == 6 {
-				fmt.Println("6+1 = 7 activated", activated)
-				fmt.Println(potentialAbilities)
-				fmt.Println()
-			}
+			// if spellPos.Y == 10 && i == 6 {
+			// 	log.Println("6+1 = 7 activated", activated)
+			// 	log.Println(potentialAbilities)
+			// 	log.Println()
+			// }
 		}
 	}
 

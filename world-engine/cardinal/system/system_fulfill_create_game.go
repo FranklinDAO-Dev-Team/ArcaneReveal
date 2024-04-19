@@ -14,7 +14,6 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.FulfillCreateGameMsg, msg.FulfillCreateGameMsgResult](
 		world,
 		func(req message.TxData[msg.FulfillCreateGameMsg]) (msg.FulfillCreateGameMsgResult, error) {
-
 			pendingGameID := req.Msg.Result.PendingGameID
 			pendingGame, hasPendingGame := cardinal.GetComponent[component.PendingGame](
 				world,
@@ -51,18 +50,13 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 				}
 			}
 
-			gameID, err := cardinal.Create(world, component.Game{
+			_, err := cardinal.Create(world, component.Game{
 				PersonaTag:  req.Msg.Result.PersonaTag,
 				Commitments: &commitments,
 			})
 			if err != nil {
-				return msg.FulfillCreateGameMsgResult{}, fmt.Errorf("failed to create Game component: %v", err)
+				return msg.FulfillCreateGameMsgResult{}, fmt.Errorf("failed to create Game component: %w", err)
 			}
-
-			world.EmitEvent(map[string]any{
-				"event": "game-created",
-				"gameID": gameID,
-			})
 
 			return msg.FulfillCreateGameMsgResult{}, nil
 		})

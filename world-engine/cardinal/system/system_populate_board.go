@@ -12,8 +12,8 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 		comp.Player{},
 		comp.Collidable{Type: comp.PlayerCollide},
 		comp.Health{
-			MaxHealth:  PLAYER_MAX_HEALTH,
-			CurrHealth: PLAYER_MAX_HEALTH,
+			MaxHealth:  PlayerMaxHealth,
+			CurrHealth: PlayerMaxHealth,
 		},
 		comp.Position{
 			X: 1,
@@ -34,11 +34,11 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 	// }
 
 	// create monsters
-	createMonster(world, 9, 1, comp.LIGHT)
+	createMonster(world, 9, 1, comp.MEDIUM)
 	createMonster(world, 1, 9, comp.LIGHT)
 	createMonster(world, 3, 9, comp.LIGHT)
-	createMonster(world, 3, 3, comp.MEDIUM)
-	createMonster(world, 9, 7, comp.MEDIUM)
+	createMonster(world, 3, 3, comp.LIGHT)
+	createMonster(world, 9, 7, comp.LIGHT)
 
 	// other walls
 	createWall(world, 3, 2)
@@ -65,6 +65,8 @@ func PopulateBoardSystem(world cardinal.WorldContext) error {
 			}
 		}
 	}
+
+	PrintStateToTerminal(world)
 
 	return nil
 }

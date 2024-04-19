@@ -1,8 +1,6 @@
 package component
 
 import (
-	"fmt"
-
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/types"
 )
@@ -41,7 +39,6 @@ func DecrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err 
 }
 
 func IncrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err error) {
-	fmt.Println("entered IncremenetHealth")
 	health, err := cardinal.GetComponent[Health](world, entityID)
 	if err != nil {
 		return err
@@ -49,15 +46,11 @@ func IncrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err 
 
 	if health.CurrHealth < health.MaxHealth {
 		// Health is not at max, increment it
-		fmt.Println("should actually heal")
 		health.CurrHealth++
 		err = cardinal.SetComponent[Health](world, entityID, health)
 		if err != nil {
 			return err
 		}
-		return nil
-	} else {
-		// health is at max, don't increment
-		return nil
 	}
+	return nil
 }

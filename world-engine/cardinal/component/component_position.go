@@ -10,8 +10,8 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-const MaxX = 11
-const MaxY = 11
+const MaxX = 10
+const MaxY = 10
 
 type Position struct {
 	X int `json:"x"`
@@ -50,22 +50,22 @@ func (p Position) GetUpdateFromDirection(direction Direction) (*Position, error)
 	switch direction {
 	case LEFT:
 		if p.X == -1 {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.X--
 	case RIGHT:
 		if p.X == MaxX {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.X++
 	case UP:
 		if p.Y == -1 {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.Y--
 	case DOWN:
 		if p.Y == MaxY {
-			return nil, fmt.Errorf("moving out of bounds")
+			return nil, fmt.Errorf("moving out of bounds: %s, %d", p.String(), int(direction))
 		}
 		p.Y++
 	default:
@@ -131,4 +131,23 @@ func (p *Position) Towards(other *Position) (Direction, error) {
 	default:
 		return -1, errors.New("other position is not in a single direction")
 	}
+}
+
+func (d Direction) rotateClockwise() Direction {
+	switch d {
+	case UP:
+		return RIGHT
+	case RIGHT:
+		return DOWN
+	case DOWN:
+		return LEFT
+	case LEFT:
+		return UP
+	default:
+		return -1
+	}
+}
+
+func (p Position) String() string {
+	return fmt.Sprintf("(%d, %d)", p.X, p.Y)
 }

@@ -22,7 +22,7 @@ func RequestGameSystem(world cardinal.WorldContext) error {
 				PlayerSource: playerSource,
 			})
 			if err != nil {
-				return msg.RequestGameMsgResult{}, fmt.Errorf("failed to create pending game: %v", err)
+				return msg.RequestGameMsgResult{}, fmt.Errorf("failed to create pending game: %w", err)
 			}
 
 			proofReq := client.ProofRequest{
