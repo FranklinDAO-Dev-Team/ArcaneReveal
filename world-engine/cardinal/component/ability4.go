@@ -15,7 +15,7 @@ func (Ability4) GetAbilityID() int {
 func (a Ability4) Resolve(
 	world cardinal.WorldContext,
 	spellPosition *Position,
-	direction Direction,
+	_ Direction,
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
@@ -31,21 +31,32 @@ func (a Ability4) Resolve(
 		}
 		// if entity is a wall, then trigger explosion
 		if colType.Type == WallCollide {
-			topLeft := Position{X: spellPosition.X - 2, Y: spellPosition.Y - 2}
-			for i := 0; i < 5; i++ {
-				for j := 0; j < 5; j++ {
-					damagePos := Position{X: topLeft.X + i, Y: topLeft.Y + j}
-					damageDealt, err := damageAtPostion(world, &damagePos, executeUpdates, true)
-					if err != nil {
-						return false, err
-					}
-					if damageDealt {
-						*eventLogList = append(*eventLogList, GameEventLog{X: damagePos.X, Y: damagePos.Y, Event: GameEventSpellDamage})
-					}
-					reveal = true
-				}
-			}
+			return applyExplosion(world, spellPosition, executeUpdates, eventLogList)
 		}
 	}
-	return reveal, nil
+	return false, nil
+}
+
+func applyExplosion(
+	world cardinal.WorldContext,
+	spellPosition *Position,
+	executeUpdates bool,
+	eventLogList *[]GameEventLog,
+) (reveal bool, err error) {
+	explosionRange := 2
+	topLeft := Position{X: spellPosition.X - explosionRange, Y: spellPosition.Y - explosionRange}
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
+			damagePos := Position{X: topLeft.X + i, Y: topLeft.Y + j}
+			damageDealt, err := damageAtPosition(world, &damagePos, executeUpdates, true)
+			if err != nil {
+				return false, err
+			}
+			if damageDealt {
+				*eventLogList = append(*eventLogList, GameEventLog{X: damagePos.X, Y: damagePos.Y, Event: GameEventSpellDamage})
+			}
+			reveal = true
+		}
+	}
+	return reveal, nil // return true if explosion actually damaged anything
 }

@@ -21,8 +21,8 @@ func (a Ability2) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	perpDirOne := (direction + 1) % 4
-	perpDirTwo := (direction + 3) % 4
+	perpDirOne := direction.rotateClockwise()
+	perpDirTwo := direction.rotateClockwise().rotateClockwise().rotateClockwise()
 
 	damageDealtOne, err := resolveOneA2Check(world, spellPosition, perpDirOne, executeUpdates, eventLogList)
 	if err != nil {
@@ -38,7 +38,13 @@ func (a Ability2) Resolve(
 	return reveal, nil
 }
 
-func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, perpDir Direction, executeUpdates bool, eventLogList *[]GameEventLog) (reveal bool, err error) {
+func resolveOneA2Check(
+	world cardinal.WorldContext,
+	spellPosition *Position,
+	perpDir Direction,
+	executeUpdates bool,
+	eventLogList *[]GameEventLog,
+) (reveal bool, err error) {
 	adjPos, err := spellPosition.GetUpdateFromDirection(perpDir)
 	if err != nil {
 		return false, err
@@ -47,18 +53,20 @@ func resolveOneA2Check(world cardinal.WorldContext, spellPosition *Position, per
 	if err != nil {
 		return false, err
 	}
-	if !hitWall { // this spell cannot hit through walls
-		adjPlayablePos, err := adjPos.GetUpdateFromDirection(perpDir)
-		// fmt.Println("adjPlayablePos", adjPlayablePos)
-		if err == nil {
-			damageDealt, err := damageAtPostion(world, adjPlayablePos, executeUpdates, false)
-			if err != nil {
-				return false, err
-			}
-			if damageDealt {
-				*eventLogList = append(*eventLogList, GameEventLog{X: adjPlayablePos.X, Y: adjPlayablePos.Y, Event: GameEventSpellDamage})
-				return true, nil
-			}
+	if hitWall { // this spell cannot hit through walls
+		return false, nil
+	}
+	adjPlayablePos, err := adjPos.GetUpdateFromDirection(perpDir)
+	// log.Println("adjPlayablePos", adjPlayablePos)
+	if err == nil {
+		damageDealt, err := damageAtPosition(world, adjPlayablePos, executeUpdates, false)
+		if err != nil {
+			return false, err
+		}
+		if damageDealt {
+			gameEvent := GameEventLog{X: adjPlayablePos.X, Y: adjPlayablePos.Y, Event: GameEventSpellDamage}
+			*eventLogList = append(*eventLogList, gameEvent)
+			return true, nil
 		}
 	}
 	return false, nil

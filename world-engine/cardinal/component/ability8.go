@@ -15,7 +15,7 @@ func (Ability8) GetAbilityID() int {
 func (a Ability8) Resolve(
 	world cardinal.WorldContext,
 	spellPosition *Position,
-	direction Direction,
+	_ Direction,
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
@@ -24,26 +24,5 @@ func (a Ability8) Resolve(
 		return false, nil
 	}
 
-	playerID, err := QueryPlayerID(world)
-	if err != nil {
-		return false, err
-	}
-
-	playerHealth, err := cardinal.GetComponent[Health](world, playerID)
-	if err != nil {
-		return false, err
-	}
-	if playerHealth.CurrHealth == playerHealth.MaxHealth {
-		return false, err // ability cannot activate if player is at max health
-	}
-
-	if executeUpdates {
-		err := IncrementHealth(world, playerID)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellWallActivation})
-	return true, nil
+	return ResolveWallHeal(world, spellPosition, executeUpdates, eventLogList)
 }

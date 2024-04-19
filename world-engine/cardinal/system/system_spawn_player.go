@@ -2,7 +2,7 @@ package system
 
 import (
 	"errors"
-	"fmt"
+	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
 
@@ -27,9 +27,9 @@ func SpawnPlayerSystem(world cardinal.WorldContext) error {
 			Y: 1,
 		},
 	)
-	fmt.Println("player spawned")
+	log.Println("player spawned")
 	p, _ := cardinal.GetComponent[comp.Position](world, 0)
-	fmt.Println(p.X, p.Y)
+	log.Println(p.X, p.Y)
 
 	if err != nil {
 		return errors.New("failed to create player")

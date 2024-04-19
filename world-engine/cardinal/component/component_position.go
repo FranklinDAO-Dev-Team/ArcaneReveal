@@ -10,8 +10,8 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-const MaxX = 11
-const MaxY = 11
+const MaxX = 10
+const MaxY = 10
 
 type Position struct {
 	X int `json:"x"`
@@ -130,5 +130,20 @@ func (p *Position) Towards(other *Position) (Direction, error) {
 		return RIGHT, nil
 	default:
 		return -1, errors.New("other position is not in a single direction")
+	}
+}
+
+func (d Direction) rotateClockwise() Direction {
+	switch d {
+	case UP:
+		return RIGHT
+	case RIGHT:
+		return DOWN
+	case DOWN:
+		return LEFT
+	case LEFT:
+		return RIGHT
+	default:
+		return -1
 	}
 }

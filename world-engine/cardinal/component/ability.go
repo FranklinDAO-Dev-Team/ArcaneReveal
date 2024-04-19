@@ -2,6 +2,7 @@ package component
 
 import (
 	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 type GameEvent int
@@ -51,47 +52,58 @@ var AbilityMap = map[int]Ability{
 	8: &Ability8{}, // left heal
 }
 
-func damageAtPostion(
+func damageAtPosition(
 	world cardinal.WorldContext,
 	pos *Position,
 	executeUpdates bool,
 	includePlayer bool,
 ) (damageDelt bool, err error) {
-	// lookup if entity exists
+	// Lookup if entity exists
 	found, id, err := pos.GetEntityIDByPosition(world)
 	if err != nil {
 		return false, err
 	}
-	if found {
-		// check entity type
-		colType, err := cardinal.GetComponent[Collidable](world, id)
+	if !found {
+		return false, nil
+	}
+
+	return damageEntity(world, id, executeUpdates, includePlayer)
+}
+
+func damageEntity(
+	world cardinal.WorldContext,
+	id types.EntityID,
+	executeUpdates bool,
+	includePlayer bool,
+) (bool, error) {
+	colType, err := cardinal.GetComponent[Collidable](world, id)
+	if err != nil {
+		return false, err
+	}
+
+	switch colType.Type {
+	case MonsterCollide:
+		return updateHealthIfNeeded(world, id, executeUpdates)
+	case PlayerCollide:
+		if includePlayer {
+			return updateHealthIfNeeded(world, id, executeUpdates)
+		}
+		return false, nil
+	case WallCollide:
+		return false, nil
+	case ItemCollide:
+		return false, nil
+	default:
+		return false, nil
+	}
+}
+
+func updateHealthIfNeeded(world cardinal.WorldContext, id types.EntityID, executeUpdates bool) (bool, error) {
+	if executeUpdates {
+		err := DecrementHealth(world, id)
 		if err != nil {
 			return false, err
 		}
-		switch colType.Type {
-		case MonsterCollide:
-			if executeUpdates {
-				err := DecrementHealth(world, id)
-				if err != nil {
-					return false, err
-				}
-				return true, nil
-			}
-		case PlayerCollide:
-			if includePlayer {
-				if executeUpdates {
-					err := DecrementHealth(world, id)
-					if err != nil {
-						return false, err
-					}
-				}
-				return true, nil
-			} else {
-				return false, nil
-			}
-		default:
-			return false, nil
-		}
 	}
-	return false, err
+	return true, nil
 }

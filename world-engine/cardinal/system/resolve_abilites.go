@@ -10,7 +10,8 @@ import (
 
 // resolveAbilities takes information about a spell and determines game events it causes
 // if updateChainState is true, it applies the changes to the world
-// potentialAbilities is a list of booleans that indicate if the ability at that index should be considered for activation
+// potentialAbilities is a list of booleans that indicate
+// if the ability at that index should be considered for activation
 // spellEvents are recorded in eventLogList
 // loop executes in 3 steps:
 // 1. record abilities that could activate a current square
@@ -29,7 +30,14 @@ func resolveAbilities(
 		// log SpellBeam position
 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellBeam})
 		// record abilities that could activate a current square
-		err := resolveAbilitiesAtPosition(world, spellPos, spell.Direction, potentialAbilities, updateChainState, eventLogList)
+		err := resolveAbilitiesAtPosition(
+			world,
+			spellPos,
+			spell.Direction,
+			potentialAbilities,
+			updateChainState,
+			eventLogList,
+		)
 		if err != nil {
 			return err
 		}
@@ -43,22 +51,6 @@ func resolveAbilities(
 			spell.Expired = true
 			break
 		}
-
-		// // if wall entity at spellPos, stop
-		// found, id, err := spellPos.GetEntityIDByPosition(world)
-		// if err != nil {
-		// 	return err
-		// }
-		// if found {
-		// 	colType, err := cardinal.GetComponent[comp.Collidable](world, id)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	if colType.Type == comp.WallCollide {
-		// 		spell.Expired = true
-		// 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellDisappate})
-		// 	}
-		// }
 	}
 	return nil
 }
@@ -83,7 +75,7 @@ func resolveAbilitiesAtPosition(
 			}
 			activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
 			if err != nil {
-				// fmt.Println("resolveAbilitiesAtPosition err", err)
+				// log.Println("resolveAbilitiesAtPosition err", err)
 				return err
 			}
 
@@ -91,9 +83,9 @@ func resolveAbilitiesAtPosition(
 			(*potentialAbilities)[i] = activated || (*potentialAbilities)[i]
 
 			// if spellPos.Y == 10 && i == 6 {
-			// 	fmt.Println("6+1 = 7 activated", activated)
-			// 	fmt.Println(potentialAbilities)
-			// 	fmt.Println()
+			// 	log.Println("6+1 = 7 activated", activated)
+			// 	log.Println(potentialAbilities)
+			// 	log.Println()
 			// }
 		}
 	}

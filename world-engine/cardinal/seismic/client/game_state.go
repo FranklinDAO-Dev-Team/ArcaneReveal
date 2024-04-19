@@ -3,6 +3,7 @@ package client
 import (
 	"crypto/rand"
 	"fmt"
+	"log"
 	"math/big"
 
 	"github.com/iden3/go-iden3-crypto/poseidon"
@@ -60,7 +61,7 @@ func NewGameState(playerSource *big.Int) (*GameState, error) {
 		}
 	}
 
-	fmt.Println("In seismic/client/game_state.go. Debug print attributes:", attributes)
+	log.Println("In seismic/client/game_state.go. Debug print attributes:", attributes)
 
 	return &GameState{
 		PlayerSource:  playerSource.String(),

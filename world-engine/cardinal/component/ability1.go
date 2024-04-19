@@ -24,12 +24,13 @@ func (Ability1) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	damageDealt, err := damageAtPostion(world, spellPosition, executeUpdates, false)
+	damageDealt, err := damageAtPosition(world, spellPosition, executeUpdates, false)
 	if err != nil {
 		return false, err
 	}
 	if damageDealt {
-		*eventLogList = append(*eventLogList, GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellDamage})
+		gameEvent := GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventSpellDamage}
+		*eventLogList = append(*eventLogList, gameEvent)
 	}
 	return damageDealt, nil
 }

@@ -2,7 +2,7 @@ package system
 
 import (
 	"cinco-paus/query"
-	"fmt"
+	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
 )
@@ -39,15 +39,15 @@ func PrintStateToTerminal(world cardinal.WorldContext) {
 		for _, cell := range row {
 			switch cell {
 			case "P":
-				fmt.Print("\033[34mP\033[0m ") // Player in blue
+				log.Print("\033[34mP\033[0m ") // Player in blue
 			case "X":
-				fmt.Print("\033[31mX\033[0m ") // Wall in red
+				log.Print("\033[31mX\033[0m ") // Wall in red
 			case "M":
-				fmt.Print("\033[35mM\033[0m ") // Monster in magenta
+				log.Print("\033[35mM\033[0m ") // Monster in magenta
 			default:
-				fmt.Print(cell + " ")
+				log.Print(cell + " ")
 			}
 		}
-		fmt.Println()
+		log.Println()
 	}
 }

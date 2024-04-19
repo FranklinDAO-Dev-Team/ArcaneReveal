@@ -6,6 +6,7 @@ import (
 	"cinco-paus/seismic/client"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 
 	"pkg.world.dev/world-engine/cardinal"
@@ -17,7 +18,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](
 		world,
 		func(turn message.TxData[msg.PlayerTurnMsg]) (msg.PlayerTurnResult, error) {
-			fmt.Println("starting player turn system")
+			log.Println("starting player turn system")
 			err := turn.Msg.ValFmt()
 			if err != nil {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
@@ -38,7 +39,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				}
 				MonsterTurnSystem(world, eventLogList)
 				// TODO: emit events to client
-				fmt.Println("TODO: emit activated abilities and spell log to client")
+				log.Println("TODO: emit activated abilities and spell log to client")
 
 			case "wand":
 				wandnum, err := strconv.Atoi(turn.Msg.WandNum)
@@ -49,10 +50,10 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				if err != nil {
 					return msg.PlayerTurnResult{Success: false}, err
 				}
-				// fmt.Println("castID: ", castID)
-				// fmt.Println("potentialAbilities: ", potentialAbilities)
+				// log.Println("castID: ", castID)
+				// log.Println("potentialAbilities: ", potentialAbilities)
 
-				// fmt.Println("gameidstr:", turn.Msg.GameIDStr)
+				// log.Println("gameidstr:", turn.Msg.GameIDStr)
 
 				gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
 				if err != nil {
@@ -70,7 +71,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 					revealRequest.PotentialAbilities[i] = true
 				}
 				revealRequestCh <- revealRequest
-				fmt.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
+				log.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
 			case "move":
 				err = playerTurnMove(world, direction, eventLogList)
@@ -78,7 +79,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 					return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: %w", err)
 				}
 				MonsterTurnSystem(world, eventLogList)
-				fmt.Println("TODO: emit activated abilities and spell log to client")
+				log.Println("TODO: emit activated abilities and spell log to client")
 			default:
 				return msg.PlayerTurnResult{}, fmt.Errorf("PlayerTurnSystem err: Invalid action")
 			}
@@ -96,7 +97,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 			// debug prints
 			// for _, logEntry := range *eventLogList {
-			// 	fmt.Printf("X: %d, Y: %d, Event: %d\n",
+			// 	log.Printf("X: %d, Y: %d, Event: %d\n",
 			// 		logEntry.X, logEntry.Y, logEntry.Event)
 			// }
 
@@ -120,7 +121,7 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction, e
 	if err != nil {
 		return err
 	}
-	fmt.Printf("attackPos: %v\n", attackPos)
+	log.Printf("attackPos: %v\n", attackPos)
 
 	found, id, err := attackPos.GetEntityIDByPosition(world)
 	if err != nil {
@@ -131,7 +132,7 @@ func player_turn_attack(world cardinal.WorldContext, direction comp.Direction, e
 		if err != nil {
 			return err
 		}
-		fmt.Printf("colType: %v\n", colType)
+		log.Printf("colType: %v\n", colType)
 		switch colType.Type {
 		case comp.MonsterCollide:
 			*eventLogList = append(*eventLogList, comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: comp.GameEventPlayerAttack})
@@ -219,7 +220,7 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	} else if valid {
-		return fmt.Errorf("would collide at %v", newPos) // invalid postion, but don't return error, just check next direction
+		return fmt.Errorf("would collide at %v", newPos) // invalid position, but don't return error, just check next direction
 	}
 	*eventLogList = append(*eventLogList, comp.GameEventLog{X: newPos.X, Y: newPos.Y, Event: directionToGameEventPlayerMove(direction)})
 
@@ -231,7 +232,7 @@ func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, event
 	if err != nil {
 		return err
 	} else if valid {
-		return fmt.Errorf("would collide at %v", newNewPos) // invalid postion, but don't return error, just check next direction
+		return fmt.Errorf("would collide at %v", newNewPos) // invalid position, but don't return error, just check next direction
 	}
 
 	cardinal.SetComponent[comp.Position](world, playerID, newNewPos)
