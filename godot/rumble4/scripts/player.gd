@@ -210,10 +210,18 @@ func _unhandled_input(event):
 				"Direction": dir,
 				"WandNum": "0",
 				}))
+				
+#var resp2 = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))   ##JSON.parse_string(resp2)
+   #print(resp2)
 
 
 func move(dir):
-	process_data();
+	#process_data();
+	
+	
+	processTheJSON();
+	
+	
 	print("move")
 	previous_move = dir
 	previous_position = position
@@ -264,3 +272,85 @@ func _on_area_entered(area):
 		
 		
 
+
+
+
+
+
+func processTheJSON():
+	# Sample stringified JSON data
+	var jsonString = """
+	
+	{
+		"payload": {
+			"player": {
+				"x": 1,
+				"y": 5,
+				"maxHealth": 5,
+				"currHealth": 3
+			},
+			"wands": [
+				{"number": 0, "isAvailable": true},
+				{"number": 1, "isAvailable": true},
+				{"number": 2, "isAvailable": true},
+				{"number": 3, "isAvailable": true}
+			],
+			"walls": [
+				{"x": 3, "y": 2, "type": 0},
+				{"x": 5, "y": 2, "type": 0},
+				{"x": 2, "y": 5, "type": 0},
+				{"x": 2, "y": 7, "type": 0}
+			],
+			"monsters": [
+				{"x": 9, "y": 5, "type": 2},
+				{"x": 1, "y": 7, "type": 2},
+				{"x": 3, "y": 5, "type": 2},
+				{"x": 1, "y": 3, "type": 2}
+			]
+		}
+	}
+	
+	"""
+
+	# Parse JSON string into a Dictionary
+	
+	var json = JSON.new()
+	var finish = json.parse_string(jsonString)
+	var JSONdata = finish
+	print("jsonString output: " + jsonString)
+
+	## Access player data
+	#var player = finish["payload"]["player"]
+	#var playerX = player["x"]
+	#var playerY = player["y"]
+	#var maxHealth = player["maxHealth"]
+	#var currHealth = player["currHealth"]
+	#print("Player Position:", playerX, ",", playerY)
+	#print("Max Health:", maxHealth)
+	#print("Current Health:", currHealth)
+#
+	## Access wands data
+	#var wands = json["payload"]["wands"]
+	#for wand in wands:
+		#var number = wand["number"]
+		#var isAvailable = wand["isAvailable"]
+		#print("Wand Number:", number)
+		#print("Is Available:", isAvailable)
+#
+	## Access walls data
+	#var walls = json["payload"]["walls"]
+	#for wall in walls:
+		#var wallX = wall["x"]
+		#var wallY = wall["y"]
+		#var wallType = wall["type"]
+		#print("Wall at:", wallX, ",", wallY)
+		#print("Type:", wallType)
+#
+	## Access monsters data
+	#var monsters = json["payload"]["monsters"]
+	#for monster in monsters:
+		#var monsterX = monster["x"]
+		#var monsterY = monster["y"]
+		#var monsterType = monster["type"]
+		#print("Monster at:", monsterX, ",", monsterY)
+		#print("Type:", monsterType)

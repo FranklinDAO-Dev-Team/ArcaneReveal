@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_x7epu"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="8_th4ig"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="9_imb6i"]
-[ext_resource type="PackedScene" path="res://scenes/Gama/BasicLightning.tscn" id="10_kbkyr"]
+[ext_resource type="PackedScene" uid="uid://bbtihlbhgix8u" path="res://scenes/Gama/BasicLightning.tscn" id="10_kbkyr"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="10_xqvk1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
