@@ -2,4 +2,19 @@
 
 # Dev Setup
 
-Before running `world cardinal start` or `world cardinal dev` makes sure to run `make setup` to setup the circuit files and vendor cgo deps.
+## Setting up the world engine backend 
+On the first set up, you may need to add the following line your .zshrc:
+```
+Add export PATH=$PATH:~/go/bin
+```
+From the project folder, run 
+```
+cd world_engine/cardinal
+make
+```
+Then, after making sure docker is running,
+```
+cd .. 
+world cardinal purge && world cardinal start --editor
+```
+
