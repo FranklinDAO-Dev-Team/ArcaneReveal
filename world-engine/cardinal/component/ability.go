@@ -34,6 +34,7 @@ type Ability interface {
 	GetAbilityID() int
 	Resolve(
 		world cardinal.WorldContext,
+		gameID types.EntityID,
 		spellPosition *Position,
 		direction Direction,
 		executeUpdates bool,

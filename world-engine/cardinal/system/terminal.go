@@ -6,11 +6,14 @@ import (
 	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-func PrintStateToTerminal(world cardinal.WorldContext) {
+func PrintStateToTerminal(world cardinal.WorldContext, gameID types.EntityID) {
 	log.Println("entered PrintStateToTerminal")
-	gameState, err := query.GameState(world, &query.GameStateRequest{})
+	log.Println("gameID: ", gameID)
+	fmt.Println()
+	gameState, err := query.GameState(world, &query.GameStateRequest{GameID: gameID})
 	if err != nil {
 		log.Println("query.GameState err: ", err)
 		return

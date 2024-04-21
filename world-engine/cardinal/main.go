@@ -23,17 +23,19 @@ func main() {
 	Must(
 		cardinal.RegisterComponent[component.PendingGame](w),
 		cardinal.RegisterComponent[component.Game](w),
+		cardinal.RegisterComponent[component.GameObj](w),
 
 		cardinal.RegisterComponent[component.Collidable](w),
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Monster](w),
 		cardinal.RegisterComponent[component.Wall](w),
+		cardinal.RegisterComponent[component.Health](w),
+		cardinal.RegisterComponent[component.Position](w),
+
 		cardinal.RegisterComponent[component.WandCore](w),
 		cardinal.RegisterComponent[component.Available](w),
 		cardinal.RegisterComponent[component.Spell](w),
 		cardinal.RegisterComponent[component.AwaitingReveal](w),
-		cardinal.RegisterComponent[component.Health](w),
-		cardinal.RegisterComponent[component.Position](w),
 	)
 
 	// Register messages (user action)
@@ -65,11 +67,10 @@ func main() {
 		// system.MonsterTurnSystem,
 	))
 
-	Must(cardinal.RegisterInitSystems(w,
-		// system.SpawnPlayerSystem,
-		system.PopulateBoardSystem,
-		system.SpawnWandsSystem,
-	))
+	// Must(cardinal.RegisterInitSystems(w,
+	// 	// system.PopulateBoardSystem,
+	// 	// system.SpawnWandsSystem,
+	// ))
 
 	seismicClient := system.Initialize(w)
 	seismicClient.Start()

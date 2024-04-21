@@ -1,6 +1,7 @@
 package system
 
 import (
+	"cinco-paus/component"
 	comp "cinco-paus/component"
 	"cinco-paus/msg"
 	"cinco-paus/seismic/client"
@@ -18,41 +19,64 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 	return cardinal.EachMessage[msg.PlayerTurnMsg, msg.PlayerTurnResult](
 		world,
 		func(turn message.TxData[msg.PlayerTurnMsg]) (msg.PlayerTurnResult, error) {
+			var err error
 			log.Println("starting player turn system")
-			err := turn.Msg.ValFmt()
+
+			gameIdInt, err := strconv.Atoi(turn.Msg.GameIDStr)
+			if err != nil {
+				return msg.PlayerTurnResult{}, fmt.Errorf("error converting string to int: %w", err)
+			}
+			gameID := types.EntityID(gameIdInt)
+
+			// check that the msg.sender is the game owner
+			err = confirmGameOwnership(world, turn.Tx.PersonaTag, gameID)
+			if err != nil {
+				return msg.PlayerTurnResult{}, err
+			}
+
+			// check msg strings are well formatted
+			err = turn.Msg.ValFmt()
 			if err != nil {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
 			}
+
+			// set up for playerTurnAction
+			playerID, err := comp.QueryPlayerID(world, gameID)
+			if err != nil {
+				return msg.PlayerTurnResult{}, err
+			}
+			log.Println("PlayerTurnSystem playerID: ", playerID)
 
 			direction, err := comp.StringToDirection(turn.Msg.Direction)
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
 			}
-
 			eventLogList := &[]comp.GameEventLog{}
 
-			err = playerTurnAction(world, turn, direction, eventLogList)
+			err = playerTurnAction(world, gameID, turn, direction, eventLogList)
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
 			}
 
+			// emit event log to client
 			err = world.EmitEvent(map[string]any{
 				"event":     "player_turn",
 				"action":    turn.Msg.Action,
 				"direction": direction,
 			})
-			PrintStateToTerminal(world)
-
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
 			}
 
+			// log
+			PrintStateToTerminal(world, gameID)
 			// debug prints
 			// for _, logEntry := range *eventLogList {
 			// 	log.Printf("X: %d, Y: %d, Event: %d\n",
 			// 		logEntry.X, logEntry.Y, logEntry.Event)
 			// }
 
+			// return success
 			result := msg.PlayerTurnResult{Success: true}
 			return result, nil
 		})
@@ -60,6 +84,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 
 func playerTurnAction(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	turn message.TxData[msg.PlayerTurnMsg],
 	direction comp.Direction,
 	eventLogList *[]comp.GameEventLog,
@@ -67,11 +92,11 @@ func playerTurnAction(
 	var err error
 	switch turn.Msg.Action {
 	case "attack":
-		err = playerTurnAttack(world, direction, eventLogList)
+		err = playerTurnAttack(world, gameID, direction, eventLogList)
 		if err != nil {
 			return err
 		}
-		err = MonsterTurnSystem(world, eventLogList)
+		err = MonsterTurnSystem(world, gameID, eventLogList)
 		if err != nil {
 			return err
 		}
@@ -84,7 +109,7 @@ func playerTurnAction(
 		if err != nil {
 			return fmt.Errorf("error converting string to int: %w", err)
 		}
-		castID, potentialAbilities, err := playerTurnWand(world, direction, wandnum)
+		castID, potentialAbilities, err := playerTurnWand(world, gameID, direction, wandnum)
 		if err != nil {
 			return err
 		}
@@ -112,11 +137,11 @@ func playerTurnAction(
 		log.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
 	case "move":
-		err = playerTurnMove(world, direction, eventLogList)
+		err = playerTurnMove(world, gameID, direction, eventLogList)
 		if err != nil {
 			return fmt.Errorf("PlayerTurnSystem err: %w", err)
 		}
-		err = MonsterTurnSystem(world, eventLogList)
+		err = MonsterTurnSystem(world, gameID, eventLogList)
 		if err != nil {
 			return fmt.Errorf("MonsterTurnSystem err: %w", err)
 		}
@@ -129,10 +154,15 @@ func playerTurnAction(
 
 func playerTurnAttack(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	direction comp.Direction,
 	eventLogList *[]comp.GameEventLog,
 ) error {
-	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
+	playerID, err := comp.QueryPlayerID(world, gameID)
+	if err != nil {
+		return err
+	}
+	playerPos, err := cardinal.GetComponent[comp.Position](world, playerID)
 	if err != nil {
 		return err
 	}
@@ -171,25 +201,27 @@ func playerTurnAttack(
 
 func playerTurnWand(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	direction comp.Direction,
 	wandnum int,
 ) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
 	log.Println("playerTurnWand")
-	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
+	playerID, err := comp.QueryPlayerID(world, gameID)
 	if err != nil {
 		return 0, nil, err
 	}
-	// log.Println("playerTurnWand 1")
+	playerPos, err := cardinal.GetComponent[comp.Position](world, playerID)
+	if err != nil {
+		return 0, nil, err
+	}
 	spellPos, err := playerPos.GetUpdateFromDirection(direction)
 	if err != nil {
 		return 0, nil, err
 	}
-	// log.Println("playerTurnWand 2")
 	wandID, _, available, err := getWandByNumber(world, wandnum)
 	if err != nil {
 		return 0, nil, err
 	}
-	// log.Println("playerTurnWand 3")
 
 	// handle wand availability
 	if !available.IsAvailable {
@@ -209,20 +241,19 @@ func playerTurnWand(
 		Abilities:  allAbilities,
 		Direction:  direction,
 	}
-	// log.Println("playerTurnWand 4")
 
 	// simulate a cast to determine potential ability activations
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
-	err = resolveAbilities(world, spell, playerPos, spell.Abilities, updateChainState, dummy)
+	err = resolveAbilities(world, gameID, spell, playerPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
 		return 0, nil, err
 	}
-	log.Println("playerTurnWand 5")
 
 	// create a new entity for the cast to later be resolved
 	castID, err = cardinal.Create(
 		world,
+		comp.GameObj{GameID: gameID},
 		comp.AwaitingReveal{IsAvailable: true},
 		spell,
 		spellPos,
@@ -234,8 +265,13 @@ func playerTurnWand(
 	return castID, spell.Abilities, nil
 }
 
-func playerTurnMove(world cardinal.WorldContext, direction comp.Direction, eventLogList *[]comp.GameEventLog) error {
-	playerID, err := comp.QueryPlayerID(world)
+func playerTurnMove(
+	world cardinal.WorldContext,
+	gameID types.EntityID,
+	direction comp.Direction,
+	eventLogList *[]comp.GameEventLog,
+) error {
+	playerID, err := comp.QueryPlayerID(world, gameID)
 	if err != nil {
 		return err
 	}
@@ -290,4 +326,18 @@ func directionToGameEventPlayerMove(direction comp.Direction) comp.GameEvent {
 	default:
 		panic("invalid direction")
 	}
+}
+
+// checks that the given personaTag owns the game
+func confirmGameOwnership(world cardinal.WorldContext, personaTag string, gameID types.EntityID) error {
+	log.Println("entered confirmGameOwnership")
+	game, err := cardinal.GetComponent[component.Game](world, types.EntityID(gameID))
+	if err != nil {
+		return fmt.Errorf("failed to find game %d:", gameID)
+	}
+	if game.PersonaTag != personaTag {
+		return fmt.Errorf("personaTag %s does not own game %d", personaTag, gameID)
+	}
+
+	return nil
 }

@@ -1,7 +1,11 @@
 package component
 
 import (
+	"fmt"
+	"log"
+
 	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/search/filter"
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
@@ -28,6 +32,46 @@ func IsCollisonThere(world cardinal.WorldContext, pos Position) (bool, error) {
 	return false, nil
 }
 
-func QueryPlayerID(world cardinal.WorldContext) (types.EntityID, error) {
-	return 0, nil // current hardcoded, player is always first entity created
+func QueryPlayerID(world cardinal.WorldContext, gameID types.EntityID) (types.EntityID, error) {
+	var outerErr error
+	var playerID types.EntityID
+	searchErr := cardinal.NewSearch(
+		world,
+		filter.Contains(Player{})).
+		Each(func(id types.EntityID) bool {
+			playerGameObj, err := cardinal.GetComponent[GameObj](world, id)
+			fmt.Println("EACH")
+			fmt.Println("id: , gameID: ", id, gameID)
+			fmt.Println("playerGameObj: ", playerGameObj)
+			fmt.Println(err == nil)
+			if err != nil {
+				log.Println("QueryPlayerID err 1: ", err)
+				outerErr = err
+				return false
+			}
+			if playerGameObj.GameID == gameID {
+				log.Println("QueryPlayerID found player: ", id)
+				playerID = id
+				return false
+			}
+
+			return true
+		})
+	log.Println("QueryPlayerID ended serach")
+	log.Println()
+
+	if playerID == 0 {
+		log.Println("QueryPlayerID no player found")
+		return 0, fmt.Errorf("QueryPlayerID no player found")
+	}
+
+	if searchErr != nil {
+		log.Println("QueryPlayerID err 2: ", searchErr)
+		return 0, searchErr
+	}
+	if outerErr != nil {
+		log.Println("QueryPlayerID err 3: ", outerErr)
+		return 0, outerErr
+	}
+	return playerID, nil
 }

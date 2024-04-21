@@ -13,10 +13,19 @@ import (
 
 const playerAttackDistance = 2
 
-func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEventLog) error {
-	// log.Println("MonsterTurnSystem")
+func MonsterTurnSystem(
+	world cardinal.WorldContext,
+	gameID types.EntityID,
+	eventLogList *[]comp.GameEventLog,
+) error {
+	log.Println("MonsterTurnSystem")
 	var turnErr error
-	playerPos, err := cardinal.GetComponent[comp.Position](world, 0)
+
+	playerID, err := comp.QueryPlayerID(world, gameID)
+	if err != nil {
+		return err
+	}
+	playerPos, err := cardinal.GetComponent[comp.Position](world, playerID)
 	if err != nil {
 		return err
 	}
@@ -35,7 +44,7 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 		manDist := origMonsterPos.ManhattenDistance(playerPos)
 
 		if manDist == playerAttackDistance {
-			turnErr = executeMonsterAttack(world, eventLogList, origMonsterPos)
+			turnErr = executeMonsterAttack(world, gameID, eventLogList, origMonsterPos)
 			if turnErr != nil {
 				return false // if error, break out of search
 			}
@@ -60,11 +69,12 @@ func MonsterTurnSystem(world cardinal.WorldContext, eventLogList *[]comp.GameEve
 
 func executeMonsterAttack(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	eventLogList *[]comp.GameEventLog,
 	origMonsterPos *comp.Position,
 ) error {
 	// attack since player is in range
-	playerID, err := comp.QueryPlayerID(world)
+	playerID, err := comp.QueryPlayerID(world, gameID)
 	if err != nil {
 		return err
 	}

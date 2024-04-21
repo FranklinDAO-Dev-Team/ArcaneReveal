@@ -36,6 +36,7 @@ type MonsterData struct {
 }
 
 type GameStateRequest struct {
+	GameID types.EntityID
 }
 
 type GameStateResponse struct {
@@ -45,19 +46,31 @@ type GameStateResponse struct {
 	Monsters []MonsterData `json:"monsters"`
 }
 
-func GameState(world cardinal.WorldContext, _ *GameStateRequest) (*GameStateResponse, error) {
+func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateResponse, error) {
+	log.Println("GameState(). req: ", req)
 	playerData := &PlayerData{}
 	wands := &[]WandData{}
 	walls := &[]WallData{}
 	monsters := &[]MonsterData{}
+	gameID := req.GameID
 
 	var outsideErr error
 
 	searchErr := cardinal.NewSearch(
 		world,
-		filter.Contains()).
+		filter.Contains(comp.GameObj{})).
 		Each(func(id types.EntityID) bool {
 			// log.Printf("id: %v\n", id)
+
+			gameObj, err := cardinal.GetComponent[comp.GameObj](world, id)
+			if err != nil {
+				log.Println("gameObj err: ", err)
+				return false
+			}
+			// if object is from the wrong game, skip to next object
+			if gameObj.GameID != gameID {
+				return true
+			}
 
 			outsideErr = getPlayerData(world, id, playerData)
 			if outsideErr != nil {
@@ -115,7 +128,6 @@ func getPlayerData(world cardinal.WorldContext, id types.EntityID, playerData *P
 		if err != nil {
 			return fmt.Errorf("failed to get position component for health: %w", err)
 		}
-		// found the player
 		playerData.X = pos.X
 		playerData.Y = pos.Y
 		playerData.MaxHealth = health.MaxHealth

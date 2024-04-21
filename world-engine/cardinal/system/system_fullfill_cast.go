@@ -39,6 +39,12 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
+			castGameObj, err := cardinal.GetComponent[comp.GameObj](world, turn.Msg.Result.CastID)
+			if err != nil {
+				return msg.FulfillCastMsgResult{}, err
+			}
+			gameID := castGameObj.GameID
+
 			// remove cast entity
 			err = cardinal.Remove(world, turn.Msg.Result.CastID)
 			if err != nil {
@@ -58,13 +64,13 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			printWhatActivated(turn.Msg.Result.Abilities)
 
 			// pass eventLogList to record executed resolutions
-			err = resolveAbilities(world, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList)
+			err = resolveAbilities(world, gameID, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
 
 			// Monster Turn occurs after abilities are resolved
-			err = MonsterTurnSystem(world, eventLogList)
+			err = MonsterTurnSystem(world, gameID, eventLogList)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
@@ -76,7 +82,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
-			PrintStateToTerminal(world)
+			PrintStateToTerminal(world, gameID)
 
 			// return successfully
 			// note: this msg returns to Seismic as the caller, not the player client

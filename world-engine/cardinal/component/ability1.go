@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 const Ability1ID = 1
@@ -21,6 +22,7 @@ func (Ability1) GetAbilityID() int {
 // return if the ability should be revealed and if there was an error
 func (Ability1) Resolve(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPosition *Position,
 	_ Direction,
 	executeUpdates bool,

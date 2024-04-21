@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 const Ability2ID = 2
@@ -18,6 +19,7 @@ func (Ability2) GetAbilityID() int {
 
 func (a Ability2) Resolve(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPosition *Position,
 	direction Direction,
 	executeUpdates bool,

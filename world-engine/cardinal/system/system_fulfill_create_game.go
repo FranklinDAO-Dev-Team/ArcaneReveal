@@ -50,13 +50,15 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 				}
 			}
 
-			_, err := cardinal.Create(world, component.Game{
+			gameID, err := cardinal.Create(world, component.Game{
 				PersonaTag:  req.Msg.Result.PersonaTag,
 				Commitments: &commitments,
 			})
 			if err != nil {
 				return msg.FulfillCreateGameMsgResult{}, fmt.Errorf("failed to create Game component: %w", err)
 			}
+
+			PopulateBoard(world, gameID)
 
 			return msg.FulfillCreateGameMsgResult{}, nil
 		})
