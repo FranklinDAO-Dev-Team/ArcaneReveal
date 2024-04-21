@@ -3,6 +3,7 @@ package main
 import (
 	"cinco-paus/query"
 	"errors"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"pkg.world.dev/world-engine/cardinal"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	w, err := cardinal.NewWorld(cardinal.WithDisableSignatureVerification())
+	w, err := cardinal.NewWorld(cardinal.WithDisableSignatureVerification(), cardinal.WithTickChannel(time.Tick(20 * time.Millisecond)), cardinal.WithCustomLogger(log.Logger), cardinal.WithReceiptHistorySize(10000))
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
@@ -51,9 +52,12 @@ func main() {
 
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
-	Must(
-		cardinal.RegisterQuery[query.GameStateRequest, query.GameStateResponse](w, "game-state", query.GameState),
-	)
+	
+	err = cardinal.RegisterQuery[query.GameStateRequest, query.GameStateResponse](w, "game-state", query.GameState)
+	if err != nil {
+		panic(err)
+	}
+	
 
 	// Each system executes deterministically in the order they are added.
 	// This is a neat feature that can be strategically used for systems that depends on the order of execution.

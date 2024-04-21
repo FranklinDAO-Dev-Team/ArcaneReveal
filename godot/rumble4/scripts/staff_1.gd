@@ -8,6 +8,8 @@ var initial_pos: Vector2
 var is_animation_playing = false
 var starting_pos
 
+@onready var game_node = get_parent().get_parent()
+
 @onready var staff_position_top = get_parent().get_node("StaffPositionTop")
 @onready var staff_position_bottom = get_parent().get_node("StaffPositionBottom")
 @onready var staff_position_left = get_parent().get_node("StaffPositionLeft")
@@ -16,6 +18,14 @@ var starting_pos
 @onready var lightning_animation_left = $"SpellTop/WandAnimations/LightningStrikeTop"
 @onready var lightning_animation_top = $"SpellTop/WandAnimations/LightningStrikeTop"
 @onready var lightning_animation_bottom = $"SpellTop/WandAnimations/LightningStrikeTop"
+
+var tile_size = 64
+var inputs = {
+	"right": Vector2.RIGHT,
+	"left": Vector2.LEFT,
+	"up": Vector2.UP,
+	"down": Vector2.DOWN
+}
 
 func _ready():
 	starting_pos = self.position
@@ -54,10 +64,32 @@ func _process(delta):
 						lightning_animation_top.play("play")
 						is_animation_playing = true
 					body_ref.Direction.BOTTOM:
-						position = get_parent().position + Vector2(16, 32)
-						rotation += PI 
-						lightning_animation_bottom.play("play")
-						is_animation_playing = true
+						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+							"GameIDStr": "73",
+							"Action": "wand",
+							"Direction": "down",
+							"WandNum": "1",
+							}))
+							
+						var raycast = get_parent().get_node("RayCast2DMagic")
+						raycast.target_position = inputs["down"] * tile_size
+						raycast.force_raycast_update()
+
+						print(raycast.is_colliding())
+			
+						print(raycast.get_collider())
+			
+						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							var obj = raycast.get_collider()
+							if obj != null:
+								obj.damage()
+							
+						
+						if resp != null:
+							position = get_parent().position + Vector2(16, 32)
+							rotation += PI 
+							lightning_animation_bottom.play("play")
+							is_animation_playing = true
 					body_ref.Direction.LEFT:
 						position = get_parent().position + Vector2(0, 16)
 						rotation -= PI / 2 

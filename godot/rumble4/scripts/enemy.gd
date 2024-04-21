@@ -20,7 +20,15 @@ var inputs = {
 @onready var health_bar = $healthbar
 @onready var player = $Player
 
+@onready var game_node = get_parent()
+
+@onready var node_name = get_script().resource_name
+
+
 func _ready():
+	if node_name == "Enemy1":
+		var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
+		print(resp)
 	update_health()
 	position = position.snapped(Vector2.ONE * tile_size)
 		
@@ -58,7 +66,7 @@ func attack_animation():
 	$Sprite.play("attack")
 	$Sprite.play("idle")
 
-	
+
 func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
