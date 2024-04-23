@@ -58,7 +58,7 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 				return msg.FulfillCreateGameMsgResult{}, fmt.Errorf("failed to create Game component: %w", err)
 			}
 
-			PopulateBoard(world, gameID)
+			populateLevel1(world, gameID)
 
 			return msg.FulfillCreateGameMsgResult{}, nil
 		})

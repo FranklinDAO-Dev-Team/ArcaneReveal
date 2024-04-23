@@ -40,7 +40,6 @@ func QueryPlayerID(world cardinal.WorldContext, gameID types.EntityID) (types.En
 		filter.Contains(Player{})).
 		Each(func(id types.EntityID) bool {
 			playerGameObj, err := cardinal.GetComponent[GameObj](world, id)
-			fmt.Println(err == nil)
 			if err != nil {
 				log.Println("QueryPlayerID err 1: ", err)
 				outerErr = err

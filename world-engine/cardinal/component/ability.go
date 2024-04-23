@@ -5,7 +5,26 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+var AbilityMap = map[int]Ability{
+	1:  &Ability1{},  // damage attack
+	2:  &Ability2{},  // side damage attack
+	3:  &Ability3{},  // wall damage attack
+	4:  &Ability4{},  // explosion
+	5:  &Ability5{},  // up heal
+	6:  &Ability6{},  // right heal
+	7:  &Ability7{},  // down heal
+	8:  &Ability8{},  // left heal
+	9:  &Ability9{},  // heal monster
+	10: &Ability10{}, // polymorph
+}
+
 type GameEvent int
+
+type GameEventLog struct {
+	X     int
+	Y     int
+	Event GameEvent
+}
 
 const (
 	GameEventSpellBeam           GameEvent = iota // 0
@@ -26,12 +45,6 @@ const (
 	GameEventMonsterPolymorph                     // 15
 )
 
-type GameEventLog struct {
-	X     int
-	Y     int
-	Event GameEvent
-}
-
 type Ability interface {
 	GetAbilityID() int
 	Resolve(
@@ -42,19 +55,6 @@ type Ability interface {
 		executeUpdates bool,
 		eventLogList *[]GameEventLog,
 	) (reveal bool, err error)
-}
-
-var AbilityMap = map[int]Ability{
-	1:  &Ability1{},  // damage attack
-	2:  &Ability2{},  // side damage attack
-	3:  &Ability3{},  // wall damage attack
-	4:  &Ability4{},  // explosion
-	5:  &Ability5{},  // up heal
-	6:  &Ability6{},  // right heal
-	7:  &Ability7{},  // down heal
-	8:  &Ability8{},  // left heal
-	9:  &Ability9{},  // heal monster
-	10: &Ability10{}, // polymorph
 }
 
 func damageAtPosition(

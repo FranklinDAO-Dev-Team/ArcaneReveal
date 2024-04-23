@@ -67,7 +67,7 @@ func main() {
 		system.FulfillCreateGameSystem,
 		system.FulfillCastSystem,
 		system.PlayerTurnSystem,
-		// system.MonsterTurnSystem,
+		system.LevelChangeSystem,
 	))
 
 	// Must(cardinal.RegisterInitSystems(w,
