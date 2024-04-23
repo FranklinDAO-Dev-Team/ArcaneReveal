@@ -40,9 +40,6 @@ func QueryPlayerID(world cardinal.WorldContext, gameID types.EntityID) (types.En
 		filter.Contains(Player{})).
 		Each(func(id types.EntityID) bool {
 			playerGameObj, err := cardinal.GetComponent[GameObj](world, id)
-			fmt.Println("EACH")
-			fmt.Println("id: , gameID: ", id, gameID)
-			fmt.Println("playerGameObj: ", playerGameObj)
 			fmt.Println(err == nil)
 			if err != nil {
 				log.Println("QueryPlayerID err 1: ", err)
@@ -50,15 +47,12 @@ func QueryPlayerID(world cardinal.WorldContext, gameID types.EntityID) (types.En
 				return false
 			}
 			if playerGameObj.GameID == gameID {
-				log.Println("QueryPlayerID found player: ", id)
 				playerID = id
 				return false
 			}
 
 			return true
 		})
-	log.Println("QueryPlayerID ended serach")
-	log.Println()
 
 	if playerID == 0 {
 		log.Println("QueryPlayerID no player found")

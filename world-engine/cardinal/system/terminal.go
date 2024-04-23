@@ -10,9 +10,7 @@ import (
 )
 
 func PrintStateToTerminal(world cardinal.WorldContext, gameID types.EntityID) {
-	log.Println("entered PrintStateToTerminal")
-	log.Println("gameID: ", gameID)
-	fmt.Println()
+	log.Printf("entered PrintStateToTerminal. Printing game %d\n", gameID)
 	gameState, err := query.GameState(world, &query.GameStateRequest{GameID: gameID})
 	if err != nil {
 		log.Println("query.GameState err: ", err)

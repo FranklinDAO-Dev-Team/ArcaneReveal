@@ -17,8 +17,8 @@ func PopulateBoard(world cardinal.WorldContext, gameID types.EntityID) error {
 	createPlayer(world, gameID, 1, 1)
 
 	// create monsters
-	createMonster(world, gameID, 9, 1, comp.MEDIUM)
-	createMonster(world, gameID, 1, 9, comp.LIGHT)
+	createMonster(world, gameID, 9, 1, comp.HEAVY)
+	createMonster(world, gameID, 1, 9, comp.MEDIUM)
 	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 3, 3, comp.LIGHT)
 	createMonster(world, gameID, 9, 7, comp.LIGHT)
@@ -97,7 +97,7 @@ func createWall(world cardinal.WorldContext, gameId types.EntityID, x, y int) er
 func createMonster(world cardinal.WorldContext, gameId types.EntityID, x int, y int, monType comp.MonsterType) error {
 	health := int(monType) + 1
 	_, err := cardinal.Create(world,
-		comp.Monster{Type: comp.HEAVY},
+		comp.Monster{Type: monType},
 		comp.Collidable{Type: comp.MonsterCollide},
 		comp.Health{
 			MaxHealth:  health,
