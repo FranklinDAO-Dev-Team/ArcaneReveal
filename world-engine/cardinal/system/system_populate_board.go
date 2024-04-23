@@ -118,6 +118,16 @@ func spawnWallFrame(world cardinal.WorldContext, gameID types.EntityID) error {
 	return nil
 }
 
+// setPlayerPosition gets the game's player position and sets it to (x, y)
+func setPlayerPosition(world cardinal.WorldContext, gameID types.EntityID, x, y int) error {
+	playerID, err := comp.QueryPlayerID(world, gameID)
+	if err != nil {
+		return err
+	}
+	err = cardinal.SetComponent[comp.Position](world, playerID, &comp.Position{x, y})
+	return err
+}
+
 // populateLevel1 populates the board for the first level
 // this function differs from other populate functions
 // because it also creates the player and wands
@@ -128,22 +138,22 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 	// create wands to track when abilities are spent
 	spawnWands(world, gameID)
 
-	populateDebugLevel(world, gameID)
-	// // create walls
-	// spawnWallFrame(world, gameID)
-	// createWall(world, gameID, 3, 2)
-	// createWall(world, gameID, 5, 2)
-	// createWall(world, gameID, 2, 5)
-	// createWall(world, gameID, 2, 7)
-	// createWall(world, gameID, 4, 7)
+	// if debug:
+	// populateDebugLevel(world, gameID)
 
-	// // create monsters
-	// // createMonster(world, gameID, 9, 1, comp.HEAVY)
-	// // createMonster(world, gameID, 1, 9, comp.MEDIUM)
-	// // createMonster(world, gameID, 3, 9, comp.LIGHT)
-	// // createMonster(world, gameID, 3, 3, comp.LIGHT)
-	// // createMonster(world, gameID, 9, 7, comp.LIGHT)
-	// createMonster(world, gameID, 9, 1, comp.LIGHT)
+	// create walls
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 3, 2)
+	createWall(world, gameID, 5, 2)
+	createWall(world, gameID, 2, 5)
+	createWall(world, gameID, 2, 7)
+	createWall(world, gameID, 4, 7)
+
+	// create monsters
+	createMonster(world, gameID, 1, 9, comp.MEDIUM)
+	createMonster(world, gameID, 3, 3, comp.LIGHT)
+	createMonster(world, gameID, 3, 9, comp.LIGHT)
+	createMonster(world, gameID, 9, 1, comp.LIGHT)
 
 	PrintStateToTerminal(world, gameID)
 
@@ -151,6 +161,8 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 }
 
 func populateLevel2(world cardinal.WorldContext, gameID types.EntityID) error {
+	log.Printf("game %d populating level 2\n", gameID)
+	setPlayerPosition(world, gameID, 1, 9)
 	spawnWallFrame(world, gameID)
 	createWall(world, gameID, 6, 1)
 	createWall(world, gameID, 2, 5)
@@ -163,31 +175,217 @@ func populateLevel2(world cardinal.WorldContext, gameID types.EntityID) error {
 	createMonster(world, gameID, 9, 7, comp.MEDIUM)
 	createMonster(world, gameID, 3, 7, comp.LIGHT)
 	createMonster(world, gameID, 7, 7, comp.LIGHT)
-	createMonster(world, gameID, 1, 9, comp.LIGHT)
+	// createMonster(world, gameID, 1, 9, comp.LIGHT)
 
 	PrintStateToTerminal(world, gameID)
 	return nil
 }
 
-func populateDebugLevel(world cardinal.WorldContext, gameID types.EntityID) error {
-	log.Print("populateDebugLevel()")
-	// create walls
+func populateLevel3(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 9, 9)
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 6, 1)
+	createWall(world, gameID, 8, 7)
+	createWall(world, gameID, 8, 5)
+	createWall(world, gameID, 8, 1)
+	createWall(world, gameID, 4, 1)
+	createWall(world, gameID, 4, 5)
+	createWall(world, gameID, 4, 7)
+	createWall(world, gameID, 4, 9)
+	createWall(world, gameID, 2, 5)
+
+	// create monsters
+	createMonster(world, gameID, 5, 9, comp.HEAVY)
+	createMonster(world, gameID, 3, 9, comp.MEDIUM)
+	createMonster(world, gameID, 1, 9, comp.MEDIUM)
+	createMonster(world, gameID, 9, 5, comp.LIGHT)
+	createMonster(world, gameID, 1, 3, comp.LIGHT)
+
+	PrintStateToTerminal(world, gameID)
+	return nil
+}
+
+func populateLevel4(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 1, 9)
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 2, 1)
+	createWall(world, gameID, 4, 1)
+	createWall(world, gameID, 8, 1)
+	createWall(world, gameID, 7, 2)
+	createWall(world, gameID, 7, 4)
+	createWall(world, gameID, 2, 5)
+	createWall(world, gameID, 4, 5)
+	createWall(world, gameID, 6, 5)
+	createWall(world, gameID, 7, 8)
+	createWall(world, gameID, 9, 8)
+
+	// create monsters
+	createMonster(world, gameID, 1, 3, comp.HEAVY)
+	createMonster(world, gameID, 5, 7, comp.MEDIUM)
+	createMonster(world, gameID, 3, 1, comp.LIGHT)
+	createMonster(world, gameID, 5, 3, comp.LIGHT)
+	createMonster(world, gameID, 9, 5, comp.LIGHT)
+
+	PrintStateToTerminal(world, gameID)
+	return nil
+}
+
+func populateLevel5(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 5, 1)
 
 	// create walls
 	spawnWallFrame(world, gameID)
-	// createWall(world, gameID, 3, 2)
-	// createWall(world, gameID, 5, 2)
-	// createWall(world, gameID, 2, 5)
-	// createWall(world, gameID, 2, 7)
-	// createWall(world, gameID, 4, 7)
+	createWall(world, gameID, 2, 3)
+	createWall(world, gameID, 4, 3)
+	createWall(world, gameID, 1, 6)
+	createWall(world, gameID, 2, 9)
+	createWall(world, gameID, 4, 7)
 
 	// create monsters
+	createMonster(world, gameID, 1, 7, comp.HEAVY)
+	createMonster(world, gameID, 5, 9, comp.HEAVY)
+	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 9, 1, comp.LIGHT)
-	// createMonster(world, gameID, 1, 9, comp.MEDIUM)
-	// createMonster(world, gameID, 3, 9, comp.LIGHT)
-	// createMonster(world, gameID, 3, 3, comp.LIGHT)
-	// createMonster(world, gameID, 9, 7, comp.LIGHT)
-	// createMonster(world, gameID, 9, 1, comp.LIGHT)
+	createMonster(world, gameID, 1, 5, comp.LIGHT)
+
+	PrintStateToTerminal(world, gameID)
+	return nil
+}
+
+func populateLevel6(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 9, 5)
+
+	// create walls
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 8, 5)
+	createWall(world, gameID, 8, 1)
+	createWall(world, gameID, 9, 8)
+	createWall(world, gameID, 5, 8)
+	createWall(world, gameID, 4, 8)
+	createWall(world, gameID, 5, 6)
+	createWall(world, gameID, 3, 6)
+	createWall(world, gameID, 1, 4)
+	createWall(world, gameID, 4, 5)
+	createWall(world, gameID, 4, 3)
+
+	// create monsters
+	createMonster(world, gameID, 3, 1, comp.HEAVY)
+	createMonster(world, gameID, 1, 7, comp.HEAVY)
+	createMonster(world, gameID, 3, 7, comp.MEDIUM)
+	createMonster(world, gameID, 7, 5, comp.LIGHT)
+	createMonster(world, gameID, 7, 3, comp.LIGHT)
+
+	PrintStateToTerminal(world, gameID)
+	return nil
+}
+
+func populateLevel7(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 5, 9)
+
+	// create walls
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 2, 1)
+	createWall(world, gameID, 5, 2)
+	createWall(world, gameID, 7, 2)
+	createWall(world, gameID, 1, 4)
+	createWall(world, gameID, 3, 4)
+	createWall(world, gameID, 4, 5)
+	createWall(world, gameID, 4, 7)
+	createWall(world, gameID, 6, 5)
+	createWall(world, gameID, 2, 9)
+	createWall(world, gameID, 9, 6)
+	createWall(world, gameID, 7, 8)
+
+	// create monsters
+	createMonster(world, gameID, 7, 1, comp.HEAVY)
+	createMonster(world, gameID, 3, 3, comp.HEAVY)
+	createMonster(world, gameID, 1, 9, comp.MEDIUM)
+	createMonster(world, gameID, 1, 3, comp.LIGHT)
+
+	return nil
+}
+
+func populateLevel8(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 1, 5)
+
+	// create walls
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 1, 2)
+	createWall(world, gameID, 3, 2)
+	createWall(world, gameID, 2, 3)
+	createWall(world, gameID, 3, 4)
+	createWall(world, gameID, 5, 6)
+	createWall(world, gameID, 4, 7)
+	createWall(world, gameID, 6, 5)
+	createWall(world, gameID, 7, 4)
+
+	// create monsters
+	createMonster(world, gameID, 9, 9, comp.XL)
+	createMonster(world, gameID, 5, 9, comp.XL)
+	createMonster(world, gameID, 3, 7, comp.LIGHT)
+	createMonster(world, gameID, 7, 3, comp.LIGHT)
+
+	return nil
+}
+
+func populateLevel9(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 5, 5)
+
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 1, 2)
+	createWall(world, gameID, 4, 1)
+	createWall(world, gameID, 5, 4)
+	createWall(world, gameID, 7, 4)
+	createWall(world, gameID, 4, 7)
+	createWall(world, gameID, 4, 9)
+	createWall(world, gameID, 6, 7)
+	createWall(world, gameID, 7, 8)
+
+	// create monsters
+	createMonster(world, gameID, 3, 9, comp.XL)
+	createMonster(world, gameID, 5, 9, comp.HEAVY)
+	createMonster(world, gameID, 7, 1, comp.HEAVY)
+	createMonster(world, gameID, 3, 9, comp.MEDIUM)
+	createMonster(world, gameID, 7, 9, comp.LIGHT)
+
+	PrintStateToTerminal(world, gameID)
+	return nil
+}
+
+func populateLevel10(world cardinal.WorldContext, gameID types.EntityID) error {
+	setPlayerPosition(world, gameID, 5, 5)
+
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 4, 3)
+	createWall(world, gameID, 5, 2)
+	createWall(world, gameID, 7, 2)
+	createWall(world, gameID, 8, 3)
+	createWall(world, gameID, 7, 4)
+	createWall(world, gameID, 6, 5)
+	createWall(world, gameID, 5, 6)
+	createWall(world, gameID, 4, 7)
+	createWall(world, gameID, 3, 8)
+	createWall(world, gameID, 5, 8)
+	createWall(world, gameID, 7, 8)
+	createWall(world, gameID, 9, 6)
+
+	// create monsters
+	createMonster(world, gameID, 1, 3, comp.XL)
+	createMonster(world, gameID, 5, 1, comp.XL)
+	createMonster(world, gameID, 9, 3, comp.HEAVY)
+	createMonster(world, gameID, 3, 9, comp.LIGHT)
+	createMonster(world, gameID, 1, 5, comp.LIGHT)
+
+	PrintStateToTerminal(world, gameID)
+	return nil
+}
+
+// populateDebugLevel is used for debugging purposes only
+func populateDebugLevel(world cardinal.WorldContext, gameID types.EntityID) error {
+	log.Print("populateDebugLevel()")
+	setPlayerPosition(world, gameID, 1, 1)
+	spawnWallFrame(world, gameID)
+	createMonster(world, gameID, 3, 1, comp.LIGHT)
 
 	return nil
 }
