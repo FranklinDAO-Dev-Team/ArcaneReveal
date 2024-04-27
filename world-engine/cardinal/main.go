@@ -53,10 +53,10 @@ func main() {
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
 
-	err = cardinal.RegisterQuery[query.GameStateRequest, query.GameStateResponse](w, "game-state", query.GameState)
-	if err != nil {
-		panic(err)
-	}
+	Must(
+		cardinal.RegisterQuery[query.GameStateRequest, query.GameStateResponse](w, "game-state", query.GameState),
+		cardinal.RegisterQuery[query.QueryGameIDByPersonaRequest, query.QueryGameIDByPersonaResponse](w, "query-game-id-by-persona", query.QueryGameIDByPersona),
+	)
 
 	// Each system executes deterministically in the order they are added.
 	// This is a neat feature that can be strategically used for systems that depends on the order of execution.
