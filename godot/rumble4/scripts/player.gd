@@ -186,8 +186,38 @@ func _input(event: InputEvent) -> void:
 		#$AnimationPlayer.play("attack_up")
 
 func handle_query():
-	var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
-	print(resp)
+	var resp_getID = await game_node.client.rpc_async(game_node.session, "query/game/query-game-id-by-persona", JSON.stringify({
+		"Persona": "CoolMage",
+	}))
+	#print(resp_getID)  # This should show the response details including payload
+
+	# Create a new JSON object and parse the response payload
+	var json = JSON.new()
+	var error = json.parse(resp_getID.payload)
+	if error == OK:
+		var response_dict = json.data  # Access the parsed data
+
+		# Debug print the entire parsed data to see its structure
+		#print(response_dict)
+
+		# Check if the 'Success' key is true and then access 'GameID'
+		if response_dict and "Success" in response_dict and response_dict["Success"]:
+			var game_id = response_dict["GameID"]
+			print("Game ID: ", game_id)
+
+			# Make another RPC call using the retrieved GameID
+			var resp_getGameState = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({
+				"GameID": game_id,  # Use the actual game ID retrieved
+			}))
+			print(resp_getGameState)  # Print the state response
+		else:
+			print("Failed to get Game ID or the response did not indicate success.")
+	else:
+		print("JSON Parse Error:", json.get_error_message())
+
+	
+	
+	
 
 
 func damage(damage) -> void:
