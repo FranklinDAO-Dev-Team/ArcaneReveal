@@ -59,11 +59,11 @@ var inputs = {
 
 	
 func _ready():
-	$"../LifeBar/Life1".play("hearts")
-	$"../LifeBar/Life2".play("hearts")
-	$"../LifeBar/Life3".play("hearts")
-	$"../LifeBar/Life4".play("hearts")
-	$"../LifeBar/Life5".play("hearts")
+	$"../Player/LifeBar/Life1".play("hearts")
+	$"../Player/LifeBar/Life2".play("hearts")
+	$"../Player/LifeBar/Life3".play("hearts")
+	$"../Player/LifeBar/Life4".play("hearts")
+	$"../Player/LifeBar/Life5".play("hearts")
 	update_health_ui()
 
 	position = position.snapped(Vector2.ONE * tile_size)
@@ -92,17 +92,17 @@ func readJSON(json_file_path):
 func process_data():
 	# cast spell: p _ _ m _ w
 	# (3, 1, 0), (5, 1, 0), (7, 1, 1), (9, 1, 0) (10, 1, 2) 
-	print("entered process_data")
+	#print("entered process_data")
 	
 	var json_file_path = "res://testInput.json"
 	var data_received = readJSON(json_file_path);
-	print(data_received.data)
+	#print(data_received.data)
 	for data in data_received.data:
 		var x_pos = int(data[0])
 		var y_pos = int(data[1])
 		var action = int(data[2])
 		
-		print(str(x_pos) + " " + str(y_pos) + " " + str(action))
+		#print(str(x_pos) + " " + str(y_pos) + " " + str(action))
 		
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
 		var position = Vector2(x_pos * 32 - 32, y_pos * 32 - 32)
@@ -128,32 +128,33 @@ func process_data():
 					# Animate lightning bolt from the sky attack
 					# Access the AnimationPlayer in the BasicLightning scene
 					animation_player = basic_lightning_instance.get_node("Blank")
-					animation_player.play("default")
-					print("lightning at: " + str(position.x) + ", " + str(position.y))
+					#animation_player.play("default")
+					#print("lightning at: " + str(position.x) + ", " + str(position.y))
 				1:
 					# Animate explosion
 					animation_player = basic_lightning_instance.get_node("Explosion")
-					animation_player.play("default")
-					print("explosion at: " + str(position.x) + ", " + str(position.y))
+					#animation_player.play("default")
+					#print("explosion at: " + str(position.x) + ", " + str(position.y))
 				2:
 					# Animate lightning bolt dissipating
 					animation_player = basic_lightning_instance.get_node("Spark")
-					animation_player.play("default")
-					print("dissipate at: " + str(position.x) + ", " + str(position.y))
+					#animation_player.play("default")
+					#print("dissipate at: " + str(position.x) + ", " + str(position.y))
 				3:
 					# Animate lightning bolt dissipating
 					animation_player = basic_lightning_instance.get_node("WallActivation")
-					animation_player.play("default")
-					print("dissipate at: " + str(position.x) + ", " + str(position.y))
+					#animation_player.play("default")
+					#print("dissipate at: " + str(position.x) + ", " + str(position.y))
 				_:
 					# Handle unexpected action
-					print("Unexpected action:", action)
+					print("")
+					#print("Unexpected action:", action)
 			
 			# Queue the instance for deletion after the animation finishes
 			#animation_player.queue_free()
 			#animation_player.connect("animation_finished", basic_lightning_instance, "_on_animation_finished")
-		else:
-			print("AnimationPlayer not found in BasicLightning scene")
+		#else:
+		#	print("AnimationPlayer not found in BasicLightning scene")
 
 # Callback function to delete the instance after the animation finishes
 #func _on_animation_finished():
@@ -162,21 +163,17 @@ func process_data():
 
 
 
-
-
-
-
-
 func _process(delta):
 	$Sprite.play("idle")
 
-
 func update_health_ui():
 	for i in range(MAX_HEALTH):
-		$"../LifeBar".get_child(i).visible = health > i
+		$"../Player/LifeBar".get_child(i).visible = health > i
 
 
-#func _input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("query"):
+		handle_query()
 	##if event.is_action_pressed("ui_accept"):
 		##damage()
 	#if event.is_action_pressed("enemy_left"):
@@ -187,7 +184,10 @@ func update_health_ui():
 		#$AnimationPlayer.play("attack_down")
 	#if event.is_action_pressed("enemy_up"):
 		#$AnimationPlayer.play("attack_up")
-	
+
+func handle_query():
+	var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
+	print(resp)
 
 
 func damage(damage) -> void:
@@ -203,25 +203,42 @@ func _unhandled_input(event):
 		return
 	for dir in inputs.keys():
 		if event.is_action_pressed(dir):
-			move(dir)
-			var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-				"GameIDStr": "71",
-				"Action": "move",
-				"Direction": dir,
-				"WandNum": "0",
-				}))
+			$RayCast2DEnemy.target_position = inputs[dir] * tile_size
+			$RayCast2DEnemy.force_raycast_update()
+			
+			if $RayCast2DEnemy.is_colliding() and $RayCast2DEnemy.get_collider().name.begins_with("Enemy"):
+				var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+					"GameIDStr": "2",
+					"Action": "attack",
+					"Direction": dir,
+					"WandNum": "0",
+					}))
+				#print(resp)
+				if resp != null:
+					move(dir)
+			else:
+				var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+					"GameIDStr": "2",
+					"Action": "move",
+					"Direction": dir,
+					"WandNum": "0",
+					}))
+		
+				if resp != null:
+					move(dir)
+					
 
 
 func move(dir):
 	process_data();
-	print("move")
+	#print("move")
 	previous_move = dir
 	previous_position = position
-	print(previous_position)
+	#print(previous_position)
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
 	if !ray.is_colliding():
-		print("no ray collide")
+		#print("no ray collide")
 		previous_move = dir 
 		#position += inputs[dir] * tile_size
 		var tween = get_tree().create_tween()
@@ -229,32 +246,24 @@ func move(dir):
 		moving = true 
 		await tween.finished
 		moving = false
-	elif is_colliding_with_enemy():
-		print("otherstuff")
 	else:
 		$AnimationPlayer.play("hit_wall")
-		
-
-func is_colliding_with_enemy() -> bool:
-	for area in get_overlapping_areas():
-		print(get_overlapping_areas())
-		if area.name == "Enemy1" or area.name == "Enemy2":
-			return true
-	return false
 	
 func recoil():
-	print("recoil triggered")
+	#print("recoil triggered")
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "position", previous_position, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
 	await tween.finished
-	print(position)
+	#print(position)
 
 
 func _on_area_entered(area):
-	print("do stuff")
-	if (area.name == "Enemy1" or area.name == "Enemy2") && moving == true:
+	#print("do stuff")
+	if area.name.begins_with("Enemy") && moving == true:
+		self.recoil()		
 		area.damage()
-		self.recoil()
+
+		
 		match area.previous_move:
 			"right": area.move("left")
 			"left": area.move("right")

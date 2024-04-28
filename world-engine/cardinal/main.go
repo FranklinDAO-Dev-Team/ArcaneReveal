@@ -3,6 +3,7 @@ package main
 import (
 	"cinco-paus/query"
 	"errors"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"pkg.world.dev/world-engine/cardinal"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	w, err := cardinal.NewWorld(cardinal.WithDisableSignatureVerification())
+	w, err := cardinal.NewWorld(cardinal.WithDisableSignatureVerification(), cardinal.WithTickChannel(time.Tick(1000*time.Millisecond)), cardinal.WithCustomLogger(log.Logger), cardinal.WithReceiptHistorySize(10000))
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
@@ -23,17 +24,19 @@ func main() {
 	Must(
 		cardinal.RegisterComponent[component.PendingGame](w),
 		cardinal.RegisterComponent[component.Game](w),
+		cardinal.RegisterComponent[component.GameObj](w),
 
 		cardinal.RegisterComponent[component.Collidable](w),
 		cardinal.RegisterComponent[component.Player](w),
 		cardinal.RegisterComponent[component.Monster](w),
 		cardinal.RegisterComponent[component.Wall](w),
+		cardinal.RegisterComponent[component.Health](w),
+		cardinal.RegisterComponent[component.Position](w),
+
 		cardinal.RegisterComponent[component.WandCore](w),
 		cardinal.RegisterComponent[component.Available](w),
 		cardinal.RegisterComponent[component.Spell](w),
 		cardinal.RegisterComponent[component.AwaitingReveal](w),
-		cardinal.RegisterComponent[component.Health](w),
-		cardinal.RegisterComponent[component.Position](w),
 	)
 
 	// Register messages (user action)
@@ -49,8 +52,10 @@ func main() {
 
 	// Register queries
 	// NOTE: You must register your queries here for it to be accessible.
+
 	Must(
 		cardinal.RegisterQuery[query.GameStateRequest, query.GameStateResponse](w, "game-state", query.GameState),
+		cardinal.RegisterQuery[query.QueryGameIDByPersonaRequest, query.QueryGameIDByPersonaResponse](w, "query-game-id-by-persona", query.QueryGameIDByPersona),
 	)
 
 	// Each system executes deterministically in the order they are added.
@@ -62,14 +67,13 @@ func main() {
 		system.FulfillCreateGameSystem,
 		system.FulfillCastSystem,
 		system.PlayerTurnSystem,
-		// system.MonsterTurnSystem,
+		system.LevelChangeSystem,
 	))
 
-	Must(cardinal.RegisterInitSystems(w,
-		// system.SpawnPlayerSystem,
-		system.PopulateBoardSystem,
-		system.SpawnWandsSystem,
-	))
+	// Must(cardinal.RegisterInitSystems(w,
+	// 	// system.PopulateBoardSystem,
+	// 	// system.SpawnWandsSystem,
+	// ))
 
 	seismicClient := system.Initialize(w)
 	seismicClient.Start()

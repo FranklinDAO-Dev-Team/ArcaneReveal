@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/iden3/go-rapidsnark/prover"
 	"github.com/iden3/go-rapidsnark/types"
@@ -39,6 +40,9 @@ func (seismicProver *SeismicProver) Prove(gameState *GameState) (*types.ZKProof,
 
 	wtns, err := seismicProver.witnessCalculator.CalculateWTNSBin(parsedInputs, true)
 	if err != nil {
+		log.Println("failed to compute witness:", err)
+		log.Println("Likely that size of expected circuit input and actual is misaligned")
+		log.Println("Double check that the constants in constants.go and init.circom are the same")
 		return nil, fmt.Errorf("failed to computed witness: %v", err)
 	}
 

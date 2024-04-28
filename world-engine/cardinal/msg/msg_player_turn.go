@@ -18,7 +18,10 @@ type PlayerTurnResult struct {
 	Success bool
 }
 
+// checks action, diection, and wandnum are well formatted
+// i.e. the strings are from the list of valid actions, directions, and wandnums
 func (m PlayerTurnMsg) ValFmt() error {
+
 	validActions := map[string]bool{
 		"attack": true,
 		"wand":   true,

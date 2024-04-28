@@ -1,7 +1,7 @@
 package client
 
 import (
-	"fmt"
+	"log"
 	"math/big"
 )
 
@@ -23,7 +23,7 @@ func New(
 	store := NewGameStateStore()
 	prover, err := NewProver()
 	if err != nil {
-		fmt.Printf("error creating prover: %v", err)
+		log.Printf("error creating prover: %v", err)
 		panic(err)
 	}
 	return &SeismicClient{

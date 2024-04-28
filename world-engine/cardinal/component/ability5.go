@@ -1,6 +1,9 @@
 package component
 
-import "pkg.world.dev/world-engine/cardinal"
+import (
+	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
+)
 
 const Ability5ID = 5
 
@@ -14,6 +17,7 @@ func (Ability5) GetAbilityID() int {
 
 func (a Ability5) Resolve(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPosition *Position,
 	_ Direction,
 	executeUpdates bool,
@@ -24,16 +28,17 @@ func (a Ability5) Resolve(
 		return false, nil
 	}
 
-	return ResolveWallHeal(world, spellPosition, executeUpdates, eventLogList)
+	return ResolveWallHeal(world, gameID, spellPosition, executeUpdates, eventLogList)
 }
 
 func ResolveWallHeal(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPosition *Position,
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	playerID, err := QueryPlayerID(world)
+	playerID, err := QueryPlayerID(world, gameID)
 	if err != nil {
 		return false, err
 	}

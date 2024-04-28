@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"pkg.world.dev/world-engine/cardinal"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 // resolveAbilities takes information about a spell and determines game events it causes
@@ -20,6 +21,7 @@ import (
 // 3. if wall entity at spellPos, stop
 func resolveAbilities(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spell *comp.Spell,
 	spellPos *comp.Position,
 	potentialAbilities *[client.TotalAbilities]bool,
@@ -34,6 +36,7 @@ func resolveAbilities(
 		// record abilities that could activate a current square
 		err := resolveAbilitiesAtPosition(
 			world,
+			gameID,
 			spellPos,
 			spell.Direction,
 			potentialAbilities,
@@ -66,6 +69,7 @@ func resolveAbilities(
 // spellEvents are recorded in eventLogList
 func resolveAbilitiesAtPosition(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPos *comp.Position,
 	direction comp.Direction,
 	potentialAbilities *[client.TotalAbilities]bool,
@@ -78,7 +82,7 @@ func resolveAbilitiesAtPosition(
 			if a == nil {
 				return errors.New("unknown ability called")
 			}
-			activated, err := a.Resolve(world, spellPos, direction, updateChainState, eventLogList)
+			activated, err := a.Resolve(world, gameID, spellPos, direction, updateChainState, eventLogList)
 			if err != nil {
 				// log.Println("resolveAbilitiesAtPosition err", err)
 				return err

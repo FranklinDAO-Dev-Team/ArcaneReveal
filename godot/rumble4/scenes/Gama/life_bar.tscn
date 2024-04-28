@@ -20,31 +20,31 @@ animations = [{
 [node name="LifeBar" type="HBoxContainer"]
 
 [node name="Life1" type="AnimatedSprite2D" parent="."]
-position = Vector2(23, 19)
-scale = Vector2(2.5625, 2.875)
+position = Vector2(4, 4.488)
+scale = Vector2(0.5, 0.561)
 sprite_frames = SubResource("SpriteFrames_gdfsd")
 animation = &"hearts"
 
 [node name="Life2" type="AnimatedSprite2D" parent="."]
-position = Vector2(71, 19)
-scale = Vector2(2.5625, 2.875)
+position = Vector2(10, 4.488)
+scale = Vector2(0.5, 0.561)
 sprite_frames = SubResource("SpriteFrames_gdfsd")
 animation = &"hearts"
 
 [node name="Life3" type="AnimatedSprite2D" parent="."]
-position = Vector2(119, 19)
-scale = Vector2(2.5625, 2.875)
+position = Vector2(16, 4.488)
+scale = Vector2(0.5, 0.561)
 sprite_frames = SubResource("SpriteFrames_gdfsd")
 animation = &"hearts"
 
 [node name="Life4" type="AnimatedSprite2D" parent="."]
-position = Vector2(167, 19)
-scale = Vector2(2.5625, 2.875)
+position = Vector2(22, 4.488)
+scale = Vector2(0.5, 0.561)
 sprite_frames = SubResource("SpriteFrames_gdfsd")
 animation = &"hearts"
 
 [node name="Life5" type="AnimatedSprite2D" parent="."]
-position = Vector2(215, 19)
-scale = Vector2(2.5625, 2.875)
+position = Vector2(28, 4.488)
+scale = Vector2(0.5, 0.561)
 sprite_frames = SubResource("SpriteFrames_gdfsd")
 animation = &"hearts"
