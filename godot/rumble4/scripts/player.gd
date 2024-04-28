@@ -59,11 +59,11 @@ var inputs = {
 
 	
 func _ready():
-	$"../LifeBar/Life1".play("hearts")
-	$"../LifeBar/Life2".play("hearts")
-	$"../LifeBar/Life3".play("hearts")
-	$"../LifeBar/Life4".play("hearts")
-	$"../LifeBar/Life5".play("hearts")
+	$"../Player/LifeBar/Life1".play("hearts")
+	$"../Player/LifeBar/Life2".play("hearts")
+	$"../Player/LifeBar/Life3".play("hearts")
+	$"../Player/LifeBar/Life4".play("hearts")
+	$"../Player/LifeBar/Life5".play("hearts")
 	update_health_ui()
 
 	position = position.snapped(Vector2.ONE * tile_size)
@@ -168,7 +168,7 @@ func _process(delta):
 
 func update_health_ui():
 	for i in range(MAX_HEALTH):
-		$"../LifeBar".get_child(i).visible = health > i
+		$"../Player/LifeBar".get_child(i).visible = health > i
 
 
 #func _input(event: InputEvent) -> void:
