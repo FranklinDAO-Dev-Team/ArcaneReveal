@@ -65,7 +65,7 @@ func _process(delta):
 						is_animation_playing = true
 					body_ref.Direction.BOTTOM:
 						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-							"GameIDStr": "73",
+							"GameIDStr": "2",
 							"Action": "wand",
 							"Direction": "down",
 							"WandNum": "1",
@@ -75,9 +75,9 @@ func _process(delta):
 						raycast.target_position = inputs["down"] * tile_size
 						raycast.force_raycast_update()
 
-						print(raycast.is_colliding())
-			
-						print(raycast.get_collider())
+						#print(raycast.is_colliding())
+			#
+						#print(raycast.get_collider())
 			
 						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
 							var obj = raycast.get_collider()

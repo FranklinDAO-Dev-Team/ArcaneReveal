@@ -171,7 +171,9 @@ func update_health_ui():
 		$"../Player/LifeBar".get_child(i).visible = health > i
 
 
-#func _input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("query"):
+		handle_query()
 	##if event.is_action_pressed("ui_accept"):
 		##damage()
 	#if event.is_action_pressed("enemy_left"):
@@ -182,7 +184,10 @@ func update_health_ui():
 		#$AnimationPlayer.play("attack_down")
 	#if event.is_action_pressed("enemy_up"):
 		#$AnimationPlayer.play("attack_up")
-	
+
+func handle_query():
+	var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
+	print(resp)
 
 
 func damage(damage) -> void:
@@ -203,17 +208,17 @@ func _unhandled_input(event):
 			
 			if $RayCast2DEnemy.is_colliding() and $RayCast2DEnemy.get_collider().name.begins_with("Enemy"):
 				var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-					"GameIDStr": "73",
+					"GameIDStr": "2",
 					"Action": "attack",
 					"Direction": dir,
 					"WandNum": "0",
 					}))
-				print(resp)
+				#print(resp)
 				if resp != null:
 					move(dir)
 			else:
 				var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-					"GameIDStr": "73",
+					"GameIDStr": "2",
 					"Action": "move",
 					"Direction": dir,
 					"WandNum": "0",
@@ -222,20 +227,18 @@ func _unhandled_input(event):
 				if resp != null:
 					move(dir)
 					
-			var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
-			print(resp)
 
 
 func move(dir):
 	process_data();
-	print("move")
+	#print("move")
 	previous_move = dir
 	previous_position = position
-	print(previous_position)
+	#print(previous_position)
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
 	if !ray.is_colliding():
-		print("no ray collide")
+		#print("no ray collide")
 		previous_move = dir 
 		#position += inputs[dir] * tile_size
 		var tween = get_tree().create_tween()
@@ -247,15 +250,15 @@ func move(dir):
 		$AnimationPlayer.play("hit_wall")
 	
 func recoil():
-	print("recoil triggered")
+	#print("recoil triggered")
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "position", previous_position, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
 	await tween.finished
-	print(position)
+	#print(position)
 
 
 func _on_area_entered(area):
-	print("do stuff")
+	#print("do stuff")
 	if area.name.begins_with("Enemy") && moving == true:
 		self.recoil()		
 		area.damage()

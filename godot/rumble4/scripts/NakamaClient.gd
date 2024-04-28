@@ -73,10 +73,12 @@ func _ready():
 	# Make CreateGame TXN call
 	var random = RandomNumberGenerator.new()
 	resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
+	#print(resp)
 	if resp.is_exception():
 		print("An error occured: %s", % resp)
 		return
 	print("Successfully created game: %s", % resp)
+	
 	
 
 func _on_rpc_response(result: NakamaAsyncResult):
