@@ -93,4 +93,3 @@ func _on_area_entered(area):
 		area.damage(attack_damage)
 		#print(previous_move)
 		attack_animation()
-
