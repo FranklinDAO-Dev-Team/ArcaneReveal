@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ccski0bqh1gbo"]
+[gd_scene load_steps=12 format=3 uid="uid://dc6jw4arwneon"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://cqrcx4mk6o7fv" path="res://scenes/Gama/enemy.tscn" id="4_1sovk"]
 [ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Gama/player.tscn" id="5_5f1lg"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_x7epu"]
-[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="8_th4ig"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="9_imb6i"]
 [ext_resource type="PackedScene" uid="uid://bbtihlbhgix8u" path="res://scenes/Gama/BasicLightning.tscn" id="10_kbkyr"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="10_xqvk1"]
@@ -490,12 +489,6 @@ position = Vector2(65, 256)
 
 [node name="Player" parent="." instance=ExtResource("5_5f1lg")]
 position = Vector2(0, 0)
-
-[node name="LifeBar" parent="." instance=ExtResource("8_th4ig")]
-offset_left = 40.0
-offset_top = 352.0
-offset_right = 40.0
-offset_bottom = 352.0
 
 [node name="TilePiece" parent="." instance=ExtResource("6_x7epu")]
 position = Vector2(-155, -165)
