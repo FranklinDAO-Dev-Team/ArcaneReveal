@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dd11hdfpdubc7"]
+[gd_scene load_steps=13 format=3 uid="uid://dd11hdfpdubc7"]
 
 [ext_resource type="Texture2D" uid="uid://bjvhek0pu75xj" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_1.png" id="1_5e5hn"]
 [ext_resource type="Texture2D" uid="uid://h4lhxnehuaee" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/1/Explosion_2.png" id="2_7qymy"]
@@ -9,16 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://cfilprs8xp6uj" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/4/Explosion_3_2.png" id="7_brtf6"]
 [ext_resource type="Texture2D" uid="uid://buh1s5w738r4i" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/4/Explosion_3_3.png" id="8_5muhr"]
 [ext_resource type="Texture2D" uid="uid://b4ih6uay4cjlx" path="res://assets/Free-Animated-Explosions/PNG/Explosion_7/4/Explosion_3_4.png" id="9_on7vh"]
-[ext_resource type="Texture2D" uid="uid://gcsjj0xsvwym" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_1.png" id="10_a0kkl"]
-[ext_resource type="Texture2D" uid="uid://d2hvlge0ds34c" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_2.png" id="11_jqhqc"]
-[ext_resource type="Texture2D" uid="uid://bqlwnviyp8pr0" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_3.png" id="12_74moq"]
-[ext_resource type="Texture2D" uid="uid://bltq4h67yi1st" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_4.png" id="13_xxw5k"]
-[ext_resource type="Texture2D" uid="uid://27xepwngo31s" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_5.png" id="14_34srw"]
-[ext_resource type="Texture2D" uid="uid://cta0cmc5u04x6" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_6.png" id="15_8xh38"]
-[ext_resource type="Texture2D" uid="uid://dbj3v716nrowb" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_7.png" id="16_u4nvi"]
-[ext_resource type="Texture2D" uid="uid://6edd3gaxcgod" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_8.png" id="17_5p428"]
-[ext_resource type="Texture2D" uid="uid://bqioev7tgwkc7" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_9.png" id="18_5s6dd"]
-[ext_resource type="Texture2D" uid="uid://onpphdrftlj1" path="res://assets/Little Mage/Idle/Explosion_1/Explosion_10.png" id="19_sd206"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_68x3c"]
 animations = [{
@@ -82,34 +72,34 @@ animations = [{
 "texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("10_a0kkl")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("11_jqhqc")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("12_74moq")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("13_xxw5k")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("14_34srw")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("15_8xh38")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("16_u4nvi")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("17_5p428")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("18_5s6dd")
+"texture": null
 }, {
 "duration": 1.0,
-"texture": ExtResource("19_sd206")
+"texture": null
 }, {
 "duration": 1.0,
 "texture": null
@@ -122,14 +112,13 @@ animations = [{
 [node name="WandAnimations" type="Node2D"]
 
 [node name="LightningStrikeRight" type="AnimatedSprite2D" parent="."]
-visible = false
 z_index = 1
 position = Vector2(1, -37)
 rotation = 1.5708
 scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
-frame = 4
+frame = 6
 frame_progress = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="LightningStrikeRight"]
@@ -141,14 +130,13 @@ offset_bottom = 409.979
 color = Color(1, 1, 1, 0.0627451)
 
 [node name="LightningStrikeLeft" type="AnimatedSprite2D" parent="."]
-visible = false
 z_index = 1
 position = Vector2(-1, -37)
 rotation = -1.5708
 scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
-frame = 4
+frame = 6
 frame_progress = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="LightningStrikeLeft"]
@@ -162,9 +150,9 @@ metadata/_edit_use_anchors_ = true
 
 [node name="LightningStrikeTop" type="AnimatedSprite2D" parent="."]
 z_index = 1
-position = Vector2(-17, 2)
+position = Vector2(-1, -37)
 rotation = 4.71239
-scale = Vector2(-0.621165, 0.217644)
+scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
 frame = 6
@@ -180,17 +168,17 @@ color = Color(1, 1, 1, 0.0627451)
 metadata/_edit_use_anchors_ = true
 
 [node name="LightningStrikeBottom" type="AnimatedSprite2D" parent="."]
-visible = false
 z_index = 1
-position = Vector2(-1, -1)
+position = Vector2(-1, -37)
 rotation = 4.71239
 scale = Vector2(2, 0.913)
 sprite_frames = SubResource("SpriteFrames_68x3c")
 animation = &"play"
-frame = 4
+frame = 6
 frame_progress = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="LightningStrikeBottom"]
+visible = false
 offset_left = -81.5
 offset_top = -437.021
 offset_right = 86.5

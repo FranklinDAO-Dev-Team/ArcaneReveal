@@ -40,12 +40,12 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
 			}
 
-			// set up for playerTurnAction
-			playerID, err := comp.QueryPlayerID(world, gameID)
-			if err != nil {
-				return msg.PlayerTurnResult{}, err
-			}
-			log.Println("PlayerTurnSystem playerID: ", playerID)
+			// // set up for playerTurnAction
+			// playerID, err := comp.QueryPlayerID(world, gameID)
+			// if err != nil {
+			// 	return msg.PlayerTurnResult{}, err
+			// }
+			// log.Println("PlayerTurnSystem playerID: ", playerID)
 
 			direction, err := comp.StringToDirection(turn.Msg.Direction)
 			if err != nil {

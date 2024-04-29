@@ -7,7 +7,7 @@ include "commitments.func.circom";
 template Init() {
     var N_STAFFS = 4;
     var N_STAFF_SPELLS = 2;
-    var N_ALL_SPELLS = 8;
+    var N_ALL_SPELLS = 10;
 
     assert(N_STAFFS * N_STAFF_SPELLS <= N_ALL_SPELLS);
 

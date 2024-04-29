@@ -17,13 +17,40 @@ var inputs = {
 }
 
 @onready var ray = $RayCast2D
-@onready var health_bar = $healthbar
 @onready var player = $Player
 
+@onready var game_node = get_parent()
+
+@onready var node_name = get_script().resource_name
+
+
 func _ready():
-	update_health()
+
+	$"LifeBar/Life1".play("hearts")
+	$"LifeBar/Life2".play("hearts")
+	$"LifeBar/Life3".play("hearts")
+	$"LifeBar/Life4".play("hearts")
+	$"LifeBar/Life5".play("hearts")
+	
+	update_health_ui()
+	
+	if node_name == "Enemy1":
+		var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
+		#print(resp)
+		update_health()
+
 	position = position.snapped(Vector2.ONE * tile_size)
+
+
+func update_health_ui():
+	for i in range(max_health):
+		$"LifeBar".get_child(i).visible = health > i
 		
+func damage() -> void:	
+	health -= 1
+	if health == 0:
+		queue_free()
+	update_health_ui()
 	
 func update_health():
 	var healthbar = $healthbar  
@@ -32,15 +59,6 @@ func update_health():
 		healthbar.visible = false
 	else:
 		healthbar.visible = true
-		
-func damage() -> void:
-	print("hello")
-	print(health)
-	health -= 1
-	if health == 0:
-		queue_free()
-	$healthbar.value = health
-	print(health)
 	
 func _process(delta):
 	$Sprite.play("idle")
@@ -58,7 +76,6 @@ func attack_animation():
 	$Sprite.play("attack")
 	$Sprite.play("idle")
 
-	
 func move(dir):
 	ray.target_position = inputs[dir] * tile_size
 	ray.force_raycast_update()
@@ -71,9 +88,9 @@ func move(dir):
 		moving = false
 		
 func _on_area_entered(area):
-	print("sugma")
+	#print("sugma")
 	if area.name == "Player" && moving == true:
 		area.damage(attack_damage)
-		print(previous_move)
+		#print(previous_move)
 		attack_animation()
 

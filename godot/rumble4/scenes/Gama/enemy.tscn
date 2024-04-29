@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cqrcx4mk6o7fv"]
+[gd_scene load_steps=17 format=3 uid="uid://cqrcx4mk6o7fv"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_fcab3"]
 [ext_resource type="Texture2D" uid="uid://dj61foprisa50" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal1.png" id="2_02pmt"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://deku44ra7d12x" path="res://assets/Little Mage/Idle/Idle4.png" id="11_5uc1a"]
 [ext_resource type="Texture2D" uid="uid://7x0vh0xpmk60" path="res://assets/Little Mage/Idle/Idle5.png" id="12_1jd60"]
 [ext_resource type="Texture2D" uid="uid://bmux3p13jry11" path="res://assets/Little Mage/Idle/Idle6.png" id="13_he3cl"]
+[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="14_nfq80"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
 size = Vector2(30, 30)
@@ -87,20 +88,6 @@ position = Vector2(16, 16)
 enabled = false
 target_position = Vector2(2.08165e-12, 32)
 
-[node name="healthbar" type="ProgressBar" parent="."]
-modulate = Color(0, 1, 0.0784314, 1)
-offset_top = 1.0
-offset_right = 310.0
-offset_bottom = 28.0
-scale = Vector2(0.1, 0.1)
-max_value = 5.0
-step = 1.0
-show_percentage = false
-
-[node name="TextureRect" type="TextureRect" parent="healthbar"]
-layout_mode = 0
-offset_top = -10.0
-offset_right = 40.0
-offset_bottom = 30.0
+[node name="LifeBar" parent="." instance=ExtResource("14_nfq80")]
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
