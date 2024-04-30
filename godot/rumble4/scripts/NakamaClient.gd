@@ -91,6 +91,57 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	var notification = JSON.new()
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
-	if notification.data.has("event") and notification.data["event"] == "player-turn":
-		var turnLogs = notification.data["log"]
+	if notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
+		# var turnLogs = notification.data["log"]
+	if notification.data.has("turnEvent"):
+		process_data(notification.data)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func process_data(notification : Dictionary):
+	var event_log = notification["turnEvent"]
+	for event in event_log:
+		var action = int(event["Event"])
+		var x_pos = int(event["X"])
+		var y_pos = int(event["Y"])
+			
+		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
+		var position = Vector2(x_pos * 32 - 32, y_pos * 32 - 32)
+			
+		# Load the BasicLightning scene
+		var basic_lightning_scene = load("res://scenes/Gama/BasicLightning.tscn")
+			
+		# Create an instance of the BasicLightning scene
+		var basic_lightning_instance = basic_lightning_scene.instantiate()
+			
+		# Set the global position of the instance to the specified position
+		basic_lightning_instance.global_position = position
+			
+		# Add the instance as a child to the main scene
+		$".".add_child(basic_lightning_instance)
+			
+		var animation_player = basic_lightning_instance.get_node("Blank")
+			
+		if animation_player != null:
+			# Initiate corresponding animation based on action
+			match action:
+				0:
+					# Animate lightning bolt from the sky attack
+					# Access the AnimationPlayer in the BasicLightning scene
+					animation_player = basic_lightning_instance.get_node("Blank")
+					animation_player.play("default")
+				1:
+					# Animate explosion
+					animation_player = basic_lightning_instance.get_node("Explosion")
+					animation_player.play("default")
+				2:
+					# Animate lightning bolt dissipating
+					animation_player = basic_lightning_instance.get_node("Spark")
+					animation_player.play("default")
+				3:
+					# Animate lightning bolt dissipating
+					animation_player = basic_lightning_instance.get_node("WallActivation")
+					animation_player.play("default")
+				_:
+					# Handle unexpected action
+					print("")
