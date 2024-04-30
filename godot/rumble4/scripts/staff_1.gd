@@ -60,9 +60,27 @@ func _process(delta):
 			if is_inside_dropable:
 				match body_ref.current_direction:
 					body_ref.Direction.TOP:
-						position = get_parent().position + Vector2(16, 0)
-						lightning_animation_top.play("play")
-						is_animation_playing = true
+						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+							"GameIDStr": "2",
+							"Action": "wand",
+							"Direction": "up",
+							"WandNum": "1",
+							}))
+							
+						var raycast = get_parent().get_node("RayCast2DMagic")
+						raycast.target_position = inputs["down"] * tile_size
+						raycast.force_raycast_update()
+			
+						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							var obj = raycast.get_collider()
+							if obj != null:
+								obj.damage()
+							
+						if resp != null:
+							position = get_parent().position + Vector2(16, 0)
+							lightning_animation_top.play("play")
+							is_animation_playing = true
+							
 					body_ref.Direction.BOTTOM:
 						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
 							"GameIDStr": "2",
@@ -74,33 +92,64 @@ func _process(delta):
 						var raycast = get_parent().get_node("RayCast2DMagic")
 						raycast.target_position = inputs["down"] * tile_size
 						raycast.force_raycast_update()
-
-						#print(raycast.is_colliding())
-			#
-						#print(raycast.get_collider())
 			
 						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
 							var obj = raycast.get_collider()
 							if obj != null:
 								obj.damage()
 							
-						
 						if resp != null:
 							position = get_parent().position + Vector2(16, 32)
 							rotation += PI 
 							lightning_animation_bottom.play("play")
 							is_animation_playing = true
+							
 					body_ref.Direction.LEFT:
-						position = get_parent().position + Vector2(0, 16)
-						rotation -= PI / 2 
-						lightning_animation_left.play("play")
-						is_animation_playing = true
+						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+							"GameIDStr": "2",
+							"Action": "wand",
+							"Direction": "left",
+							"WandNum": "1",
+							}))
+							
+						var raycast = get_parent().get_node("RayCast2DMagic")
+						raycast.target_position = inputs["down"] * tile_size
+						raycast.force_raycast_update()
+			
+						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							var obj = raycast.get_collider()
+							if obj != null:
+								obj.damage()
+							
+						if resp != null:
+							position = get_parent().position + Vector2(0, 16)
+							rotation -= PI / 2 
+							lightning_animation_left.play("play")
+							is_animation_playing = true
+							
 					body_ref.Direction.RIGHT:
-						position = get_parent().position + Vector2(32, 16)
-						rotation += PI / 2
-						lightning_animation_bottom.position = Vector2(20, -23)
-						lightning_animation_right.play("play")
-						is_animation_playing = true
+						var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
+							"GameIDStr": "2",
+							"Action": "wand",
+							"Direction": "right",
+							"WandNum": "1",
+							}))
+							
+						var raycast = get_parent().get_node("RayCast2DMagic")
+						raycast.target_position = inputs["down"] * tile_size
+						raycast.force_raycast_update()
+			
+						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							var obj = raycast.get_collider()
+							if obj != null:
+								obj.damage()
+							
+						if resp != null:
+							position = get_parent().position + Vector2(32, 16)
+							rotation += PI / 2
+							lightning_animation_bottom.position = Vector2(20, -23)
+							lightning_animation_right.play("play")
+							is_animation_playing = true
 			else:
 				self.position = starting_pos
 
