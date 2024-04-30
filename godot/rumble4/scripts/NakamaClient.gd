@@ -122,7 +122,7 @@ func process_data(notification : Dictionary):
 			
 		var animation_player = basic_lightning_instance.get_node("Blank")
 			
-		if animation_player != null:
+		if animation_player != null and x_pos > 0 and x_pos < 10 and y_pos > 0 and y_pos < 10:
 			# Initiate corresponding animation based on action
 			match action:
 				0:
