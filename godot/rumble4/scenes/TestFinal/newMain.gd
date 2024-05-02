@@ -1,6 +1,6 @@
 extends Node
 
-
+var enemy_state = []
 
 @onready var client : NakamaClient
 @onready var socket
@@ -9,6 +9,8 @@ extends Node
 
 var enemies_defeated = 0
 var tile_size = 32
+var grid_size = 11
+var played = true
 
 func _on_enemy_exited(enemy: Area2D):
 	if not enemy.is_inside_tree():
@@ -16,7 +18,7 @@ func _on_enemy_exited(enemy: Area2D):
 		if enemies_defeated == 2:
 			# Display WIN text or perform any other desired action
 			$GameWinLabel.visible = true
-
+	
 
 func _ready():
 	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
@@ -76,6 +78,7 @@ func _ready():
 	print("Successfully created game: %s", % resp)
 	
 	
+	
 
 func _on_rpc_response(result: NakamaAsyncResult):
 	if result.is_successful():
@@ -90,10 +93,17 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	if notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
 		# var turnLogs = notification.data["log"]
-		var payload = await handle_query()
-		var json = JSON.new()
-		var state = json.parse_string(payload)
-		process_state(state)
+		if (played):
+			var payload = await handle_query()
+			var json = JSON.new()
+			var state = json.parse_string(payload)
+			played = false
+			initialize_state(state)
+		else:
+			var payload = await handle_query()
+			var json = JSON.new()
+			var state = json.parse_string(payload)
+			process_state(state)
 	if notification.data.has("turnEvent"):
 		process_event(notification.data)
 
@@ -129,7 +139,7 @@ func handle_query():
 
 
 		
-func process_state(state : Dictionary):
+func initialize_state(state : Dictionary):
 	var player = state["player"]
 	var wands = state["wands"]
 	var walls = state["walls"]
@@ -162,16 +172,32 @@ func process_state(state : Dictionary):
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 			
 		# Load the BasicLightning scene
-		var enemy_scene = load("res://scenes/Gama/enemy.tscn")
+		var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
 			
 		# Create an instance of the BasicLightning scene
 		var enemy_instance = enemy_scene.instantiate()
 			
 		# Set the global position of the instance to the specified position
-		enemy_instance.global_position = position
+		enemy_instance.x_pos = x_pos
+		enemy_instance.y_pos = y_pos
 			
 		# Add the instance as a child to the main scene
 		add_child(enemy_instance)
+		enemy_state.append(enemy_instance)
+
+
+func process_state(state : Dictionary):
+	var monsters = state["monsters"]
+	
+	for i in range(monsters.size()):
+		var monster = monsters[i]
+		var x_pos = int(monster["x"])
+		var y_pos = int(monster["y"])
+
+		# Set the global position of the instance to the specified position
+		var enemy_instance = enemy_state[i]
+		enemy_instance.x_pos = x_pos
+		enemy_instance.y_pos = y_pos
 		
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -222,3 +248,4 @@ func process_event(notification : Dictionary):
 				_:
 					# Handle unexpected action
 					print("")
+					
