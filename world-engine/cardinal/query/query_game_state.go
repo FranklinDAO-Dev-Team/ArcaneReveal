@@ -30,9 +30,11 @@ type WallData struct {
 }
 
 type MonsterData struct {
-	X    int `json:"x"`
-	Y    int `json:"y"`
-	Type int `json:"type"`
+	X          int `json:"x"`
+	Y          int `json:"y"`
+	CurrHealth int `json:"currHealth"`
+	MaxHealth  int `json:"maxHealth"`
+	Type       int `json:"type"`
 }
 
 type GameStateRequest struct {
@@ -174,10 +176,16 @@ func getMonsterData(world cardinal.WorldContext, id types.EntityID, monsters *[]
 		if err != nil {
 			return fmt.Errorf("failed to get position component for monster: %w", err)
 		}
+		health, err := cardinal.GetComponent[comp.Health](world, id)
+		if err != nil {
+			return fmt.Errorf("failed to get position component for monster: %w", err)
+		}
 		*monsters = append(*monsters, MonsterData{
-			X:    pos.X,
-			Y:    pos.Y,
-			Type: int(comp.MonsterCollide),
+			X:          pos.X,
+			Y:          pos.Y,
+			CurrHealth: health.CurrHealth,
+			MaxHealth:  health.MaxHealth,
+			Type:       int(comp.MonsterCollide),
 		})
 	}
 	return nil
