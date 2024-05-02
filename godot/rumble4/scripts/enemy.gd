@@ -88,7 +88,6 @@ func move(dir):
 		moving = false
 		
 func _on_area_entered(area):
-	#print("sugma")
 	if area.name == "Player" && moving == true:
 		area.damage(attack_damage)
 		#print(previous_move)
