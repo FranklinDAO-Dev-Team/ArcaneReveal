@@ -264,6 +264,5 @@ func _on_area_entered(area):
 			"up": area.move("down")
 			"down": area.move("up")
 		
-		
-		
+	
 

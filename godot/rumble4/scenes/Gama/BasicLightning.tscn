@@ -273,11 +273,11 @@ animations = [{
 }],
 "loop": false,
 "name": &"default",
-"speed": 20.0
+"speed": 10.0
 }]
 
 [sub_resource type="Animation" id="Animation_jrguj"]
-length = 1.05
+length = 1.2
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -285,10 +285,10 @@ tracks/0/path = NodePath("AnimatedSprite2D3:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.775, 0.925),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 31, 37]
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -442,7 +442,6 @@ _data = {
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.0625, 0.0625)
 sprite_frames = SubResource("SpriteFrames_dnb1k")
-frame = 10
 centered = false
 
 [node name="Blank" type="AnimationPlayer" parent="."]
@@ -462,7 +461,7 @@ libraries = {
 }
 
 [node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.0485294, 0.0485294)
+scale = Vector2(0.0573529, 0.0573529)
 sprite_frames = SubResource("SpriteFrames_hhmbb")
 frame = 11
 centered = false
