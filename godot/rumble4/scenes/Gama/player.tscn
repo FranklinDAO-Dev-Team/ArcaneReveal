@@ -1,9 +1,11 @@
-[gd_scene load_steps=20 format=3 uid="uid://0nka4rtgo7vg"]
+[gd_scene load_steps=22 format=3 uid="uid://0nka4rtgo7vg"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_7xlh3"]
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_req7c"]
 [ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Gama/staff_1.tscn" id="3_6po7h"]
+[ext_resource type="Script" path="res://scenes/Gama/staff_2.gd" id="4_66sxy"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="4_ekywa"]
+[ext_resource type="Script" path="res://scenes/Gama/staff_3.gd" id="5_0t0ws"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
 size = Vector2(30, 30)
@@ -206,16 +208,18 @@ position = Vector2(16, 16)
 position = Vector2(16, 16)
 
 [node name="Staff1" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(152, -157)
+position = Vector2(50, -157)
 scale = Vector2(1.2, 1.2)
 
 [node name="Staff2" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(257, -157)
+position = Vector2(151, -157)
 scale = Vector2(1.2, 1.2)
+script = ExtResource("4_66sxy")
 
 [node name="Staff3" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(49, -157)
+position = Vector2(254, -157)
 scale = Vector2(1.2, 1.2)
+script = ExtResource("5_0t0ws")
 
 [node name="RayCast2DMagic" type="RayCast2D" parent="."]
 position = Vector2(16, 16)

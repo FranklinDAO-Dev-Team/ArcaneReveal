@@ -1,8 +1,7 @@
 extends Node
 
-@onready var enemy1: Area2D = $Enemy1
-@onready var enemy2: Area2D = $Enemy2
-	
+
+
 @onready var client : NakamaClient
 @onready var socket
 @onready var session : NakamaSession
@@ -20,9 +19,6 @@ func _on_enemy_exited(enemy: Area2D):
 
 
 func _ready():
-	enemy1.tree_exited.connect(_on_enemy_exited.bind(enemy1))
-	enemy2.tree_exited.connect(_on_enemy_exited.bind(enemy2))
-	
 	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
 	socket = Nakama.create_socket_from(client)
 
@@ -94,11 +90,92 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	if notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
 		# var turnLogs = notification.data["log"]
+		var payload = await handle_query()
+		var json = JSON.new()
+		var state = json.parse_string(payload)
+		process_state(state)
 	if notification.data.has("turnEvent"):
-		process_data(notification.data)
+		process_event(notification.data)
 
+
+
+func handle_query():
+	var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
+		"Persona": "CoolMage",
+	}))
+	print(resp_getID)  # This should show the response details including payload
+
+	# Create a new JSON object and parse the response payload
+	var json = JSON.new()
+	var error = json.parse(resp_getID.payload)
+	if error == OK:
+		var response_dict = json.data  # Access the parsed data
+
+		# Check if the 'Success' key is true and then access 'GameID'
+		if response_dict and "Success" in response_dict and response_dict["Success"]:
+			var game_id = response_dict["GameID"]
+			print("Game ID: ", game_id)
+
+			# Make another RPC call using the retrieved GameID
+			var resp_getGameState = await client.rpc_async(session, "query/game/game-state", JSON.stringify({
+				"GameID": game_id,  # Use the actual game ID retrieved
+			}))
+			print(resp_getGameState)  # Print the state response
+			return resp_getGameState.payload
+		else:
+			print("Failed to get Game ID or the response did not indicate success.")
+	else:
+		print("JSON Parse Error:", json.get_error_message())
+
+
+		
+func process_state(state : Dictionary):
+	var player = state["player"]
+	var wands = state["wands"]
+	var walls = state["walls"]
+	var monsters = state["monsters"]
+	
+	for wall in walls:
+		var x_pos = int(wall["x"])
+		var y_pos = int(wall["y"])
+		
+		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
+		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
+			
+		# Load the BasicLightning scene
+		var wall_scene = load("res://scenes/Gama/wall.tscn")
+			
+		# Create an instance of the BasicLightning scene
+		var wall_instance = wall_scene.instantiate()
+			
+		# Set the global position of the instance to the specified position
+		wall_instance.global_position = position
+			
+		# Add the instance as a child to the main scene
+		add_child(wall_instance)
+	
+	for monster in monsters:
+		var x_pos = int(monster["x"])
+		var y_pos = int(monster["y"])
+		
+		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
+		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
+			
+		# Load the BasicLightning scene
+		var enemy_scene = load("res://scenes/Gama/enemy.tscn")
+			
+		# Create an instance of the BasicLightning scene
+		var enemy_instance = enemy_scene.instantiate()
+			
+		# Set the global position of the instance to the specified position
+		enemy_instance.global_position = position
+			
+		# Add the instance as a child to the main scene
+		add_child(enemy_instance)
+		
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func process_data(notification : Dictionary):
+func process_event(notification : Dictionary):
 	var event_log = notification["turnEvent"]
 	for event in event_log:
 		var action = int(event["Event"])
@@ -106,7 +183,7 @@ func process_data(notification : Dictionary):
 		var y_pos = int(event["Y"])
 			
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
-		var position = Vector2(x_pos * 32 - 32, y_pos * 32 - 32)
+		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 			
 		# Load the BasicLightning scene
 		var basic_lightning_scene = load("res://scenes/Gama/BasicLightning.tscn")
@@ -118,7 +195,7 @@ func process_data(notification : Dictionary):
 		basic_lightning_instance.global_position = position
 			
 		# Add the instance as a child to the main scene
-		$".".add_child(basic_lightning_instance)
+		add_child(basic_lightning_instance)
 			
 		var animation_player = basic_lightning_instance.get_node("Blank")
 			
