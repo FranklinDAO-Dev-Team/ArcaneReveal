@@ -8,7 +8,7 @@ var id
 
 const animation_speed = 3
 var moving = false
-const tile_size = 64
+const tile_size = 32
 
 var inputs = {
 	"right": Vector2.RIGHT,
@@ -27,7 +27,7 @@ func _ready():
 	$"../Player/LifeBar/Life4".play("hearts")
 	$"../Player/LifeBar/Life5".play("hearts")
 	update_health_ui()
-	global_position = Vector2((x_pos - 1) * tile_size / 2, (y_pos - 1) * tile_size / 2)
+	global_position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 	
 	$StaffPositionTop.position = Vector2(16, 0)  # Adjust this offset
 	$StaffPositionBottom.position = Vector2(16, 32)  # Adjust this offset
@@ -48,33 +48,8 @@ func update_health_ui():
 		$"../Player/LifeBar".get_child(i).visible = health > i
 
 
-func _unhandled_input(event):
-	if moving:
-		return
-	for dir in inputs.keys():
-		if event.is_action_pressed(dir):
-			$RayCast2DEnemy.target_position = inputs[dir] * tile_size
-			$RayCast2DEnemy.force_raycast_update()
-			
-			if $RayCast2DEnemy.is_colliding() and $RayCast2DEnemy.get_collider().name.begins_with("Enemy"):
-				var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-					"GameIDStr": "2",
-					"Action": "attack",
-					"Direction": dir,
-					"WandNum": "0",
-					}))
-
-			else:
-				var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-					"GameIDStr": "2",
-					"Action": "move",
-					"Direction": dir,
-					"WandNum": "0",
-					}))
-
-
 func move(x_curr, y_curr):
-	var pos = Vector2((x_curr - 1) * tile_size / 2, (y_curr - 1) * tile_size / 2)
+	var pos = Vector2((x_curr - 1) * tile_size, (y_curr - 1) * tile_size)
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "position", pos, 1.0 / animation_speed).set_trans(Tween.TRANS_SINE)
 	moving = true
@@ -82,6 +57,19 @@ func move(x_curr, y_curr):
 	moving = false
 	x_pos = x_curr
 	y_pos = y_curr
+
+
+func attack(dir):
+	if dir == "left":
+		$AnimationPlayer.play("attack_left")
+	elif dir == "right":
+		$AnimationPlayer.play("attack_right")
+	elif dir == "up":
+		$AnimationPlayer.play("attack_up")
+	elif dir == "down":
+		$AnimationPlayer.play("attack_down")
+	else:
+		return
 
 
 func hit_wall():

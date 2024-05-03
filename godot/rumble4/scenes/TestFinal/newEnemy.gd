@@ -4,10 +4,11 @@ const MAX_HEALTH = 5
 var health = MAX_HEALTH
 var x_pos
 var y_pos
+var id
 
 const animation_speed = 3
 var moving = false
-const tile_size = 64
+const tile_size = 32
 
 @onready var game_node = get_parent()
 @onready var node_name = get_script().resource_name
@@ -20,7 +21,7 @@ func _ready():
 	$"LifeBar/Life4".play("hearts")
 	$"LifeBar/Life5".play("hearts")
 	update_health_ui()
-	global_position = Vector2((x_pos - 1) * tile_size / 2, (y_pos - 1) * tile_size / 2)
+	global_position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 
 
 func _process(delta):
@@ -51,7 +52,7 @@ func attack_animation():
 
 
 func move(x_curr, y_curr):
-	var pos = Vector2((x_curr - 1) * tile_size / 2, (y_curr - 1) * tile_size / 2)
+	var pos = Vector2((x_curr - 1) * tile_size, (y_curr - 1) * tile_size)
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "position", pos, 1.0 / animation_speed).set_trans(Tween.TRANS_SINE)
 	moving = true
