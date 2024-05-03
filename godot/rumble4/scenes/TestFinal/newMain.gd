@@ -1,6 +1,7 @@
 extends Node
 
 var enemy_state = []
+var player
 
 @onready var client : NakamaClient
 @onready var socket
@@ -79,9 +80,7 @@ func _ready():
 	var json = JSON.new()
 	var state = json.parse_string(payload)
 	initialize_state(state)
-	
-	
-	
+
 
 func _on_rpc_response(result: NakamaAsyncResult):
 	if result.is_successful():
@@ -93,14 +92,20 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	var notification = JSON.new()
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
+	if notification.data.has("turnEvent"):
+		process_event(notification.data)
+		print("caught wand turn event")
+		var payload = await handle_query()
+		var json = JSON.new()
+		var state = json.parse_string(payload)
+		process_state(state)
+
 	if notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
 		var payload = await handle_query()
 		var json = JSON.new()
 		var state = json.parse_string(payload)
 		process_state(state)
-	if notification.data.has("turnEvent"):
-		process_event(notification.data)
 
 
 
@@ -168,10 +173,19 @@ func wait_for_game_creation():
 
 		
 func initialize_state(state : Dictionary):
-	var player = state["player"]
+	var player_init = state["player"]
 	var wands = state["wands"]
 	var walls = state["walls"]
 	var monsters = state["monsters"]
+	
+	var player_scene = load("res://scenes/TestFinal/newPlayer.tscn")
+	var player_instance = player_scene.instantiate()
+	player_instance.x_pos = int(player_init["x"])
+	player_instance.y_pos = int(player_init["y"])
+	player_instance.health = int(player_init["maxHealth"])
+	player_instance.id = int(player_init["id"])
+	player = player_instance
+	add_child(player)
 	
 	for wall in walls:
 		var x_pos = int(wall["x"])
@@ -195,6 +209,7 @@ func initialize_state(state : Dictionary):
 	for monster in monsters:
 		var x_pos = int(monster["x"])
 		var y_pos = int(monster["y"])
+		var health = int(monster["currHealth"])
 		
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
@@ -208,6 +223,7 @@ func initialize_state(state : Dictionary):
 		# Set the global position of the instance to the specified position
 		enemy_instance.x_pos = x_pos
 		enemy_instance.y_pos = y_pos
+		enemy_instance.health = health
 			
 		# Add the instance as a child to the main scene
 		add_child(enemy_instance)
@@ -215,8 +231,14 @@ func initialize_state(state : Dictionary):
 
 
 func process_state(state : Dictionary):
-	var monsters = state["monsters"]
+	var player_state = state["player"]
+	var player_x = int(player_state["x"])
+	var player_y = int(player_state["y"])
 	
+	player.move(player_x, player_y)
+	player.health = int(player_state["currHealth"])
+	
+	var monsters = state["monsters"]
 	for i in range(monsters.size()):
 		var monster = monsters[i]
 		var x_pos = int(monster["x"])
@@ -225,10 +247,8 @@ func process_state(state : Dictionary):
 
 		# Set the global position of the instance to the specified position
 		var enemy_instance = enemy_state[i]
-		enemy_instance.x_pos = x_pos
-		enemy_instance.y_pos = y_pos
+		enemy_instance.move(x_pos, y_pos)
 		enemy_instance.health = health
-		
 		
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -279,4 +299,8 @@ func process_event(notification : Dictionary):
 				_:
 					# Handle unexpected action
 					print("")
-					
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("query"):
+		handle_query()
+	

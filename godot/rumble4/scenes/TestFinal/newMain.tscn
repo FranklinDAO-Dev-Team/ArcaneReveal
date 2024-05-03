@@ -1,8 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://ci17p04oo6cte"]
+[gd_scene load_steps=9 format=3 uid="uid://ci17p04oo6cte"]
 
 [ext_resource type="Script" path="res://scenes/TestFinal/newMain.gd" id="1_ogrni"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_lsm5l"]
-[ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Gama/player.tscn" id="5_rcl0x"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_ku8vv"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="7_w54np"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="8_ehegj"]
@@ -284,9 +283,6 @@ tile_set = SubResource("TileSet_xdt47")
 rendering_quadrant_size = 32
 format = 2
 layer_0/tile_data = PackedInt32Array(0, 0, 0, 65536, 327680, 3, 131072, 0, 0, 196608, 327680, 3, 262144, 0, 0, 262145, 327680, 3, 262146, 0, 0, 262147, 327680, 3, 262148, 0, 0, 196612, 327680, 3, 131076, 0, 0, 65540, 327680, 3, 65539, 0, 4, 3, 327680, 3, 4, 0, 0, 2, 0, 0, 1, 327680, 3, 65537, 0, 4, 131073, 327680, 3, 196609, 0, 4, 196610, 327680, 3, 131074, 0, 0, 65538, 327680, 3, 196611, 0, 4, 131075, 327680, 3, 327680, 327680, 3, 393216, 0, 0, 458752, 327680, 3, 524288, 0, 0, 327681, 0, 4, 393217, 327680, 3, 458753, 0, 4, 524289, 327680, 3, 327682, 327680, 3, 393218, 0, 0, 458754, 327680, 3, 524290, 0, 0, 327683, 0, 4, 393219, 327680, 3, 458755, 0, 4, 524291, 327680, 3, 327684, 327680, 3, 393220, 0, 0, 458756, 327680, 3, 524292, 0, 0, 5, 327680, 3, 65541, 0, 4, 131077, 327680, 3, 196613, 0, 4, 262149, 327680, 3, 327685, 0, 4, 393221, 327680, 3, 458757, 0, 4, 524293, 327680, 3, 6, 0, 0, 65542, 327680, 3, 131078, 0, 0, 196614, 327680, 3, 262150, 0, 0, 327686, 327680, 3, 393222, 0, 0, 458758, 327680, 3, 524294, 0, 0, 7, 327680, 3, 65543, 0, 4, 131079, 327680, 3, 196615, 0, 4, 262151, 327680, 3, 327687, 0, 4, 393223, 327680, 3, 458759, 0, 4, 524295, 327680, 3, 8, 0, 0, 65544, 327680, 3, 131080, 0, 0, 196616, 327680, 3, 262152, 0, 0, 327688, 327680, 3, 393224, 0, 0, 458760, 327680, 3, 524296, 0, 0)
-
-[node name="Player" parent="." instance=ExtResource("5_rcl0x")]
-position = Vector2(0, 0)
 
 [node name="TilePiece" parent="." instance=ExtResource("6_ku8vv")]
 position = Vector2(-155, -165)
