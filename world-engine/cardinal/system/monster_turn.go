@@ -49,7 +49,7 @@ func MonsterTurnSystem(
 				return false // if error, break out of search
 			}
 		} else {
-			turnErr = executeMonsterMove(world, eventLogList, origMonsterPos, id, playerPos)
+			turnErr = executeMonsterMove(world, gameID, eventLogList, origMonsterPos, id, playerPos)
 			if turnErr != nil {
 				return false // if error, break out of search
 			}
@@ -93,13 +93,14 @@ func executeMonsterAttack(
 
 func executeMonsterMove(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	eventLogList *[]comp.GameEventLog,
 	origMonsterPos *comp.Position,
 	monsterID types.EntityID,
 	playerPos *comp.Position,
 ) error {
 	// get move options (places that are legal, not moving into a wall, etc),
-	direction, err := decideMonsterMovementDirection(world, origMonsterPos, playerPos)
+	direction, err := decideMonsterMovementDirection(world, gameID, origMonsterPos, playerPos)
 	if err != nil {
 		return err
 	}
@@ -132,6 +133,7 @@ func executeMonsterMove(
 
 func decideMonsterMovementDirection(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	monsterPos *comp.Position,
 	playerPos *comp.Position,
 ) (comp.Direction, error) {
@@ -143,7 +145,7 @@ func decideMonsterMovementDirection(
 		directions[i], directions[j] = directions[j], directions[i]
 	})
 	for _, direction := range directions {
-		valid, manDist, err := CheckMonsterMovementUtility(world, playerPos, monsterPos, direction)
+		valid, manDist, err := CheckMonsterMovementUtility(world, gameID, playerPos, monsterPos, direction)
 		if err != nil {
 			return -1, err
 		}
@@ -157,6 +159,7 @@ func decideMonsterMovementDirection(
 
 func CheckMonsterMovementUtility(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	playerPos *comp.Position,
 	monsterPos *comp.Position,
 	direction comp.Direction,
@@ -166,7 +169,7 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.IsCollisonThere(world, *newMonsterPos)
+	valid, err = comp.IsCollisonThere(world, gameID, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
 	} else if valid {
@@ -178,7 +181,7 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.IsCollisonThere(world, *newMonsterPos)
+	valid, err = comp.IsCollisonThere(world, gameID, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
 	} else if valid {

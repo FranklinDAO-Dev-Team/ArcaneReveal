@@ -82,19 +82,26 @@ type EntityAtLocation struct {
 
 func (p *Position) GetEntityIDByPosition(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 ) (found bool, eID types.EntityID, searchErr error) {
 	if p == nil {
 		return false, 0, errors.New("attempting GetEntityIDByPosition with nil input")
 	}
-	searchErr = cardinal.NewSearch(world, filter.Contains(Position{})).Each(
+	searchErr = cardinal.NewSearch(
+		world,
+		filter.Contains(Position{}, GameObj{})).Each(
 		func(id types.EntityID) bool {
 			pos, err := cardinal.GetComponent[Position](world, id)
 			if err != nil {
 				return false
 			}
+			gameObjTag, err := cardinal.GetComponent[GameObj](world, id)
+			if err != nil {
+				return false
+			}
 
-			// Terminates the search if the player is found
-			if pos.X == p.X && pos.Y == p.Y {
+			// Terminates the search if the entity is found
+			if pos.X == p.X && pos.Y == p.Y && gameObjTag.GameID == gameID {
 				eID = id
 				found = true
 				return false
