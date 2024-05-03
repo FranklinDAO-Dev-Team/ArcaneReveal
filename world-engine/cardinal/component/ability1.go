@@ -28,7 +28,7 @@ func (Ability1) Resolve(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
-	damageDealt, err := damageAtPosition(world, spellPosition, executeUpdates, false)
+	damageDealt, err := damageAtPosition(world, gameID, spellPosition, executeUpdates, false)
 	if err != nil {
 		log.Println("Ability1.Resolve err: ", err)
 		return false, err

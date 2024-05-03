@@ -9,8 +9,8 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
-func IsCollisonThere(world cardinal.WorldContext, pos Position) (bool, error) {
-	found, id, err := pos.GetEntityIDByPosition(world)
+func IsCollisonThere(world cardinal.WorldContext, gameID types.EntityID, pos Position) (bool, error) {
+	found, id, err := pos.GetEntityIDByPosition(world, gameID)
 	if err != nil {
 		return false, err
 	}

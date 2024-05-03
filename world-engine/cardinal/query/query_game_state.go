@@ -12,29 +12,33 @@ import (
 )
 
 type PlayerData struct {
-	X          int `json:"x"`
-	Y          int `json:"y"`
-	MaxHealth  int `json:"maxHealth"`
-	CurrHealth int `json:"currHealth"`
+	ID         types.EntityID `json:"id"`
+	X          int            `json:"x"`
+	Y          int            `json:"y"`
+	MaxHealth  int            `json:"maxHealth"`
+	CurrHealth int            `json:"currHealth"`
 }
 
 type WandData struct {
-	Number      int  `json:"number"`
-	IsAvailable bool `json:"isAvailable"`
+	ID          types.EntityID `json:"id"`
+	Number      int            `json:"number"`
+	IsAvailable bool           `json:"isAvailable"`
 }
 
 type WallData struct {
-	X    int `json:"x"`
-	Y    int `json:"y"`
-	Type int `json:"type"`
+	ID   types.EntityID `json:"id"`
+	X    int            `json:"x"`
+	Y    int            `json:"y"`
+	Type int            `json:"type"`
 }
 
 type MonsterData struct {
-	X          int `json:"x"`
-	Y          int `json:"y"`
-	CurrHealth int `json:"currHealth"`
-	MaxHealth  int `json:"maxHealth"`
-	Type       int `json:"type"`
+	ID         types.EntityID `json:"id"`
+	X          int            `json:"x"`
+	Y          int            `json:"y"`
+	CurrHealth int            `json:"currHealth"`
+	MaxHealth  int            `json:"maxHealth"`
+	Type       int            `json:"type"`
 }
 
 type GameStateRequest struct {
@@ -42,10 +46,11 @@ type GameStateRequest struct {
 }
 
 type GameStateResponse struct {
-	Player   PlayerData    `json:"player"`
-	Wands    []WandData    `json:"wands"`
-	Walls    []WallData    `json:"walls"`
-	Monsters []MonsterData `json:"monsters"`
+	GameID   types.EntityID `json:"gameID"`
+	Player   PlayerData     `json:"player"`
+	Wands    []WandData     `json:"wands"`
+	Walls    []WallData     `json:"walls"`
+	Monsters []MonsterData  `json:"monsters"`
 }
 
 func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateResponse, error) {
@@ -112,6 +117,7 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 	}
 
 	return &GameStateResponse{
+		GameID:   gameID,
 		Player:   *playerData,
 		Wands:    *wands,
 		Walls:    *walls,
@@ -130,6 +136,7 @@ func getPlayerData(world cardinal.WorldContext, id types.EntityID, playerData *P
 		if err != nil {
 			return fmt.Errorf("failed to get position component for health: %w", err)
 		}
+		playerData.ID = id
 		playerData.X = pos.X
 		playerData.Y = pos.Y
 		playerData.MaxHealth = health.MaxHealth
@@ -146,6 +153,7 @@ func getWandData(world cardinal.WorldContext, id types.EntityID, wands *[]WandDa
 			return fmt.Errorf("failed to get available component for wand: %w", err)
 		}
 		*wands = append(*wands, WandData{
+			ID:          id,
 			Number:      wand.Number,
 			IsAvailable: availableObj.IsAvailable,
 		})
@@ -161,6 +169,7 @@ func getWallData(world cardinal.WorldContext, id types.EntityID, walls *[]WallDa
 			return fmt.Errorf("failed to get position component for wall: %w", err)
 		}
 		*walls = append(*walls, WallData{
+			ID:   id,
 			X:    pos.X,
 			Y:    pos.Y,
 			Type: int(comp.WallCollide),
@@ -181,6 +190,7 @@ func getMonsterData(world cardinal.WorldContext, id types.EntityID, monsters *[]
 			return fmt.Errorf("failed to get position component for monster: %w", err)
 		}
 		*monsters = append(*monsters, MonsterData{
+			ID:         id,
 			X:          pos.X,
 			Y:          pos.Y,
 			CurrHealth: health.CurrHealth,
