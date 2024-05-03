@@ -2,6 +2,7 @@ package system
 
 import (
 	comp "cinco-paus/component"
+	"fmt"
 	"log"
 
 	"math/rand"
@@ -123,6 +124,15 @@ func executeMonsterMove(
 		return err
 	}
 
+	// double check that newNewMonsterPos is not colliding with anything
+	found, eID, err := newNewMonsterPos.GetEntityIDByPosition(world, gameID)
+	if err != nil {
+		return err
+	}
+	if found {
+		return fmt.Errorf("executeMonsterMove() newNewMonsterPos collides with entity %d", eID)
+	}
+
 	// update monster position onchain
 	err = cardinal.SetComponent[comp.Position](world, monsterID, newNewMonsterPos)
 	if err != nil {
@@ -169,10 +179,10 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.IsCollisonThere(world, gameID, *newMonsterPos)
+	invalid, err := comp.IsCollisonThere(world, gameID, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
-	} else if valid {
+	} else if invalid {
 		return false, 0, nil // invalid position, but don't return error, just check next direction
 	}
 
@@ -181,10 +191,10 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.IsCollisonThere(world, gameID, *newMonsterPos)
+	invalid, err = comp.IsCollisonThere(world, gameID, *newNewMonsterPos)
 	if err != nil {
 		return false, 0, err
-	} else if valid {
+	} else if invalid {
 		return false, 0, nil // invalid position, but don't return error, just check next direction
 	}
 
