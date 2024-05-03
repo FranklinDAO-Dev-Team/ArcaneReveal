@@ -3,6 +3,8 @@ extends Area2D
 @export var attack_damage = 1
 
 var previous_move
+var prev_x = 1
+var prev_y = 1
 var x_pos
 var y_pos
 
@@ -45,6 +47,8 @@ func _ready():
 
 
 func update_health_ui():
+	if health == 0:
+		queue_free()
 	for i in range(max_health):
 		$"LifeBar".get_child(i).visible = health > i
 		
@@ -64,14 +68,12 @@ func update_health():
 	
 func _process(delta):
 	$Sprite.play("idle")
+	#if (prev_x != x_pos or prev_y != y_pos):
+		#move(prev_x, prev_y, x_pos, y_pos)
+		#prev_x = x_pos
+		#prev_y = y_pos
 	global_position = Vector2((x_pos - 1) * tile_size / 2, (y_pos - 1) * tile_size / 2)
-		
-func _unhandled_input(event):
-	if moving:
-		return
-	for dir in inputs.keys():
-		if event.is_action_pressed(dir):
-			move(dir)
+	update_health_ui()
 			
 			
 func attack_animation():
@@ -79,19 +81,15 @@ func attack_animation():
 	$Sprite.play("attack")
 	$Sprite.play("idle")
 
-func move(dir):
-	ray.target_position = inputs[dir] * tile_size
-	ray.force_raycast_update()
-	if !ray.is_colliding():
-		previous_move = dir 
-		var tween = get_tree().create_tween()
-		tween.tween_property(self, "position", position + inputs[dir] * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
-		moving = true
-		await tween.finished
-		moving = false
+func move(prev_x, prev_y, curr_x, curr_y):
+	var delta = Vector2(curr_x - prev_x, prev_y - curr_y)
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position", position + delta * tile_size, 1.0/animation_speed).set_trans(Tween.TRANS_SINE)
+	moving = true
+	await tween.finished
+	moving = false
 		
 func _on_area_entered(area):
 	if area.name == "Player" && moving == true:
 		area.damage(attack_damage)
-		#print(previous_move)
 		attack_animation()
