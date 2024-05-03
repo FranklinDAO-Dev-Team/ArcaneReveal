@@ -1,6 +1,6 @@
 extends Node
 
-
+var enemy_state = []
 
 @onready var client : NakamaClient
 @onready var socket
@@ -9,6 +9,7 @@ extends Node
 
 var enemies_defeated = 0
 var tile_size = 32
+var grid_size = 11
 
 func _on_enemy_exited(enemy: Area2D):
 	if not enemy.is_inside_tree():
@@ -16,7 +17,7 @@ func _on_enemy_exited(enemy: Area2D):
 		if enemies_defeated == 2:
 			# Display WIN text or perform any other desired action
 			$GameWinLabel.visible = true
-
+	
 
 func _ready():
 	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
@@ -73,7 +74,12 @@ func _ready():
 	if resp.is_exception():
 		print("An error occured: %s", % resp)
 		return
-	print("Successfully created game: %s", % resp)
+	print("Successfully created game request entity: %s", % resp)
+	var payload = await wait_for_game_creation()
+	var json = JSON.new()
+	var state = json.parse_string(payload)
+	initialize_state(state)
+	
 	
 	
 
@@ -89,7 +95,6 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	print("[Notification]: ", notification.data)
 	if notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
-		# var turnLogs = notification.data["log"]
 		var payload = await handle_query()
 		var json = JSON.new()
 		var state = json.parse_string(payload)
@@ -126,10 +131,43 @@ func handle_query():
 			print("Failed to get Game ID or the response did not indicate success.")
 	else:
 		print("JSON Parse Error:", json.get_error_message())
+		
+	
+func wait_for_game_creation():
+	var created = false
+	while not created:
+		var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
+		"Persona": "CoolMage",
+		}))
+		print(resp_getID)  # This should show the response details including payload
+
+		# Create a new JSON object and parse the response payload
+		var json = JSON.new()
+		var error = json.parse(resp_getID.payload)
+		if error == OK:
+			var response_dict = json.data  # Access the parsed data
+
+			# Check if the 'Success' key is true and then access 'GameID'
+			if response_dict and "Success" in response_dict and response_dict["Success"]:
+				var game_id = response_dict["GameID"]
+				print("Game ID: ", game_id)
+
+				# Make another RPC call using the retrieved GameID
+				var resp_getGameState = await client.rpc_async(session, "query/game/game-state", JSON.stringify({
+					"GameID": game_id,  # Use the actual game ID retrieved
+				}))
+				print(resp_getGameState)  # Print the state response
+				created = false
+				return resp_getGameState.payload
+			else:
+				print("Failed to get Game ID or the response did not indicate success.")
+		else:
+			print("JSON Parse Error:", json.get_error_message())
+	return
 
 
 		
-func process_state(state : Dictionary):
+func initialize_state(state : Dictionary):
 	var player = state["player"]
 	var wands = state["wands"]
 	var walls = state["walls"]
@@ -162,16 +200,35 @@ func process_state(state : Dictionary):
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 			
 		# Load the BasicLightning scene
-		var enemy_scene = load("res://scenes/Gama/enemy.tscn")
+		var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
 			
 		# Create an instance of the BasicLightning scene
 		var enemy_instance = enemy_scene.instantiate()
 			
 		# Set the global position of the instance to the specified position
-		enemy_instance.global_position = position
+		enemy_instance.x_pos = x_pos
+		enemy_instance.y_pos = y_pos
 			
 		# Add the instance as a child to the main scene
 		add_child(enemy_instance)
+		enemy_state.append(enemy_instance)
+
+
+func process_state(state : Dictionary):
+	var monsters = state["monsters"]
+	
+	for i in range(monsters.size()):
+		var monster = monsters[i]
+		var x_pos = int(monster["x"])
+		var y_pos = int(monster["y"])
+		var health = int(monster["currHealth"])
+
+		# Set the global position of the instance to the specified position
+		var enemy_instance = enemy_state[i]
+		enemy_instance.x_pos = x_pos
+		enemy_instance.y_pos = y_pos
+		enemy_instance.health = health
+		
 		
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -222,3 +279,4 @@ func process_event(notification : Dictionary):
 				_:
 					# Handle unexpected action
 					print("")
+					

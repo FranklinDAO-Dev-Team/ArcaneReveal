@@ -176,7 +176,7 @@ func playerTurnAttack(
 	}
 	log.Printf("attackPos: %v\n", attackPos)
 
-	found, id, err := attackPos.GetEntityIDByPosition(world)
+	found, id, err := attackPos.GetEntityIDByPosition(world, gameID)
 	if err != nil {
 		return err
 	}
@@ -286,7 +286,7 @@ func playerTurnMove(
 	if err != nil {
 		return err
 	}
-	valid, err := comp.IsCollisonThere(world, *newPos)
+	valid, err := comp.IsCollisonThere(world, gameID, *newPos)
 	if err != nil {
 		return err
 	} else if valid {
@@ -300,7 +300,7 @@ func playerTurnMove(
 	if err != nil {
 		return err
 	}
-	valid, err = comp.IsCollisonThere(world, *newNewPos)
+	valid, err = comp.IsCollisonThere(world, gameID, *newNewPos)
 	if err != nil {
 		return err
 	} else if valid {
