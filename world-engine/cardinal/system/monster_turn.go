@@ -105,6 +105,10 @@ func executeMonsterMove(
 	if err != nil {
 		return err
 	}
+	if direction == comp.Direction(-1) {
+		// if monster cannot move, do nothing
+		return nil
+	}
 	moveEventType := directionToMonsterMoveEvent(direction)
 
 	monsterMoveEvent1 := comp.GameEventLog{X: origMonsterPos.X, Y: origMonsterPos.Y, Event: moveEventType}

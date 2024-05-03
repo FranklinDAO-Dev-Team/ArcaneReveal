@@ -13,6 +13,7 @@ import (
 	"github.com/iden3/go-iden3-crypto/poseidon"
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/message"
+	"pkg.world.dev/world-engine/cardinal/types"
 )
 
 func FulfillCastSystem(world cardinal.WorldContext) error {
@@ -44,6 +45,10 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 				return msg.FulfillCastMsgResult{}, err
 			}
 			gameID := castGameObj.GameID
+			if turn.Msg.Result.GameID != gameID {
+				err = fmt.Errorf("GameID %d in msg.Result does not match GameID %d in castGameObj", turn.Msg.Result.GameID, gameID)
+				return msg.FulfillCastMsgResult{}, err
+			}
 
 			// remove cast entity
 			err = cardinal.Remove(world, turn.Msg.Result.CastID)
@@ -52,7 +57,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			}
 
 			//  Check salts and that &turn.Msg.Abilities makes sense
-			err = verifySalts(world, turn, spell)
+			err = verifySalts(world, gameID, turn, spell)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
@@ -92,7 +97,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 		})
 }
 
-func verifySalts(world cardinal.WorldContext, turn message.TxData[msg.FulfillCastMsg], spell *comp.Spell) error {
+func verifySalts(world cardinal.WorldContext, gameID types.EntityID, turn message.TxData[msg.FulfillCastMsg], spell *comp.Spell) error {
 	for i, canCastAbilityI := range turn.Msg.Result.Abilities {
 		if canCastAbilityI {
 			// log.Println("canCast", i)
@@ -105,7 +110,7 @@ func verifySalts(world cardinal.WorldContext, turn message.TxData[msg.FulfillCas
 				return fmt.Errorf("failed to hash salt: %w", err)
 			}
 
-			game, err := cardinal.GetComponent[comp.Game](world, turn.Msg.Result.GameID)
+			game, err := cardinal.GetComponent[comp.Game](world, gameID)
 			if err != nil {
 				return err
 			}
