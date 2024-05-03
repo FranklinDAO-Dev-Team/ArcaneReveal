@@ -30,10 +30,22 @@ func MonsterTurnSystem(
 	if err != nil {
 		return err
 	}
+
+	// iterate through all monsters in the game and have them make moves
 	searchErr := cardinal.NewSearch(
 		world,
 		filter.Contains(comp.Monster{}),
 	).Each(func(id types.EntityID) bool {
+		// make sure the monster is for the right game
+		gameObjTag, err := cardinal.GetComponent[comp.GameObj](world, id)
+		if err != nil {
+			return false
+		}
+		if gameObjTag.GameID != gameID {
+			// skip to next entity
+			return true
+		}
+
 		// get original monster position
 		origMonsterPos, err := cardinal.GetComponent[comp.Position](world, id)
 		if err != nil {
