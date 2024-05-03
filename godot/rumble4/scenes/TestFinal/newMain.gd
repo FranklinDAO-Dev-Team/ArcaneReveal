@@ -1,7 +1,8 @@
 extends Node
 
-var enemy_state = []
+var enemy_state = {}
 var player
+var wall_state = []
 
 @onready var client : NakamaClient
 @onready var socket
@@ -9,8 +10,14 @@ var player
 @onready var ray = $RayCast3D
 
 var enemies_defeated = 0
-var tile_size = 32
-var grid_size = 11
+const tile_size = 32
+const grid_size = 11
+const inputs = {
+	"right": Vector2.RIGHT,
+	"left": Vector2.LEFT,
+	"up": Vector2.UP,
+	"down": Vector2.DOWN
+}
 
 func _on_enemy_exited(enemy: Area2D):
 	if not enemy.is_inside_tree():
@@ -87,7 +94,8 @@ func _on_rpc_response(result: NakamaAsyncResult):
 		print("RPC succeeded: ", result.payload)
 	else:
 		print("RPC failed: ", result.error)
-		
+
+
 func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	var notification = JSON.new()
 	notification.parse(p_notification.content)
@@ -106,7 +114,6 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 		var json = JSON.new()
 		var state = json.parse_string(payload)
 		process_state(state)
-
 
 
 func handle_query():
@@ -136,8 +143,8 @@ func handle_query():
 			print("Failed to get Game ID or the response did not indicate success.")
 	else:
 		print("JSON Parse Error:", json.get_error_message())
-		
-	
+
+
 func wait_for_game_creation():
 	var created = false
 	while not created:
@@ -171,49 +178,48 @@ func wait_for_game_creation():
 	return
 
 
-		
 func initialize_state(state : Dictionary):
 	var player_init = state["player"]
 	var wands = state["wands"]
 	var walls = state["walls"]
 	var monsters = state["monsters"]
 	
-	var player_scene = load("res://scenes/TestFinal/newPlayer.tscn")
-	var player_instance = player_scene.instantiate()
-	player_instance.x_pos = int(player_init["x"])
-	player_instance.y_pos = int(player_init["y"])
-	player_instance.health = int(player_init["maxHealth"])
-	player_instance.id = int(player_init["id"])
-	player = player_instance
-	add_child(player)
+	if player == null:
+		var player_scene = load("res://scenes/TestFinal/newPlayer.tscn")
+		var player_instance = player_scene.instantiate()
+		player_instance.x_pos = int(player_init["x"])
+		player_instance.y_pos = int(player_init["y"])
+		player_instance.health = int(player_init["currHealth"])
+		player_instance.id = int(player_init["id"])
+		player = player_instance
+		add_child(player)
+	else:
+		player.x_pos = int(player_init["x"])
+		player.y_pos = int(player_init["y"])
+		player.health = int(player_init["currHealth"])
+		player.id = int(player_init["id"])
 	
+	for i in grid_size:
+		wall_state.append([])
+		for j in grid_size:
+			wall_state[i].append(0)
+			
 	for wall in walls:
 		var x_pos = int(wall["x"])
 		var y_pos = int(wall["y"])
+		wall_state[x_pos][y_pos] = 1
 		
-		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 			
-		# Load the BasicLightning scene
 		var wall_scene = load("res://scenes/Gama/wall.tscn")
-			
-		# Create an instance of the BasicLightning scene
 		var wall_instance = wall_scene.instantiate()
-			
-		# Set the global position of the instance to the specified position
+				
 		wall_instance.global_position = position
 			
 		# Add the instance as a child to the main scene
 		add_child(wall_instance)
 	
 	for monster in monsters:
-		var x_pos = int(monster["x"])
-		var y_pos = int(monster["y"])
-		var health = int(monster["currHealth"])
-		
-		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
-		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
-			
 		# Load the BasicLightning scene
 		var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
 			
@@ -221,13 +227,14 @@ func initialize_state(state : Dictionary):
 		var enemy_instance = enemy_scene.instantiate()
 			
 		# Set the global position of the instance to the specified position
-		enemy_instance.x_pos = x_pos
-		enemy_instance.y_pos = y_pos
-		enemy_instance.health = health
+		enemy_instance.x_pos = int(monster["x"])
+		enemy_instance.y_pos = int(monster["y"])
+		enemy_instance.health = int(monster["currHealth"])
+		enemy_instance.id = int(monster["id"])
 			
 		# Add the instance as a child to the main scene
 		add_child(enemy_instance)
-		enemy_state.append(enemy_instance)
+		enemy_state[enemy_instance.id] = enemy_instance
 
 
 func process_state(state : Dictionary):
@@ -239,16 +246,29 @@ func process_state(state : Dictionary):
 	player.health = int(player_state["currHealth"])
 	
 	var monsters = state["monsters"]
+	var monster_ids = []
 	for i in range(monsters.size()):
 		var monster = monsters[i]
 		var x_pos = int(monster["x"])
 		var y_pos = int(monster["y"])
 		var health = int(monster["currHealth"])
+		var id = int(monster["id"])
 
 		# Set the global position of the instance to the specified position
-		var enemy_instance = enemy_state[i]
+		if id not in enemy_state.keys():
+			print("new_game")
+			initialize_state(state)
+			return
+		var enemy_instance = enemy_state[id]
 		enemy_instance.move(x_pos, y_pos)
 		enemy_instance.health = health
+		monster_ids.append(id)
+		
+	# Check if an enemy died between turns
+	for id in enemy_state.keys():
+		if id not in monster_ids:
+			enemy_state[id].queue_free()
+			enemy_state.erase(id)
 		
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -300,7 +320,47 @@ func process_event(notification : Dictionary):
 					# Handle unexpected action
 					print("")
 
+
+func has_player_attacked(dir):
+	var new_player_pos = Vector2(player.x_pos, player.y_pos) + 2 * inputs[dir]
+	for enemy in enemy_state.values():
+		var monster_curr_pos = Vector2(enemy.x_pos, enemy.y_pos)
+		if new_player_pos.x == monster_curr_pos.x and new_player_pos.y == monster_curr_pos.y:
+			player.attack(dir)
+			return true
+	return false
+
+
+func has_wall_collision(dir):
+	var new_player_pos = Vector2(player.x_pos, player.y_pos) + inputs[dir]
+	if wall_state[new_player_pos.x][new_player_pos.y] == 1:
+		player.hit_wall()
+		return true
+	return false
+
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("query"):
 		handle_query()
-	
+
+
+func _unhandled_input(event):
+	for dir in inputs.keys():
+		if event.is_action_pressed(dir) and not has_wall_collision(dir):
+			if has_player_attacked(dir):
+				var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
+					"GameIDStr": "2",
+					"Action": "attack",
+					"Direction": dir,
+					"WandNum": "0",
+					}))
+			else:
+				var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
+					"GameIDStr": "2",
+					"Action": "move",
+					"Direction": dir,
+					"WandNum": "0",
+					}))
+
+
+
