@@ -218,7 +218,7 @@ func playerTurnWand(
 	if err != nil {
 		return 0, nil, err
 	}
-	wandID, _, available, err := getWandByNumber(world, wandnum)
+	wandID, _, available, err := getWandByNumber(world, gameID, wandnum)
 	if err != nil {
 		return 0, nil, err
 	}
