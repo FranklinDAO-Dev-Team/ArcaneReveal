@@ -69,18 +69,10 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 }
 
 func checkPlayerDied(world cardinal.WorldContext, gameID types.EntityID) (bool, error) {
-	playerID, err := comp.QueryPlayerID(world, gameID)
-	if err != nil {
-		return false, err
-	}
-	playerHealth, err := cardinal.GetComponent[comp.Health](world, playerID)
-	if err != nil {
-		return false, err
-	}
-	if playerHealth.CurrHealth == 0 {
-		return true, nil
-	}
-	return false, nil
+	// player gets deleted when it dies automatically by DecrementHealth()
+	// so if we can't find it using QueryPlayerID(), it means it died
+	_, err := comp.QueryPlayerID(world, gameID)
+	return (err != nil), nil
 }
 
 // checkLevelCompleted checks if the player has completed the current level
@@ -207,8 +199,7 @@ func clearBoard(world cardinal.WorldContext, gameID types.EntityID) error {
 			return true
 		}
 
-		// remove entity if it is a monster or wall
-		// if so, remove it
+		// remove entity if it is a monster or wall to clear board for next level
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
 			outerErr = err
@@ -316,7 +307,7 @@ func removeGameInstance(world cardinal.WorldContext, gameID types.EntityID) erro
 			return true
 		}
 
-		// remove entity
+		// remove entity attatched to given game
 		err = cardinal.Remove(world, id)
 		if err != nil {
 			outerErr = err
