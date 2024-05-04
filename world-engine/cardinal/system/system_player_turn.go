@@ -101,8 +101,13 @@ func playerTurnAction(
 			return err
 		}
 
-		// TODO: emit events to client
-		log.Println("TODO: emit activated abilities and spell log to client")
+		// emit after attck and move
+		eventMap := make(map[string]any)
+		eventMap["turnEvent"] = *eventLogList
+		err = world.EmitEvent(eventMap)
+		if err != nil {
+			return err
+		}
 
 	case "wand":
 		wandnum, err := strconv.Atoi(turn.Msg.WandNum)
@@ -113,10 +118,6 @@ func playerTurnAction(
 		if err != nil {
 			return err
 		}
-		// log.Println("castID: ", castID)
-		// log.Println("potentialAbilities: ", potentialAbilities)
-
-		// log.Println("gameidstr:", turn.Msg.GameIDStr)
 
 		gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
 		if err != nil {
@@ -145,7 +146,12 @@ func playerTurnAction(
 		if err != nil {
 			return fmt.Errorf("MonsterTurnSystem err: %w", err)
 		}
-		log.Println("TODO: emit activated abilities and spell log to client")
+		eventMap := make(map[string]any)
+		eventMap["turnEvent"] = *eventLogList
+		err = world.EmitEvent(eventMap)
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("PlayerTurnSystem err: Invalid action")
 	}

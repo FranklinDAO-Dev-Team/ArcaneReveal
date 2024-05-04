@@ -145,6 +145,11 @@ func updateGameLevel(world cardinal.WorldContext, gameID types.EntityID) (int, e
 	if err != nil {
 		return -1, err
 	}
+	world.EmitEvent(map[string]any{
+		"event":    "level-won",
+		"gameID":   gameID,
+		"newLevel": newLevel,
+	})
 
 	return newLevel, nil
 }
