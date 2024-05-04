@@ -45,10 +45,13 @@ func update_health():
 		healthbar.visible = true
 
 
-func attack_animation():
-	$Sprite.stop()
-	$Sprite.play("attack")
-	$Sprite.play("idle")
+func attack(player_x, player_y):
+	var new_pos = Vector2((player_x - 1) * tile_size, (player_y - 1) * tile_size)
+	var curr_pos = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position", new_pos, 1.0 / (2 * animation_speed)).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(self, "position", curr_pos, 1.0 / (2 * animation_speed)).set_trans(Tween.TRANS_SINE)
+	await tween.finished
 
 
 func move(x_curr, y_curr):
