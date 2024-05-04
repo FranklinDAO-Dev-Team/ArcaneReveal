@@ -2,6 +2,7 @@ extends Node
 
 var enemy_state = {}
 var player
+var level
 var wall_state = []
 
 @onready var client : NakamaClient
@@ -86,6 +87,10 @@ func _ready():
 	var payload = await wait_for_game_creation()
 	var json = JSON.new()
 	var state = json.parse_string(payload)
+	for row in range(grid_size):
+		wall_state.append([])
+		for col in range(grid_size):
+			wall_state[row].append(null)
 	initialize_state(state)
 
 
@@ -102,11 +107,11 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	print("[Notification]: ", notification.data)
 	if notification.data.has("turnEvent"):
 		process_event(notification.data)
-		print("caught wand turn event")
 		var payload = await handle_query()
 		var json = JSON.new()
 		var state = json.parse_string(payload)
 		process_state(state)
+		print("caught wand turn event")
 
 	if notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
@@ -183,6 +188,7 @@ func initialize_state(state : Dictionary):
 	var wands = state["wands"]
 	var walls = state["walls"]
 	var monsters = state["monsters"]
+	level = state["level"]
 	
 	if player == null:
 		var player_scene = load("res://scenes/TestFinal/newPlayer.tscn")
@@ -198,16 +204,17 @@ func initialize_state(state : Dictionary):
 		player.y_pos = int(player_init["y"])
 		player.health = int(player_init["currHealth"])
 		player.id = int(player_init["id"])
-	
-	for i in grid_size:
-		wall_state.append([])
-		for j in grid_size:
-			wall_state[i].append(0)
+		
+	for row in range(grid_size):
+		for col in range(grid_size):
+			if wall_state[row][col] != null:
+				var curr_wall = wall_state[row][col]
+				curr_wall.queue_free()
+				wall_state[row][col] = null
 			
 	for wall in walls:
 		var x_pos = int(wall["x"])
 		var y_pos = int(wall["y"])
-		wall_state[x_pos][y_pos] = 1
 		
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 			
@@ -217,6 +224,7 @@ func initialize_state(state : Dictionary):
 		wall_instance.global_position = position
 			
 		# Add the instance as a child to the main scene
+		wall_state[x_pos][y_pos] = wall_instance
 		add_child(wall_instance)
 	
 	for monster in monsters:
@@ -238,6 +246,8 @@ func initialize_state(state : Dictionary):
 
 
 func process_state(state : Dictionary):
+	if level != state["level"]:
+		initialize_state(state)
 	var player_state = state["player"]
 	var player_x = int(player_state["x"])
 	var player_y = int(player_state["y"])
@@ -256,12 +266,21 @@ func process_state(state : Dictionary):
 
 		# Set the global position of the instance to the specified position
 		if id not in enemy_state.keys():
-			print("new_game")
-			initialize_state(state)
-			return
-		var enemy_instance = enemy_state[id]
-		enemy_instance.move(x_pos, y_pos)
-		enemy_instance.health = health
+			var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
+			var enemy_instance = enemy_scene.instantiate()
+				
+			enemy_instance.x_pos = x_pos
+			enemy_instance.y_pos = y_pos
+			enemy_instance.health = health
+			enemy_instance.id = id
+				
+			# Add the instance as a child to the main scene
+			add_child(enemy_instance)
+			enemy_state[enemy_instance.id] = enemy_instance
+		else:
+			var enemy_instance = enemy_state[id]
+			enemy_instance.move(x_pos, y_pos)
+			enemy_instance.health = health
 		monster_ids.append(id)
 		
 	# Check if an enemy died between turns
@@ -316,6 +335,14 @@ func process_event(notification : Dictionary):
 					# Animate lightning bolt dissipating
 					animation_player = basic_lightning_instance.get_node("WallActivation")
 					animation_player.play("default")
+				4: 
+					var payload = await handle_query()
+					var json = JSON.new()
+					var state = json.parse_string(payload)
+					process_state(state)
+					for enemy in enemy_state.values():
+						if x_pos == enemy.x_pos and y_pos == enemy.y_pos:
+							enemy.attack(player.x_pos, player.y_pos)
 				_:
 					# Handle unexpected action
 					print("")
@@ -333,7 +360,7 @@ func has_player_attacked(dir):
 
 func has_wall_collision(dir):
 	var new_player_pos = Vector2(player.x_pos, player.y_pos) + inputs[dir]
-	if wall_state[new_player_pos.x][new_player_pos.y] == 1:
+	if wall_state[new_player_pos.x][new_player_pos.y] != null:
 		player.hit_wall()
 		return true
 	return false
