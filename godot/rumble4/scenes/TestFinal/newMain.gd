@@ -4,6 +4,7 @@ var enemy_state = {}
 var player
 var level
 var wall_state = []
+var game_over = false
 
 @onready var client : NakamaClient
 @onready var socket
@@ -105,20 +106,28 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	var notification = JSON.new()
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
-	if notification.data.has("turnEvent"):
+	if notification.data.has("event") and notification.data["event"] == "game-over":
+		player.update_health_ui(true)
+		game_over = true
+	if (not game_over) and notification.data.has("turnEvent"):
+		print(game_over)
 		process_event(notification.data)
 		var payload = await handle_query()
 		var json = JSON.new()
-		var state = json.parse_string(payload)
-		process_state(state)
-		print("caught wand turn event")
+		if payload != null:
+			var state = json.parse_string(payload)
+			process_state(state)
+			print("caught wand turn event")
 
-	if notification.data.has("event") and notification.data["event"] == "player_turn":
+	if (not game_over) and notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
+		print(game_over)
 		var payload = await handle_query()
 		var json = JSON.new()
-		var state = json.parse_string(payload)
-		process_state(state)
+		if payload != null:
+			var state = json.parse_string(payload)
+			process_state(state)
+			print("caught wand turn event")
 
 
 func handle_query():
@@ -338,10 +347,11 @@ func process_event(notification : Dictionary):
 				4: 
 					var payload = await handle_query()
 					var json = JSON.new()
-					var state = json.parse_string(payload)
-					process_state(state)
+					if payload != null:
+						var state = json.parse_string(payload)
+						process_state(state)
 					for enemy in enemy_state.values():
-						if x_pos == enemy.x_pos and y_pos == enemy.y_pos:
+						if x_pos == enemy.x_pos and y_pos == enemy.y_pos and player != null:
 							enemy.attack(player.x_pos, player.y_pos)
 				_:
 					# Handle unexpected action

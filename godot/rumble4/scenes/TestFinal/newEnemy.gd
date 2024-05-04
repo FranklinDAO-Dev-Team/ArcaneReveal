@@ -50,11 +50,15 @@ func attack(player_x, player_y):
 	var curr_pos = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "position", new_pos, 1.0 / (2 * animation_speed)).set_trans(Tween.TRANS_SINE)
+	moving = true
 	tween.tween_property(self, "position", curr_pos, 1.0 / (2 * animation_speed)).set_trans(Tween.TRANS_SINE)
 	await tween.finished
+	moving = false
 
 
 func move(x_curr, y_curr):
+	if moving:
+		return
 	var pos = Vector2((x_curr - 1) * tile_size, (y_curr - 1) * tile_size)
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "position", pos, 1.0 / animation_speed).set_trans(Tween.TRANS_SINE)

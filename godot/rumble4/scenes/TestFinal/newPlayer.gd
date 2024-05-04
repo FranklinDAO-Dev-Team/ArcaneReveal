@@ -26,7 +26,7 @@ func _ready():
 	$"../Player/LifeBar/Life3".play("hearts")
 	$"../Player/LifeBar/Life4".play("hearts")
 	$"../Player/LifeBar/Life5".play("hearts")
-	update_health_ui()
+	update_health_ui(false)
 	global_position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 	
 	$StaffPositionTop.position = Vector2(16, 0)  # Adjust this offset
@@ -37,11 +37,11 @@ func _ready():
 
 func _process(delta):
 	$Sprite.play("idle")
-	update_health_ui()
+	update_health_ui(false)
 	
 
-func update_health_ui():
-	if health == 0:
+func update_health_ui(game_over):
+	if health == 0 or game_over:
 		queue_free()
 		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
 	for i in range(MAX_HEALTH):
