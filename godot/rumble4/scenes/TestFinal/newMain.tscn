@@ -289,7 +289,8 @@ layer_0/tile_data = PackedInt32Array(0, 0, 0, 65536, 327680, 3, 131072, 0, 0, 19
 position = Vector2(0, 0)
 
 [node name="TilePiece" parent="." instance=ExtResource("6_ku8vv")]
-position = Vector2(-155, -165)
+visible = false
+position = Vector2(104, -88)
 scale = Vector2(1.89695, 1.73142)
 
 [node name="Key" parent="." instance=ExtResource("7_w54np")]
