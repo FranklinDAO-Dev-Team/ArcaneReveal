@@ -36,6 +36,26 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 				switchLevels(world, gameID)
 			}
 
+			playerDied, err := checkPlayerDied(world, gameID)
+			if err != nil {
+				outerErr = err
+				return false
+			}
+
+			if playerDied {
+				log.Printf("LevelChangeSystem() game %d player died\n", gameID)
+				world.EmitEvent(map[string]any{
+					"event":  "game-over",
+					"gameID": gameID,
+				})
+				err = removeGameInstance(world, gameID)
+				if err != nil {
+					log.Printf("LevelChangeSystem() failed to remove game instance %d: %w\n", gameID, err)
+					return false
+				}
+				return false
+			}
+
 			// check next game
 			return true
 		})
@@ -46,6 +66,21 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 		return outerErr
 	}
 	return nil
+}
+
+func checkPlayerDied(world cardinal.WorldContext, gameID types.EntityID) (bool, error) {
+	playerID, err := comp.QueryPlayerID(world, gameID)
+	if err != nil {
+		return false, err
+	}
+	playerHealth, err := cardinal.GetComponent[comp.Health](world, playerID)
+	if err != nil {
+		return false, err
+	}
+	if playerHealth.CurrHealth == 0 {
+		return true, nil
+	}
+	return false, nil
 }
 
 // checkLevelCompleted checks if the player has completed the current level
