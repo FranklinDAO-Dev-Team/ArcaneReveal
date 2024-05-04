@@ -53,10 +53,8 @@ func MonsterTurnSystem(
 			turnErr = err
 			return false // if error, break out of search
 		}
-		// get manhatten distance between original monster position and player position
-		manDist := origMonsterPos.ManhattenDistance(playerPos)
 
-		if manDist == playerAttackDistance {
+		if monsterCanAttack(world, gameID, origMonsterPos, playerPos) {
 			turnErr = executeMonsterAttack(world, gameID, eventLogList, origMonsterPos)
 			if turnErr != nil {
 				return false // if error, break out of search
@@ -78,6 +76,27 @@ func MonsterTurnSystem(
 		return turnErr
 	}
 	return nil
+}
+
+func monsterCanAttack(
+	world cardinal.WorldContext,
+	gameID types.EntityID,
+	origMonsterPos *comp.Position,
+	playerPos *comp.Position,
+) bool {
+	manDist := origMonsterPos.ManhattenDistance(playerPos)
+	if manDist == playerAttackDistance {
+		inBetweenPos := comp.Position{
+			X: (origMonsterPos.X + playerPos.X) / 2,
+			Y: (origMonsterPos.Y + playerPos.Y) / 2,
+		}
+		coll, err := comp.IsCollisonThere(world, gameID, inBetweenPos)
+		if err != nil {
+			return false
+		}
+		return !coll
+	}
+	return false
 }
 
 func executeMonsterAttack(
