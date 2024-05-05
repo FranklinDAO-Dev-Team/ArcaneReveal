@@ -1,10 +1,9 @@
-[gd_scene load_steps=22 format=3 uid="uid://c8adqhthkgx2u"]
+[gd_scene load_steps=21 format=3 uid="uid://dbch3nuw8pnkn"]
 
 [ext_resource type="Script" path="res://scenes/TestFinal/newPlayer.gd" id="1_ofh1u"]
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="2_gaqry"]
 [ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Gama/staff_1.tscn" id="3_5l3yg"]
-[ext_resource type="Script" path="res://scenes/Gama/staff_2.gd" id="4_gi3h3"]
-[ext_resource type="Script" path="res://scenes/Gama/staff_3.gd" id="5_wcnil"]
+[ext_resource type="Script" path="res://scripts/staff.gd" id="4_8e4pg"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="6_bdseo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
@@ -208,18 +207,24 @@ position = Vector2(16, 16)
 position = Vector2(16, 16)
 
 [node name="Staff1" parent="." instance=ExtResource("3_5l3yg")]
-position = Vector2(50, -157)
+position = Vector2(41, -63)
 scale = Vector2(1.2, 1.2)
+script = ExtResource("4_8e4pg")
 
 [node name="Staff2" parent="." instance=ExtResource("3_5l3yg")]
-position = Vector2(151, -157)
+position = Vector2(106, -63)
 scale = Vector2(1.2, 1.2)
-script = ExtResource("4_gi3h3")
+script = ExtResource("4_8e4pg")
 
 [node name="Staff3" parent="." instance=ExtResource("3_5l3yg")]
-position = Vector2(254, -157)
+position = Vector2(170, -63)
 scale = Vector2(1.2, 1.2)
-script = ExtResource("5_wcnil")
+script = ExtResource("4_8e4pg")
+
+[node name="Staff4" parent="." instance=ExtResource("3_5l3yg")]
+position = Vector2(234, -63)
+scale = Vector2(1.2, 1.2)
+script = ExtResource("4_8e4pg")
 
 [node name="RayCast2DMagic" type="RayCast2D" parent="."]
 position = Vector2(16, 16)

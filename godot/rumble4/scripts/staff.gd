@@ -81,10 +81,10 @@ func cast_wand(hovered_wand_selected, direction):
 		raycast.target_position = inputs[direction] * tile_size
 		raycast.force_raycast_update()
 		
-		if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
-			var obj = raycast.get_collider()
-			if obj != null:
-				obj.damage()
+		#if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+			#var obj = raycast.get_collider()
+			#if obj != null:
+				#obj.damage()
 				
 		if resp != null:
 			match direction:

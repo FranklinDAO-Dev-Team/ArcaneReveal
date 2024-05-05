@@ -22,8 +22,9 @@ Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 
 [display]
 
-window/size/viewport_width=2500
-window/size/viewport_height=2500
+window/size/viewport_width=1800
+window/size/viewport_height=1800
+window/size/initial_position_type=2
 window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/stretch/scale=2.5
