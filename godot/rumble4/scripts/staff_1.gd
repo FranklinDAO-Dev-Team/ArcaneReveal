@@ -64,7 +64,7 @@ func _process(delta):
 							"GameIDStr": "2",
 							"Action": "wand",
 							"Direction": "up",
-							"WandNum": "3",
+							"WandNum": "1",
 						}))
 							
 						var raycast = get_parent().get_node("RayCast2DMagic")
@@ -86,8 +86,8 @@ func _process(delta):
 							"GameIDStr": "2",
 							"Action": "wand",
 							"Direction": "down",
-							"WandNum": "3",
-						}))
+							"WandNum": "1",
+							}))
 							
 						var raycast = get_parent().get_node("RayCast2DMagic")
 						raycast.target_position = inputs["down"] * tile_size
@@ -109,8 +109,8 @@ func _process(delta):
 							"GameIDStr": "2",
 							"Action": "wand",
 							"Direction": "left",
-							"WandNum": "3",
-						}))
+							"WandNum": "1",
+							}))
 							
 						var raycast = get_parent().get_node("RayCast2DMagic")
 						raycast.target_position = inputs["down"] * tile_size
@@ -132,8 +132,8 @@ func _process(delta):
 							"GameIDStr": "2",
 							"Action": "wand",
 							"Direction": "right",
-							"WandNum": "3",
-						}))
+							"WandNum": "1",
+							}))
 							
 						var raycast = get_parent().get_node("RayCast2DMagic")
 						raycast.target_position = inputs["down"] * tile_size

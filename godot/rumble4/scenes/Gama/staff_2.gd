@@ -71,10 +71,10 @@ func _process(delta):
 						raycast.target_position = inputs["down"] * tile_size
 						raycast.force_raycast_update()
 			
-						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
-							var obj = raycast.get_collider()
-							if obj != null:
-								obj.damage()
+						#if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							#var obj = raycast.get_collider()
+							#if obj != null:
+								#obj.damage()
 							
 						if resp != null:
 							position = get_parent().position + Vector2(16, 0)
@@ -93,10 +93,10 @@ func _process(delta):
 						raycast.target_position = inputs["down"] * tile_size
 						raycast.force_raycast_update()
 			
-						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
-							var obj = raycast.get_collider()
-							if obj != null:
-								obj.damage()
+						#if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							#var obj = raycast.get_collider()
+							#if obj != null:
+								#obj.damage()
 							
 						if resp != null:
 							position = get_parent().position + Vector2(16, 32)
@@ -116,10 +116,10 @@ func _process(delta):
 						raycast.target_position = inputs["down"] * tile_size
 						raycast.force_raycast_update()
 			
-						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
-							var obj = raycast.get_collider()
-							if obj != null:
-								obj.damage()
+						#if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							#var obj = raycast.get_collider()
+							#if obj != null:
+								#obj.damage()
 							
 						if resp != null:
 							position = get_parent().position + Vector2(0, 16)
@@ -139,10 +139,10 @@ func _process(delta):
 						raycast.target_position = inputs["down"] * tile_size
 						raycast.force_raycast_update()
 			
-						if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
-							var obj = raycast.get_collider()
-							if obj != null:
-								obj.damage()
+						#if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
+							#var obj = raycast.get_collider()
+							#if obj != null:
+								#obj.damage()
 							
 						if resp != null:
 							position = get_parent().position + Vector2(32, 16)

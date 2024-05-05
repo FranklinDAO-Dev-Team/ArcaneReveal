@@ -47,6 +47,7 @@ type GameStateRequest struct {
 
 type GameStateResponse struct {
 	GameID   types.EntityID `json:"gameID"`
+	Level    int            `json:"level"`
 	Player   PlayerData     `json:"player"`
 	Wands    []WandData     `json:"wands"`
 	Walls    []WallData     `json:"walls"`
@@ -116,8 +117,14 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 		return nil, outsideErr
 	}
 
+	game, err := cardinal.GetComponent[comp.Game](world, gameID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &GameStateResponse{
 		GameID:   gameID,
+		Level:    game.Level,
 		Player:   *playerData,
 		Wands:    *wands,
 		Walls:    *walls,

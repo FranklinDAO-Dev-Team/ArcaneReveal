@@ -30,10 +30,22 @@ func MonsterTurnSystem(
 	if err != nil {
 		return err
 	}
+
+	// iterate through all monsters in the game and have them make moves
 	searchErr := cardinal.NewSearch(
 		world,
 		filter.Contains(comp.Monster{}),
 	).Each(func(id types.EntityID) bool {
+		// make sure the monster is for the right game
+		gameObjTag, err := cardinal.GetComponent[comp.GameObj](world, id)
+		if err != nil {
+			return false
+		}
+		if gameObjTag.GameID != gameID {
+			// skip to next entity
+			return true
+		}
+
 		// get original monster position
 		origMonsterPos, err := cardinal.GetComponent[comp.Position](world, id)
 		if err != nil {
@@ -41,10 +53,8 @@ func MonsterTurnSystem(
 			turnErr = err
 			return false // if error, break out of search
 		}
-		// get manhatten distance between original monster position and player position
-		manDist := origMonsterPos.ManhattenDistance(playerPos)
 
-		if manDist == playerAttackDistance {
+		if monsterCanAttack(world, gameID, origMonsterPos, playerPos) {
 			turnErr = executeMonsterAttack(world, gameID, eventLogList, origMonsterPos)
 			if turnErr != nil {
 				return false // if error, break out of search
@@ -66,6 +76,27 @@ func MonsterTurnSystem(
 		return turnErr
 	}
 	return nil
+}
+
+func monsterCanAttack(
+	world cardinal.WorldContext,
+	gameID types.EntityID,
+	origMonsterPos *comp.Position,
+	playerPos *comp.Position,
+) bool {
+	manDist := origMonsterPos.ManhattenDistance(playerPos)
+	if manDist == playerAttackDistance {
+		inBetweenPos := comp.Position{
+			X: (origMonsterPos.X + playerPos.X) / 2,
+			Y: (origMonsterPos.Y + playerPos.Y) / 2,
+		}
+		coll, err := comp.IsCollisonThere(world, gameID, inBetweenPos)
+		if err != nil {
+			return false
+		}
+		return !coll
+	}
+	return false
 }
 
 func executeMonsterAttack(
