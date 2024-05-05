@@ -1,36 +1,36 @@
-[gd_scene load_steps=21 format=3 uid="uid://0nka4rtgo7vg"]
+[gd_scene load_steps=21 format=3 uid="uid://dbch3nuw8pnkn"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_7xlh3"]
-[ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_req7c"]
-[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Gama/staff_1.tscn" id="3_6po7h"]
-[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="4_ekywa"]
-[ext_resource type="Script" path="res://scripts/staff.gd" id="4_nx6rx"]
+[ext_resource type="Script" path="res://scenes/TestFinal/newPlayer.gd" id="1_ofh1u"]
+[ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="2_gaqry"]
+[ext_resource type="PackedScene" uid="uid://cmpk73pbw6dok" path="res://scenes/Gama/staff_1.tscn" id="3_5l3yg"]
+[ext_resource type="Script" path="res://scripts/staff.gd" id="4_8e4pg"]
+[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="6_bdseo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]
 size = Vector2(30, 30)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qm1nf"]
-atlas = ExtResource("1_req7c")
+atlas = ExtResource("2_gaqry")
 region = Rect2(0, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wb4d6"]
-atlas = ExtResource("1_req7c")
+atlas = ExtResource("2_gaqry")
 region = Rect2(24, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h6gcs"]
-atlas = ExtResource("1_req7c")
+atlas = ExtResource("2_gaqry")
 region = Rect2(48, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vnhgb"]
-atlas = ExtResource("1_req7c")
+atlas = ExtResource("2_gaqry")
 region = Rect2(120, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w0g88"]
-atlas = ExtResource("1_req7c")
+atlas = ExtResource("2_gaqry")
 region = Rect2(144, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3baau"]
-atlas = ExtResource("1_req7c")
+atlas = ExtResource("2_gaqry")
 region = Rect2(168, 24, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_klfs3"]
@@ -166,7 +166,7 @@ _data = {
 
 [node name="Player" type="Area2D"]
 position = Vector2(-1, -1)
-script = ExtResource("1_7xlh3")
+script = ExtResource("1_ofh1u")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(16, 16)
@@ -206,25 +206,25 @@ position = Vector2(16, 16)
 [node name="StaffPositionRight" type="Node2D" parent="."]
 position = Vector2(16, 16)
 
-[node name="Staff1" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(16, -157)
+[node name="Staff1" parent="." instance=ExtResource("3_5l3yg")]
+position = Vector2(41, -63)
 scale = Vector2(1.2, 1.2)
-script = ExtResource("4_nx6rx")
+script = ExtResource("4_8e4pg")
 
-[node name="Staff2" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(97, -157)
+[node name="Staff2" parent="." instance=ExtResource("3_5l3yg")]
+position = Vector2(106, -63)
 scale = Vector2(1.2, 1.2)
-script = ExtResource("4_nx6rx")
+script = ExtResource("4_8e4pg")
 
-[node name="Staff3" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(177, -157)
+[node name="Staff3" parent="." instance=ExtResource("3_5l3yg")]
+position = Vector2(170, -63)
 scale = Vector2(1.2, 1.2)
-script = ExtResource("4_nx6rx")
+script = ExtResource("4_8e4pg")
 
-[node name="Staff4" parent="." instance=ExtResource("3_6po7h")]
-position = Vector2(257, -157)
+[node name="Staff4" parent="." instance=ExtResource("3_5l3yg")]
+position = Vector2(234, -63)
 scale = Vector2(1.2, 1.2)
-script = ExtResource("4_nx6rx")
+script = ExtResource("4_8e4pg")
 
 [node name="RayCast2DMagic" type="RayCast2D" parent="."]
 position = Vector2(16, 16)
@@ -232,7 +232,7 @@ scale = Vector2(0.833333, 0.833333)
 target_position = Vector2(2.08165e-12, 32)
 collide_with_areas = true
 
-[node name="LifeBar" parent="." instance=ExtResource("4_ekywa")]
+[node name="LifeBar" parent="." instance=ExtResource("6_bdseo")]
 offset_top = -1.0
 offset_bottom = -1.0
 

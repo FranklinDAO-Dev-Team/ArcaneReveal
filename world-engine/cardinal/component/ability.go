@@ -59,12 +59,13 @@ type Ability interface {
 
 func damageAtPosition(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	pos *Position,
 	executeUpdates bool,
 	includePlayer bool,
 ) (damageDelt bool, err error) {
 	// Lookup if entity exists
-	found, id, err := pos.GetEntityIDByPosition(world)
+	found, id, err := pos.GetEntityIDByPosition(world, gameID)
 	if err != nil {
 		return false, err
 	}
