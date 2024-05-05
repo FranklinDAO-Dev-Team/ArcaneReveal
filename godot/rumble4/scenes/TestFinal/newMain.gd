@@ -5,6 +5,7 @@ var player
 var level
 var wall_state = []
 var game_over = false
+var staff_nodes = []
 
 @onready var client : NakamaClient
 @onready var socket
@@ -109,6 +110,7 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	if notification.data.has("event") and notification.data["event"] == "game-over":
 		player.update_health_ui(true)
 		game_over = true
+		return  # Add this line to exit the function if the game is over
 	if (not game_over) and notification.data.has("turnEvent"):
 		print(game_over)
 		process_event(notification.data)
@@ -116,8 +118,9 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 		var json = JSON.new()
 		if payload != null:
 			var state = json.parse_string(payload)
-			process_state(state)
-			print("caught wand turn event")
+			if state != null:  # Add this check
+				process_state(state)
+				print("caught wand turn event")
 
 	if (not game_over) and notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
@@ -126,8 +129,9 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 		var json = JSON.new()
 		if payload != null:
 			var state = json.parse_string(payload)
-			process_state(state)
-			print("caught wand turn event")
+			if state != null:  # Add this check
+				process_state(state)
+				print("caught wand turn event")
 
 
 func handle_query():
@@ -214,6 +218,22 @@ func initialize_state(state : Dictionary):
 		player.health = int(player_init["currHealth"])
 		player.id = int(player_init["id"])
 		
+		
+	# Remove existing staff nodes
+	for staff_node in staff_nodes:
+		staff_node.queue_free()
+	staff_nodes.clear()
+	
+	# Create new staff nodes
+	for i in range(1, 5):
+		var staff_scene = load("res://scenes/Gama/staff_1.tscn")
+		var staff_instance = staff_scene.instantiate()
+		staff_instance.position = Vector2(41 + (i - 1) * 65, -63)
+		staff_instance.scale = Vector2(1.2, 1.2)
+		staff_instance.name = "Staff" + str(i)
+		player.add_child(staff_instance)
+		staff_nodes.append(staff_instance)
+		
 	for row in range(grid_size):
 		for col in range(grid_size):
 			if wall_state[row][col] != null:
@@ -263,6 +283,11 @@ func process_state(state : Dictionary):
 	
 	player.move(player_x, player_y)
 	player.health = int(player_state["currHealth"])
+	
+	# Update staff nodes' positions
+	for staff_node in staff_nodes:
+		if is_instance_valid(staff_node):  # Check if the staff node still exists
+			staff_node.global_position = player.global_position + staff_node.position
 	
 	var monsters = state["monsters"]
 	var monster_ids = []
@@ -356,7 +381,6 @@ func process_event(notification : Dictionary):
 				_:
 					# Handle unexpected action
 					print("")
-
 
 func has_player_attacked(dir):
 	var new_player_pos = Vector2(player.x_pos, player.y_pos) + 2 * inputs[dir]

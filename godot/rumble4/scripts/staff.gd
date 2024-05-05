@@ -5,7 +5,6 @@ var is_animation_playing = false
 var starting_pos
 
 @onready var game_node = get_parent().get_parent()
-
 @onready var staff_position_top = get_parent().get_node("StaffPositionTop")
 @onready var staff_position_bottom = get_parent().get_node("StaffPositionBottom")
 @onready var staff_position_left = get_parent().get_node("StaffPositionLeft")
@@ -26,14 +25,15 @@ var inputs = {
 func _ready():
 	starting_pos = self.position
 	self.top_level = true
-	
+
 	set_process_input(true)
-		
+
 	lightning_animation_right.connect("animation_finished", _on_animation_finished)
 	lightning_animation_left.connect("animation_finished", _on_animation_finished)
 	lightning_animation_top.connect("animation_finished", _on_animation_finished)
 	lightning_animation_bottom.connect("animation_finished", _on_animation_finished)
-		
+
+
 func _process(delta):
 	if Input.is_action_just_pressed("select_wand1"):
 		selected_wand = 1
@@ -47,13 +47,13 @@ func _process(delta):
 	elif Input.is_action_just_pressed("select_wand4"):
 		selected_wand = 4
 		print("selected wand" + str(selected_wand))
-		
+
 	var hovered_wand = "Staff" + str(selected_wand)
 	if name == hovered_wand:
 		$Icon.visible = true
 	else:
 		$Icon.visible = false
-		
+
 	if Input.is_action_just_pressed("wand_up"):
 		cast_wand(hovered_wand, "up")
 	elif Input.is_action_just_pressed("wand_down"):
@@ -62,13 +62,13 @@ func _process(delta):
 		cast_wand(hovered_wand, "left")
 	elif Input.is_action_just_pressed("wand_right"):
 		cast_wand(hovered_wand, "right")
-		
+
 func cast_wand(hovered_wand_selected, direction):
 	if selected_wand == 0 or is_animation_playing:
 		return
-		
+
 	print("casting wand" + str(selected_wand))
-	
+
 	if name == hovered_wand_selected:
 		var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
 			"GameIDStr": "2",
@@ -76,16 +76,11 @@ func cast_wand(hovered_wand_selected, direction):
 			"Direction": direction,
 			"WandNum": str(selected_wand - 1),
 		}))
-		
+
 		var raycast = get_parent().get_node("RayCast2DMagic")
 		raycast.target_position = inputs[direction] * tile_size
 		raycast.force_raycast_update()
-		
-		#if raycast.is_colliding() and raycast.get_collider().name.begins_with("Enemy"):
-			#var obj = raycast.get_collider()
-			#if obj != null:
-				#obj.damage()
-				
+
 		if resp != null:
 			match direction:
 				"up":
@@ -104,11 +99,21 @@ func cast_wand(hovered_wand_selected, direction):
 					rotation += PI / 2
 					lightning_animation_bottom.position = Vector2(20, -23)
 					lightning_animation_right.play("play")
-			
+
 			is_animation_playing = true
-		
+			visible = false
+			queue_free()  # Delete the staff node
+
 func _on_animation_finished():
 	is_animation_playing = false
 	var casted_wand = "Staff" + str(selected_wand)
-	if (name == casted_wand):
-		queue_free()
+	if name == casted_wand:
+		visible = false
+		queue_free()  # Delete the staff node
+
+#func reset_staff():
+	#visible = true  # Make the staff node visible again
+	#position = starting_pos  # Reset the position to the starting position
+	#rotation = 0  # Reset the rotation of the staff
+	#lightning_animation_bottom.position = Vector2(0, 0)  # Reset the position of the lightning animation
+	#$Icon.visible = false  # Hide the icon when the staff is reset
