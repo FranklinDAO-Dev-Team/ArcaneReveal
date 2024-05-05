@@ -110,7 +110,6 @@ animations = [{
 }]
 
 [node name="WandAnimations" type="Node2D"]
-visible = false
 
 [node name="LightningStrikeRight" type="AnimatedSprite2D" parent="."]
 z_index = 1
