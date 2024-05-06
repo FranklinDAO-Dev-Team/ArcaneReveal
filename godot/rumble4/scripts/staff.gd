@@ -35,20 +35,24 @@ func _ready():
 
 
 func _process(delta):
+	var hovered_wand = "Staff" + str(selected_wand)
 	if Input.is_action_just_pressed("select_wand1"):
 		selected_wand = 1
-		print("selected wand" + str(selected_wand))
+		if name == hovered_wand:
+			print("selected wand" + str(selected_wand))
 	elif Input.is_action_just_pressed("select_wand2"):
 		selected_wand = 2
-		print("selected wand" + str(selected_wand))
+		if name == hovered_wand:
+			print("selected wand" + str(selected_wand))
 	elif Input.is_action_just_pressed("select_wand3"):
 		selected_wand = 3
-		print("selected wand" + str(selected_wand))
+		if name == hovered_wand:
+			print("selected wand" + str(selected_wand))
 	elif Input.is_action_just_pressed("select_wand4"):
 		selected_wand = 4
-		print("selected wand" + str(selected_wand))
+		if name == hovered_wand:
+			print("selected wand" + str(selected_wand))
 
-	var hovered_wand = "Staff" + str(selected_wand)
 	if name == hovered_wand:
 		$Icon.visible = true
 	else:
@@ -66,8 +70,9 @@ func _process(delta):
 func cast_wand(hovered_wand_selected, direction):
 	if selected_wand == 0 or is_animation_playing:
 		return
-
-	print("casting wand" + str(selected_wand))
+	var hovered_wand = "Staff" + str(selected_wand)
+	if name == hovered_wand:
+		print("casting wand" + str(selected_wand))
 
 	if name == hovered_wand_selected:
 		var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
@@ -101,15 +106,12 @@ func cast_wand(hovered_wand_selected, direction):
 					lightning_animation_right.play("play")
 
 			is_animation_playing = true
-			visible = false
-			queue_free()  # Delete the staff node
 
 func _on_animation_finished():
 	is_animation_playing = false
 	var casted_wand = "Staff" + str(selected_wand)
 	if name == casted_wand:
-		visible = false
-		queue_free()  # Delete the staff node
+		queue_free()  # Delete the staff node after the animation finishes
 
 #func reset_staff():
 	#visible = true  # Make the staff node visible again
