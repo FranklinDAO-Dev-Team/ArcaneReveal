@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://cmpk73pbw6dok"]
 
-[ext_resource type="Script" path="res://scripts/staff_1.gd" id="1_cqpl4"]
+[ext_resource type="Script" path="res://scripts/staff.gd" id="1_tqrul"]
 [ext_resource type="Texture2D" uid="uid://b4pq5fqc5r47q" path="res://assets/tile001.png" id="2_lmve5"]
 [ext_resource type="PackedScene" uid="uid://bu0gr54ywawxt" path="res://scenes/Gama/spell1.tscn" id="3_kmh55"]
 
@@ -17,9 +17,9 @@ animations = [{
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n3ool"]
 
-[node name="Staff1" type="Node2D"]
+[node name="Staff" type="Node2D"]
 z_index = 1
-script = ExtResource("1_cqpl4")
+script = ExtResource("1_tqrul")
 metadata/_edit_group_ = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
@@ -54,6 +54,14 @@ z_index = 1
 position = Vector2(2.16242e-13, 52)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
+
+[node name="Icon" type="ColorRect" parent="."]
+visible = false
+offset_top = -22.0
+offset_right = 8.0
+offset_bottom = -14.0
+rotation = 0.785398
+color = Color(0.356863, 1, 0.882353, 1)
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
