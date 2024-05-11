@@ -1,16 +1,20 @@
 extends Node
 
+var game_started = false
+
 var enemy_state = {}
 var player
 var level
 var wall_state = []
 var game_over = false
 var staff_nodes = []
+var username = ""
 
 @onready var client : NakamaClient
 @onready var socket
 @onready var session : NakamaSession
 @onready var ray = $RayCast3D
+
 
 var enemies_defeated = 0
 const tile_size = 32
@@ -31,6 +35,16 @@ func _on_enemy_exited(enemy: Area2D):
 	
 
 func _ready():
+	var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
+	add_child(username_input_screen)
+	username_input_screen.connect("username_submitted", Callable(self, "_on_username_submitted"))
+	
+func _on_username_submitted(submitted_username):
+	var display_username = preload("res://scenes/TestFinal/displayName.tscn").instantiate()
+	add_child(display_username)
+	username = submitted_username
+	display_username.text = "Username: " + username
+	
 	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
 	socket = Nakama.create_socket_from(client)
 
@@ -43,7 +57,6 @@ func _ready():
 
 	print("Successfully authenticated: %s" % session)
 
-
 	var connected_result: NakamaAsyncResult = await socket.connect_async(session)
 	if connected_result.is_exception():
 		print("An error occurred: %s" % connected_result)
@@ -55,13 +68,13 @@ func _ready():
 	# Check whether account already has persona
 	var resp = await client.rpc_async(session, "nakama/show-persona")
 	if resp.is_exception():
-		print("An error occured: %s", % resp)
-		# Create persona	
-		resp = await client.rpc_async(session, "nakama/claim-persona", JSON.stringify({"personaTag": "CoolMage"}))
+		print("An error occurred: %s", % resp)
+		# Create persona
+		resp = await client.rpc_async(session, "nakama/claim-persona", JSON.stringify({"personaTag": username}))
 		if resp.is_exception():
-			print("An error occured while claiming persona: %s", % resp)
+			print("An error occurred while claiming persona: %s", % resp)
 			return
-		print("Created PersonaTag: CoolMage")
+		print("Created PersonaTag: ", username)
 	else:
 		if JSON.parse_string(resp.payload)["status"] == "accepted":
 			print("Device already has a persona, skipping creation")
@@ -93,7 +106,9 @@ func _ready():
 		wall_state.append([])
 		for col in range(grid_size):
 			wall_state[row].append(null)
+			
 	initialize_state(state)
+	game_started = true
 
 
 func _on_rpc_response(result: NakamaAsyncResult):
@@ -136,7 +151,7 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 
 func handle_query():
 	var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
-		"Persona": "CoolMage",
+		"Persona": username,
 	}))
 	print(resp_getID)  # This should show the response details including payload
 
@@ -167,7 +182,7 @@ func wait_for_game_creation():
 	var created = false
 	while not created:
 		var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
-		"Persona": "CoolMage",
+		"Persona": username,
 		}))
 		print(resp_getID)  # This should show the response details including payload
 
@@ -412,27 +427,25 @@ func has_wall_collision(dir):
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("query"):
+	if game_started and event.is_action_pressed("query"):
 		handle_query()
 
 
 func _unhandled_input(event):
-	for dir in inputs.keys():
-		if event.is_action_pressed(dir) and not has_wall_collision(dir):
-			if has_player_attacked(dir):
-				var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
-					"GameIDStr": "2",
-					"Action": "attack",
-					"Direction": dir,
-					"WandNum": "0",
-					}))
-			else:
-				var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
-					"GameIDStr": "2",
-					"Action": "move",
-					"Direction": dir,
-					"WandNum": "0",
-					}))
-
-
-
+	if game_started:
+		for dir in inputs.keys():
+			if event.is_action_pressed(dir) and not has_wall_collision(dir):
+				if has_player_attacked(dir):
+					var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
+						"GameIDStr": "2",
+						"Action": "attack",
+						"Direction": dir,
+						"WandNum": "0",
+						}))
+				else:
+					var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
+						"GameIDStr": "2",
+						"Action": "move",
+						"Direction": dir,
+						"WandNum": "0",
+						}))
