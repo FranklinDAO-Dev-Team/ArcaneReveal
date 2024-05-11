@@ -5,6 +5,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// down heal
 const Ability7ID = 7
 
 type Ability7 struct{}
@@ -13,6 +14,9 @@ var _ Ability = &Ability7{}
 
 func (Ability7) GetAbilityID() int {
 	return Ability7ID
+}
+func (Ability7) GetAbilityName() string {
+	return "down heal"
 }
 
 func (a Ability7) Resolve(

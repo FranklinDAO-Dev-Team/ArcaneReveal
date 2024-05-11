@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"math/big"
 
@@ -57,6 +58,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			}
 
 			//  Check salts and that &turn.Msg.Abilities makes sense
+			// also update the game reveals array
 			err = verifySalts(world, gameID, turn, spell)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
@@ -64,11 +66,10 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			log.Println("Commitments verified")
 
 			// resolve abilities and update chain state
+			// pass eventLogList to record executed resolutions
 			eventLogList := &[]comp.GameEventLog{}
 			updateChainState := true
 			printWhatActivated(turn.Msg.Result.Abilities)
-
-			// pass eventLogList to record executed resolutions
 			err = resolveAbilities(world, gameID, spell, spellPos, &turn.Msg.Result.Abilities, updateChainState, eventLogList)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
@@ -97,10 +98,16 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 		})
 }
 
-func verifySalts(world cardinal.WorldContext, gameID types.EntityID, turn message.TxData[msg.FulfillCastMsg], spell *comp.Spell) error {
+// verifies the salts agains the commitments in the game and updates the game reveals array
+func verifySalts(
+	world cardinal.WorldContext,
+	gameID types.EntityID,
+	turn message.TxData[msg.FulfillCastMsg],
+	spell *comp.Spell,
+) error {
 	for i, canCastAbilityI := range turn.Msg.Result.Abilities {
 		if canCastAbilityI {
-			// log.Println("canCast", i)
+			// calculate the commitment based on the revealed salt
 			i64 := int64(i)
 			salt := big.NewInt(0)
 			base := 10
@@ -110,19 +117,40 @@ func verifySalts(world cardinal.WorldContext, gameID types.EntityID, turn messag
 				return fmt.Errorf("failed to hash salt: %w", err)
 			}
 
+			// verify the calculated commitment matches the commitment in the game
 			game, err := cardinal.GetComponent[comp.Game](world, gameID)
 			if err != nil {
 				return err
 			}
-			// log.Println("game.Commitments dimensions", len(*game.Commitments), len((*game.Commitments)[0]))
-			// log.Printf("wand num: %d, i: %d\n", spell.WandNumber, i)
-
-			if !contains((*game.Commitments)[spell.WandNumber], commitment.String()) {
+			var wandCommits = (*game.Commitments)[spell.WandNumber]
+			commitIndex := findIndex(wandCommits, commitment.String())
+			if commitIndex == -1 {
 				return fmt.Errorf("commitment %d does not match", i)
 			}
+
+			log.Printf("Ability %d (%s) activted \n", i, comp.AbilityMap[i+1].GetAbilityName())
+
+			// update the reveals array
+			var newReveals = *game.Reveals
+			newReveals[spell.WandNumber][commitIndex] = strconv.Itoa(int(i64))
+			cardinal.SetComponent[comp.Game](world, gameID, &comp.Game{
+				PersonaTag:  game.PersonaTag,
+				Commitments: game.Commitments,
+				Reveals:     &newReveals,
+				Level:       game.Level,
+			})
 		}
 	}
 	return nil
+}
+
+func findIndex(arr []string, val string) int {
+	for i, v := range arr {
+		if v == val {
+			return i
+		}
+	}
+	return -1
 }
 
 // Function to check if a string is in an array
@@ -136,7 +164,7 @@ func contains(array []string, value string) bool {
 }
 
 func printWhatActivated(abilities [client.TotalAbilities]bool) {
-	abilityNameMap := []string{"pureDamage, SideDamage, WallDamage, Explosion, UpHeal, RightHeal, DownHeal, LeftHeal"}
+	abilityNameMap := []string{"PureDamage, SideDamage, WallDamage, Explosion, UpHeal, RightHeal, DownHeal, LeftHeal"}
 	for i := 0; i < len(abilityNameMap); i++ {
 		if abilities[i] {
 			log.Println(abilityNameMap[i])
