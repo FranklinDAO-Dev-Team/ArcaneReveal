@@ -49,10 +49,18 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 					commitments[i][j] = pubSignals[1+i*client.NumAbilities+j]
 				}
 			}
+			reveals := make([][]string, client.NumWands)
+			for i := range reveals {
+				reveals[i] = make([]string, client.NumAbilities)
+				for j := range reveals[i] {
+					reveals[i][j] = "-1"
+				}
+			}
 
 			gameID, err := cardinal.Create(world, component.Game{
 				PersonaTag:  req.Msg.Result.PersonaTag,
 				Commitments: &commitments,
+				Reveals:     &reveals,
 				Level:       1,
 			})
 			if err != nil {

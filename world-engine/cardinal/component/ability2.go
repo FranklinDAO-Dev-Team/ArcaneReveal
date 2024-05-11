@@ -7,6 +7,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// side damage attack
 const Ability2ID = 2
 
 type Ability2 struct{}
@@ -15,6 +16,9 @@ var _ Ability = &Ability2{}
 
 func (Ability2) GetAbilityID() int {
 	return Ability2ID
+}
+func (Ability2) GetAbilityName() string {
+	return "side damage attack"
 }
 
 func (a Ability2) Resolve(

@@ -7,6 +7,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// damage attack
 const Ability1ID = 1
 
 type Ability1 struct{}
@@ -15,6 +16,10 @@ var _ Ability = &Ability1{}
 
 func (Ability1) GetAbilityID() int {
 	return Ability1ID
+}
+
+func (Ability1) GetAbilityName() string {
+	return "damage attack"
 }
 
 // Resolves effects of the ability

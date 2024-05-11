@@ -47,6 +47,7 @@ const (
 
 type Ability interface {
 	GetAbilityID() int
+	GetAbilityName() string
 	Resolve(
 		world cardinal.WorldContext,
 		gameID types.EntityID,

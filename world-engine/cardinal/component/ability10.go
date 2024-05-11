@@ -7,6 +7,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// polymorph
 const Ability10ID = 10
 
 type Ability10 struct{}
@@ -15,6 +16,9 @@ var _ Ability = &Ability10{}
 
 func (Ability10) GetAbilityID() int {
 	return Ability10ID
+}
+func (Ability10) GetAbilityName() string {
+	return "polymorph"
 }
 
 // polymorphs the monster
