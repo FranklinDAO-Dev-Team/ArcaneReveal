@@ -111,6 +111,7 @@ func playerTurnAction(
 		if err != nil {
 			return err
 		}
+		log.Printf("playerTurnAction potentialAbilities: %v \n", potentialAbilities)
 
 		gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
 		if err != nil {
@@ -123,12 +124,9 @@ func playerTurnAction(
 			WandNum:            wandnum,
 			PotentialAbilities: *potentialAbilities,
 		}
-		// set all abilities to true since we don't know which ones will be activated
-		for i := 0; i < len(revealRequest.PotentialAbilities); i++ {
-			revealRequest.PotentialAbilities[i] = true
-		}
+
+		// Send the reveal request to the Seismic server
 		revealRequestCh <- revealRequest
-		log.Println("PlayerTurnSystem *potentialAbilities", revealRequest.PotentialAbilities)
 
 	case "move":
 		err = playerTurnMove(world, gameID, direction, eventLogList)
@@ -229,11 +227,8 @@ func playerTurnWand(
 	// set the wand to not ready (do early as it may potentially be refreshed by abilities)
 	cardinal.SetComponent[comp.Available](world, wandID, &comp.Available{IsAvailable: false})
 
-	// set all abilities to true since we don't know which ones will be activated
+	// set all abilities to false becasue assume false until simulated
 	allAbilities := &[client.TotalAbilities]bool{}
-	for i := range allAbilities {
-		allAbilities[i] = true
-	}
 	spell := &comp.Spell{
 		WandNumber: wandnum,
 		Expired:    false,
@@ -242,12 +237,15 @@ func playerTurnWand(
 	}
 
 	// simulate a cast to determine potential ability activations
+	// log.Printf("playerTurnWand potentialAbilities BEFORE resolveAbilities: %v \n", spell.Abilities)
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
 	err = resolveAbilities(world, gameID, spell, playerPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
 		return 0, nil, err
 	}
+	log.Printf("playerTurnWand potentialAbilities AFTER resolveAbilities: %v \n\n", spell.Abilities)
+	// log.Printf("dummy event log: %v \n", dummy)
 
 	// create a new entity for the cast to later be resolved
 	castID, err = cardinal.Create(
@@ -329,7 +327,6 @@ func directionToGameEventPlayerMove(direction comp.Direction) comp.GameEvent {
 
 // checks that the given personaTag owns the game
 func confirmGameOwnership(world cardinal.WorldContext, personaTag string, gameID types.EntityID) error {
-	log.Println("entered confirmGameOwnership")
 	game, err := cardinal.GetComponent[component.Game](world, types.EntityID(gameID))
 	if err != nil {
 		return fmt.Errorf("failed to find game %d:", gameID)

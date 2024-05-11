@@ -29,6 +29,7 @@ func resolveAbilities(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for !spell.Expired {
+		// log.Println()
 		// log.Println("resolveAbilities. start Spell position: ", spellPos.X, spellPos.Y)
 
 		// log SpellBeam position
@@ -47,6 +48,7 @@ func resolveAbilities(
 			log.Println("resolveAbilitiesAtPosition err: ", err)
 			return err
 		}
+		// log.Printf("potentialAbilities: %v", *potentialAbilities)
 
 		// get next spell position
 		spellPos, err = spellPos.GetUpdateFromDirection(spell.Direction)
@@ -77,16 +79,18 @@ func resolveAbilitiesAtPosition(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for i := 0; i < len(*potentialAbilities); i++ {
-		if potentialAbilities[i] { // if ability should be activated/checked
+		if potentialAbilities[i] || !updateChainState { // if ability should be activated/checked
 			a := comp.AbilityMap[i+1]
 			if a == nil {
 				return errors.New("unknown ability called")
 			}
 			activated, err := a.Resolve(world, gameID, spellPos, direction, updateChainState, eventLogList)
 			if err != nil {
-				// log.Println("resolveAbilitiesAtPosition err", err)
 				return err
 			}
+			// if activated {
+			// 	log.Printf("resolveAbilitiesAtPosition() activated ability %d (%s) \n", i, a.GetAbilityName())
+			// }
 
 			// only overwrite if ability activated
 			potentialAbilities[i] = activated || potentialAbilities[i]
