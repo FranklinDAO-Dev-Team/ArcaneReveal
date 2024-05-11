@@ -49,7 +49,7 @@ type GameStateResponse struct {
 	GameID   types.EntityID `json:"gameID"`
 	Level    int            `json:"level"`
 	Player   PlayerData     `json:"player"`
-	Reveals  [][]string     `json:"reveals"`
+	Reveals  [][]int        `json:"reveals"`
 	Wands    []WandData     `json:"wands"`
 	Walls    []WallData     `json:"walls"`
 	Monsters []MonsterData  `json:"monsters"`

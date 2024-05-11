@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 
 	"math/big"
 
@@ -132,7 +131,7 @@ func verifySalts(
 
 			// update the reveals array
 			var newReveals = *game.Reveals
-			newReveals[spell.WandNumber][commitIndex] = strconv.Itoa(int(i64))
+			newReveals[spell.WandNumber][commitIndex] = i
 			cardinal.SetComponent[comp.Game](world, gameID, &comp.Game{
 				PersonaTag:  game.PersonaTag,
 				Commitments: game.Commitments,
