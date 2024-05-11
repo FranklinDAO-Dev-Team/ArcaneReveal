@@ -40,13 +40,6 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 				return msg.PlayerTurnResult{}, fmt.Errorf("error with msg format: %w", err)
 			}
 
-			// // set up for playerTurnAction
-			// playerID, err := comp.QueryPlayerID(world, gameID)
-			// if err != nil {
-			// 	return msg.PlayerTurnResult{}, err
-			// }
-			// log.Println("PlayerTurnSystem playerID: ", playerID)
-
 			direction, err := comp.StringToDirection(turn.Msg.Direction)
 			if err != nil {
 				return msg.PlayerTurnResult{}, err
@@ -101,8 +94,13 @@ func playerTurnAction(
 			return err
 		}
 
-		// TODO: emit events to client
-		log.Println("TODO: emit activated abilities and spell log to client")
+		// emit after attck and move
+		eventMap := make(map[string]any)
+		eventMap["turnEvent"] = *eventLogList
+		err = world.EmitEvent(eventMap)
+		if err != nil {
+			return err
+		}
 
 	case "wand":
 		wandnum, err := strconv.Atoi(turn.Msg.WandNum)
@@ -113,10 +111,6 @@ func playerTurnAction(
 		if err != nil {
 			return err
 		}
-		// log.Println("castID: ", castID)
-		// log.Println("potentialAbilities: ", potentialAbilities)
-
-		// log.Println("gameidstr:", turn.Msg.GameIDStr)
 
 		gameID, err := strconv.Atoi(turn.Msg.GameIDStr)
 		if err != nil {
@@ -145,7 +139,12 @@ func playerTurnAction(
 		if err != nil {
 			return fmt.Errorf("MonsterTurnSystem err: %w", err)
 		}
-		log.Println("TODO: emit activated abilities and spell log to client")
+		eventMap := make(map[string]any)
+		eventMap["turnEvent"] = *eventLogList
+		err = world.EmitEvent(eventMap)
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("PlayerTurnSystem err: Invalid action")
 	}
@@ -176,7 +175,7 @@ func playerTurnAttack(
 	}
 	log.Printf("attackPos: %v\n", attackPos)
 
-	found, id, err := attackPos.GetEntityIDByPosition(world)
+	found, id, err := attackPos.GetEntityIDByPosition(world, gameID)
 	if err != nil {
 		return err
 	}
@@ -218,7 +217,7 @@ func playerTurnWand(
 	if err != nil {
 		return 0, nil, err
 	}
-	wandID, _, available, err := getWandByNumber(world, wandnum)
+	wandID, _, available, err := getWandByNumber(world, gameID, wandnum)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -286,7 +285,7 @@ func playerTurnMove(
 	if err != nil {
 		return err
 	}
-	valid, err := comp.IsCollisonThere(world, *newPos)
+	valid, err := comp.IsCollisonThere(world, gameID, *newPos)
 	if err != nil {
 		return err
 	} else if valid {
@@ -300,7 +299,7 @@ func playerTurnMove(
 	if err != nil {
 		return err
 	}
-	valid, err = comp.IsCollisonThere(world, *newNewPos)
+	valid, err = comp.IsCollisonThere(world, gameID, *newNewPos)
 	if err != nil {
 		return err
 	} else if valid {

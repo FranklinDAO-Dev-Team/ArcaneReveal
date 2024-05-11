@@ -1,0 +1,93 @@
+[gd_scene load_steps=17 format=3 uid="uid://gmnh1e5w4yb3"]
+
+[ext_resource type="Script" path="res://scenes/TestFinal/newEnemy.gd" id="1_f4gb2"]
+[ext_resource type="Texture2D" uid="uid://dj61foprisa50" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal1.png" id="2_hkyc6"]
+[ext_resource type="Texture2D" uid="uid://c73rer3i3mv30" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal2.png" id="3_d67xw"]
+[ext_resource type="Texture2D" uid="uid://dcs8seaulu5eb" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal3.png" id="4_exu6b"]
+[ext_resource type="Texture2D" uid="uid://dbhxxukaugvu" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal4.png" id="5_3ao83"]
+[ext_resource type="Texture2D" uid="uid://b5p1ll7pxjsob" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal5.png" id="6_b0ebd"]
+[ext_resource type="Texture2D" uid="uid://bd1suk2pc53dq" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal6.png" id="7_rxxgs"]
+[ext_resource type="Texture2D" uid="uid://7hqgg7rxskhg" path="res://assets/Little Mage/Idle/Idle1.png" id="8_s6u10"]
+[ext_resource type="Texture2D" uid="uid://bk0m37kmn5h1k" path="res://assets/Little Mage/Idle/Idle2.png" id="9_qrk7c"]
+[ext_resource type="Texture2D" uid="uid://dw5glqi6743hl" path="res://assets/Little Mage/Idle/Idle3.png" id="10_fn8l7"]
+[ext_resource type="Texture2D" uid="uid://deku44ra7d12x" path="res://assets/Little Mage/Idle/Idle4.png" id="11_bry5g"]
+[ext_resource type="Texture2D" uid="uid://7x0vh0xpmk60" path="res://assets/Little Mage/Idle/Idle5.png" id="12_3ev8y"]
+[ext_resource type="Texture2D" uid="uid://bmux3p13jry11" path="res://assets/Little Mage/Idle/Idle6.png" id="13_v3r4f"]
+[ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="14_ky6qg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
+size = Vector2(30, 30)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kri47"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_hkyc6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_d67xw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_exu6b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_3ao83")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_b0ebd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_rxxgs")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_s6u10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_qrk7c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_fn8l7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_bry5g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_3ev8y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_v3r4f")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="EnemyV2" type="Area2D"]
+position = Vector2(-1, -1)
+script = ExtResource("1_f4gb2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_t6hbu")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, 1)
+scale = Vector2(1.875, 1.875)
+sprite_frames = SubResource("SpriteFrames_kri47")
+animation = &"attack"
+frame_progress = 0.149807
+centered = false
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2(16, 16)
+enabled = false
+target_position = Vector2(2.08165e-12, 32)
+
+[node name="LifeBar" parent="." instance=ExtResource("14_ky6qg")]
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

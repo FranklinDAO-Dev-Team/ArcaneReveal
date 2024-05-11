@@ -26,7 +26,7 @@ func (a Ability4) Resolve(
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
 	// look up entity at spell position
-	found, id, err := spellPosition.GetEntityIDByPosition(world)
+	found, id, err := spellPosition.GetEntityIDByPosition(world, gameID)
 	if err != nil {
 		log.Println("Ability4.Resolve err: ", err)
 		return false, err
@@ -39,7 +39,7 @@ func (a Ability4) Resolve(
 		}
 		// if entity is a wall, then trigger explosion
 		if colType.Type == WallCollide {
-			return applyExplosion(world, spellPosition, executeUpdates, eventLogList)
+			return applyExplosion(world, gameID, spellPosition, executeUpdates, eventLogList)
 		}
 	}
 	return false, nil
@@ -47,6 +47,7 @@ func (a Ability4) Resolve(
 
 func applyExplosion(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPosition *Position,
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
@@ -56,7 +57,7 @@ func applyExplosion(
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 5; j++ {
 			damagePos := Position{X: topLeft.X + i, Y: topLeft.Y + j}
-			damageDealt, err := damageAtPosition(world, &damagePos, executeUpdates, true)
+			damageDealt, err := damageAtPosition(world, gameID, &damagePos, executeUpdates, true)
 			if err != nil {
 				return false, err
 			}

@@ -10,34 +10,52 @@ import (
 
 func getWandByNumber(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	targetNum int,
 ) (wandID types.EntityID, wandCore *comp.WandCore, available *comp.Available, err error) {
-	searchErr := cardinal.NewSearch(world, filter.Contains(comp.WandCore{})).Each(
+	var outerErr error
+	searchErr := cardinal.NewSearch(world, filter.Contains(comp.WandCore{}, comp.GameObj{})).Each(
 		func(id types.EntityID) bool {
-			wandCore, err = cardinal.GetComponent[comp.WandCore](world, id)
+			// make sure the wand is for the right game
+			gameObjTag, err := cardinal.GetComponent[comp.GameObj](world, id)
 			if err != nil {
+				outerErr = err
 				return false
 			}
+			if gameObjTag.GameID != gameID {
+				// skip to next entity
+				return true
+			}
 
-			// Terminates the search if the player is found
+			wandCore, err = cardinal.GetComponent[comp.WandCore](world, id)
+			if err != nil {
+				outerErr = err
+				return false
+			}
+			// Terminates the search if the wand is found
 			if wandCore.Number == targetNum {
+				// set return values
 				wandID = id
 				available, err = cardinal.GetComponent[comp.Available](world, id)
 				if err != nil {
+					outerErr = err
 					return false
 				}
+
+				// successfully found the wand, stop searching
 				return false
 			}
 
-			// Continue searching if the player is not the target player
+			// Continue searching if the wand num is wrong
 			return true
 		},
 	)
 	if searchErr != nil {
 		return 0, nil, nil, err
 	}
+	if outerErr != nil {
+		return 0, nil, nil, outerErr
+	}
 
-	// log.Printf("wandID: %s\n", fmt.Sprint(wandID))
-	// log.Println("wandCore: ", wandCore)
 	return wandID, wandCore, available, nil
 }

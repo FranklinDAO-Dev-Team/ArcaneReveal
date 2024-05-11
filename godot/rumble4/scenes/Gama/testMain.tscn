@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dc6jw4arwneon"]
+[gd_scene load_steps=12 format=3 uid="uid://ccski0bqh1gbo"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://0nka4rtgo7vg" path="res://scenes/Gama/player.tscn" id="5_5f1lg"]
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_x7epu"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="9_imb6i"]
-[ext_resource type="PackedScene" path="res://scenes/Gama/BasicLightning.tscn" id="10_kbkyr"]
+[ext_resource type="PackedScene" uid="uid://bbtihlbhgix8u" path="res://scenes/Gama/BasicLightning.tscn" id="10_kbkyr"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="10_xqvk1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]

@@ -28,12 +28,12 @@ func (a Ability2) Resolve(
 	perpDirOne := direction.rotateClockwise()
 	perpDirTwo := direction.rotateClockwise().rotateClockwise().rotateClockwise()
 
-	damageDealtOne, err := resolveOneA2Check(world, spellPosition, perpDirOne, executeUpdates, eventLogList)
+	damageDealtOne, err := resolveOneA2Check(world, gameID, spellPosition, perpDirOne, executeUpdates, eventLogList)
 	if err != nil {
 		log.Println("Ability2.Resolve err 1: ", err)
 		return false, err
 	}
-	damageDealtTwo, err := resolveOneA2Check(world, spellPosition, perpDirTwo, executeUpdates, eventLogList)
+	damageDealtTwo, err := resolveOneA2Check(world, gameID, spellPosition, perpDirTwo, executeUpdates, eventLogList)
 	if err != nil {
 		log.Println("Ability2.Resolve err 2: ", err)
 		return false, err
@@ -46,6 +46,7 @@ func (a Ability2) Resolve(
 
 func resolveOneA2Check(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	spellPosition *Position,
 	perpDir Direction,
 	executeUpdates bool,
@@ -55,7 +56,7 @@ func resolveOneA2Check(
 	if err != nil {
 		return false, err
 	}
-	hitWall, err := IsCollisonThere(world, *adjPos)
+	hitWall, err := IsCollisonThere(world, gameID, *adjPos)
 	if err != nil {
 		return false, err
 	}
@@ -65,7 +66,7 @@ func resolveOneA2Check(
 	adjPlayablePos, err := adjPos.GetUpdateFromDirection(perpDir)
 	// log.Println("adjPlayablePos", adjPlayablePos)
 	if err == nil {
-		damageDealt, err := damageAtPosition(world, adjPlayablePos, executeUpdates, false)
+		damageDealt, err := damageAtPosition(world, gameID, adjPlayablePos, executeUpdates, false)
 		if err != nil {
 			return false, err
 		}

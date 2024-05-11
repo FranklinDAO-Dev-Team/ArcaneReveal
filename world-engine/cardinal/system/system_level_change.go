@@ -36,6 +36,26 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 				switchLevels(world, gameID)
 			}
 
+			playerDied, err := checkPlayerDied(world, gameID)
+			if err != nil {
+				outerErr = err
+				return false
+			}
+
+			if playerDied {
+				log.Printf("LevelChangeSystem() game %d player died\n", gameID)
+				world.EmitEvent(map[string]any{
+					"event":  "game-over",
+					"gameID": gameID,
+				})
+				err = removeGameInstance(world, gameID)
+				if err != nil {
+					log.Printf("LevelChangeSystem() failed to remove game instance %d: %w\n", gameID, err)
+					return false
+				}
+				return false
+			}
+
 			// check next game
 			return true
 		})
@@ -46,6 +66,13 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 		return outerErr
 	}
 	return nil
+}
+
+func checkPlayerDied(world cardinal.WorldContext, gameID types.EntityID) (bool, error) {
+	// player gets deleted when it dies automatically by DecrementHealth()
+	// so if we can't find it using QueryPlayerID(), it means it died
+	_, err := comp.QueryPlayerID(world, gameID)
+	return (err != nil), nil
 }
 
 // checkLevelCompleted checks if the player has completed the current level
@@ -145,6 +172,11 @@ func updateGameLevel(world cardinal.WorldContext, gameID types.EntityID) (int, e
 	if err != nil {
 		return -1, err
 	}
+	world.EmitEvent(map[string]any{
+		"event":    "level-won",
+		"gameID":   gameID,
+		"newLevel": newLevel,
+	})
 
 	return newLevel, nil
 }
@@ -167,8 +199,7 @@ func clearBoard(world cardinal.WorldContext, gameID types.EntityID) error {
 			return true
 		}
 
-		// remove entity if it is a monster or wall
-		// if so, remove it
+		// remove entity if it is a monster or wall to clear board for next level
 		colType, err := cardinal.GetComponent[comp.Collidable](world, id)
 		if err != nil {
 			outerErr = err
@@ -276,7 +307,7 @@ func removeGameInstance(world cardinal.WorldContext, gameID types.EntityID) erro
 			return true
 		}
 
-		// remove entity
+		// remove entity attatched to given game
 		err = cardinal.Remove(world, id)
 		if err != nil {
 			outerErr = err
