@@ -2,6 +2,7 @@ package system
 
 import (
 	comp "cinco-paus/component"
+	"fmt"
 	"log"
 
 	"math/rand"
@@ -29,10 +30,22 @@ func MonsterTurnSystem(
 	if err != nil {
 		return err
 	}
+
+	// iterate through all monsters in the game and have them make moves
 	searchErr := cardinal.NewSearch(
 		world,
 		filter.Contains(comp.Monster{}),
 	).Each(func(id types.EntityID) bool {
+		// make sure the monster is for the right game
+		gameObjTag, err := cardinal.GetComponent[comp.GameObj](world, id)
+		if err != nil {
+			return false
+		}
+		if gameObjTag.GameID != gameID {
+			// skip to next entity
+			return true
+		}
+
 		// get original monster position
 		origMonsterPos, err := cardinal.GetComponent[comp.Position](world, id)
 		if err != nil {
@@ -40,16 +53,14 @@ func MonsterTurnSystem(
 			turnErr = err
 			return false // if error, break out of search
 		}
-		// get manhatten distance between original monster position and player position
-		manDist := origMonsterPos.ManhattenDistance(playerPos)
 
-		if manDist == playerAttackDistance {
+		if monsterCanAttack(world, gameID, origMonsterPos, playerPos) {
 			turnErr = executeMonsterAttack(world, gameID, eventLogList, origMonsterPos)
 			if turnErr != nil {
 				return false // if error, break out of search
 			}
 		} else {
-			turnErr = executeMonsterMove(world, eventLogList, origMonsterPos, id, playerPos)
+			turnErr = executeMonsterMove(world, gameID, eventLogList, origMonsterPos, id, playerPos)
 			if turnErr != nil {
 				return false // if error, break out of search
 			}
@@ -65,6 +76,27 @@ func MonsterTurnSystem(
 		return turnErr
 	}
 	return nil
+}
+
+func monsterCanAttack(
+	world cardinal.WorldContext,
+	gameID types.EntityID,
+	origMonsterPos *comp.Position,
+	playerPos *comp.Position,
+) bool {
+	manDist := origMonsterPos.ManhattenDistance(playerPos)
+	if manDist == playerAttackDistance {
+		inBetweenPos := comp.Position{
+			X: (origMonsterPos.X + playerPos.X) / 2,
+			Y: (origMonsterPos.Y + playerPos.Y) / 2,
+		}
+		coll, err := comp.IsCollisonThere(world, gameID, inBetweenPos)
+		if err != nil {
+			return false
+		}
+		return !coll
+	}
+	return false
 }
 
 func executeMonsterAttack(
@@ -93,15 +125,20 @@ func executeMonsterAttack(
 
 func executeMonsterMove(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	eventLogList *[]comp.GameEventLog,
 	origMonsterPos *comp.Position,
 	monsterID types.EntityID,
 	playerPos *comp.Position,
 ) error {
 	// get move options (places that are legal, not moving into a wall, etc),
-	direction, err := decideMonsterMovementDirection(world, origMonsterPos, playerPos)
+	direction, err := decideMonsterMovementDirection(world, gameID, origMonsterPos, playerPos)
 	if err != nil {
 		return err
+	}
+	if direction == comp.Direction(-1) {
+		// if monster cannot move, do nothing
+		return nil
 	}
 	moveEventType := directionToMonsterMoveEvent(direction)
 
@@ -122,6 +159,15 @@ func executeMonsterMove(
 		return err
 	}
 
+	// double check that newNewMonsterPos is not colliding with anything
+	found, eID, err := newNewMonsterPos.GetEntityIDByPosition(world, gameID)
+	if err != nil {
+		return err
+	}
+	if found {
+		return fmt.Errorf("executeMonsterMove() newNewMonsterPos collides with entity %d", eID)
+	}
+
 	// update monster position onchain
 	err = cardinal.SetComponent[comp.Position](world, monsterID, newNewMonsterPos)
 	if err != nil {
@@ -132,6 +178,7 @@ func executeMonsterMove(
 
 func decideMonsterMovementDirection(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	monsterPos *comp.Position,
 	playerPos *comp.Position,
 ) (comp.Direction, error) {
@@ -143,7 +190,7 @@ func decideMonsterMovementDirection(
 		directions[i], directions[j] = directions[j], directions[i]
 	})
 	for _, direction := range directions {
-		valid, manDist, err := CheckMonsterMovementUtility(world, playerPos, monsterPos, direction)
+		valid, manDist, err := CheckMonsterMovementUtility(world, gameID, playerPos, monsterPos, direction)
 		if err != nil {
 			return -1, err
 		}
@@ -157,6 +204,7 @@ func decideMonsterMovementDirection(
 
 func CheckMonsterMovementUtility(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	playerPos *comp.Position,
 	monsterPos *comp.Position,
 	direction comp.Direction,
@@ -166,10 +214,10 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.IsCollisonThere(world, *newMonsterPos)
+	invalid, err := comp.IsCollisonThere(world, gameID, *newMonsterPos)
 	if err != nil {
 		return false, 0, err
-	} else if valid {
+	} else if invalid {
 		return false, 0, nil // invalid position, but don't return error, just check next direction
 	}
 
@@ -178,10 +226,10 @@ func CheckMonsterMovementUtility(
 	if err != nil {
 		return false, 0, err
 	}
-	valid, err = comp.IsCollisonThere(world, *newMonsterPos)
+	invalid, err = comp.IsCollisonThere(world, gameID, *newNewMonsterPos)
 	if err != nil {
 		return false, 0, err
-	} else if valid {
+	} else if invalid {
 		return false, 0, nil // invalid position, but don't return error, just check next direction
 	}
 

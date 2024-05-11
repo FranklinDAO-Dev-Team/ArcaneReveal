@@ -1,36 +1,3 @@
-#var currPos = [0, 0]
-#
-#
-##func _physics_process(delta):
-	##move()
-	##
-##func move():
-	##input_movement = Input.get_vector("left", "right", "up", "down")
-	##
-	##if input_movement != Vector2.ZERO:
-		##velocity = input_movement * speed
-	##
-	##if input_movement == Vector2.ZERO:
-		##velocity = Vector2.ZERO
-		##
-	##move_and_slide()
-#
-#func _input(event):
-	#if event.is_action_pressed("right"):
-		#if currPos[0] <= 96:
-			#currPos[0] += 32
-	#elif event.is_action_pressed("left"):
-		#if currPos[0] >= 32:
-			#currPos[0] -= 32	
-	#elif event.is_action_pressed("up"):
-		#if currPos[1] >= 32:
-			#currPos[1] -= 32
-	#elif event.is_action_pressed("down"):
-		#if currPos[1] <= 96:	
-			#currPos[1] += 32
-#
-	#self.position = Vector2(currPos[0], currPos[1])
-	
 extends Area2D
 
 
@@ -71,7 +38,6 @@ func _ready():
 	$StaffPositionBottom.position = Vector2(16, 32)  # Adjust this offset
 	$StaffPositionLeft.position = Vector2(0, 16)  # Adjust this offset
 	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
-	#position += Vector2.ONE * tile_size / 
 
 	if game_node == null:
 		print("game_node is null, cannot access session")
@@ -90,13 +56,9 @@ func readJSON(json_file_path):
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func process_data():
-	# cast spell: p _ _ m _ w
-	# (3, 1, 0), (5, 1, 0), (7, 1, 1), (9, 1, 0) (10, 1, 2) 
-	#print("entered process_data")
-	
 	var json_file_path = "res://testInput.json"
 	var data_received = readJSON(json_file_path);
-	#print(data_received.data)
+	
 	for data in data_received.data:
 		var x_pos = int(data[0])
 		var y_pos = int(data[1])
@@ -128,39 +90,22 @@ func process_data():
 					# Animate lightning bolt from the sky attack
 					# Access the AnimationPlayer in the BasicLightning scene
 					animation_player = basic_lightning_instance.get_node("Blank")
-					#animation_player.play("default")
-					#print("lightning at: " + str(position.x) + ", " + str(position.y))
+					animation_player.play("default")
 				1:
 					# Animate explosion
 					animation_player = basic_lightning_instance.get_node("Explosion")
-					#animation_player.play("default")
-					#print("explosion at: " + str(position.x) + ", " + str(position.y))
+					animation_player.play("default")
 				2:
 					# Animate lightning bolt dissipating
 					animation_player = basic_lightning_instance.get_node("Spark")
-					#animation_player.play("default")
-					#print("dissipate at: " + str(position.x) + ", " + str(position.y))
+					animation_player.play("default")
 				3:
 					# Animate lightning bolt dissipating
 					animation_player = basic_lightning_instance.get_node("WallActivation")
-					#animation_player.play("default")
-					#print("dissipate at: " + str(position.x) + ", " + str(position.y))
+					animation_player.play("default")
 				_:
 					# Handle unexpected action
 					print("")
-					#print("Unexpected action:", action)
-			
-			# Queue the instance for deletion after the animation finishes
-			#animation_player.queue_free()
-			#animation_player.connect("animation_finished", basic_lightning_instance, "_on_animation_finished")
-		#else:
-		#	print("AnimationPlayer not found in BasicLightning scene")
-
-# Callback function to delete the instance after the animation finishes
-#func _on_animation_finished():
-	#var instance = get_parent()
-	#instance.queue_free()
-
 
 
 func _process(delta):
@@ -174,20 +119,37 @@ func update_health_ui():
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("query"):
 		handle_query()
-	##if event.is_action_pressed("ui_accept"):
-		##damage()
-	#if event.is_action_pressed("enemy_left"):
-		#$AnimationPlayer.play("attack_left")
-	#if event.is_action_pressed("enemy_right"):
-		#$AnimationPlayer.play("attack_right")
-	#if event.is_action_pressed("enemy_down"):
-		#$AnimationPlayer.play("attack_down")
-	#if event.is_action_pressed("enemy_up"):
-		#$AnimationPlayer.play("attack_up")
 
 func handle_query():
-	var resp = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({}))
-	print(resp)
+	var resp_getID = await game_node.client.rpc_async(game_node.session, "query/game/query-game-id-by-persona", JSON.stringify({
+		"Persona": "CoolMage",
+	}))
+	print(resp_getID)  # This should show the response details including payload
+
+	# Create a new JSON object and parse the response payload
+	var json = JSON.new()
+	var error = json.parse(resp_getID.payload)
+	if error == OK:
+		var response_dict = json.data  # Access the parsed data
+
+		# Check if the 'Success' key is true and then access 'GameID'
+		if response_dict and "Success" in response_dict and response_dict["Success"]:
+			var game_id = response_dict["GameID"]
+			print("Game ID: ", game_id)
+
+			# Make another RPC call using the retrieved GameID
+			var resp_getGameState = await game_node.client.rpc_async(game_node.session, "query/game/game-state", JSON.stringify({
+				"GameID": game_id,  # Use the actual game ID retrieved
+			}))
+			print(resp_getGameState)  # Print the state response
+		else:
+			print("Failed to get Game ID or the response did not indicate success.")
+	else:
+		print("JSON Parse Error:", json.get_error_message())
+
+	
+	
+	
 
 
 func damage(damage) -> void:
@@ -230,7 +192,6 @@ func _unhandled_input(event):
 
 
 func move(dir):
-	process_data();
 	#print("move")
 	previous_move = dir
 	previous_position = position
@@ -270,6 +231,5 @@ func _on_area_entered(area):
 			"up": area.move("down")
 			"down": area.move("up")
 		
-		
-		
+	
 

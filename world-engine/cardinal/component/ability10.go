@@ -27,7 +27,7 @@ func (Ability10) Resolve(
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
 	// Lookup if entity exists
-	found, id, err := spellPosition.GetEntityIDByPosition(world)
+	found, id, err := spellPosition.GetEntityIDByPosition(world, gameID)
 	if err != nil {
 		return false, err
 	}
