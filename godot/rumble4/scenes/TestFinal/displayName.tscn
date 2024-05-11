@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cirlky5uxiq8r"]
+
+[node name="UsernameLabel" type="Label"]
+offset_left = 88.0
+offset_top = 369.0
+offset_right = 89.0
+offset_bottom = 392.0
