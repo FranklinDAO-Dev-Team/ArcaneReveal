@@ -1,6 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://5dcoq1ojrjcf"]
+[gd_scene load_steps=11 format=3 uid="uid://5dcoq1ojrjcf"]
 
 [ext_resource type="Texture2D" uid="uid://cxtpr76of2qap" path="res://assets/TX Tileset Stone Ground.png" id="1_cg5xv"]
+[ext_resource type="Texture2D" uid="uid://badf0oi7geqt0" path="res://assets/RF_Catacombs_v1.0/torch_1.png" id="2_k21y3"]
+[ext_resource type="Texture2D" uid="uid://djq812yp8iams" path="res://assets/RF_Catacombs_v1.0/torch_2.png" id="3_07ajb"]
+[ext_resource type="Texture2D" uid="uid://ctyoafm6pwo2r" path="res://assets/RF_Catacombs_v1.0/torch_3.png" id="4_7jj68"]
+[ext_resource type="Texture2D" uid="uid://lpjalvs3ixbj" path="res://assets/RF_Catacombs_v1.0/torch_4.png" id="5_g7g6f"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wxi5y"]
 atlas = ExtResource("1_cg5xv")
@@ -17,15 +21,48 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ryu7e"]
+atlas = ExtResource("2_k21y3")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_luxfi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_g7g6f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ryu7e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_07ajb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_7jj68")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xuysp"]
 size = Vector2(30, 30)
 
 [node name="Wall" type="StaticBody2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+modulate = Color(0.462745, 0.411765, 0.356863, 1)
 sprite_frames = SubResource("SpriteFrames_hxiyr")
+frame_progress = 0.671259
 centered = false
+
+[node name="Fire" type="AnimatedSprite2D" parent="."]
+position = Vector2(16, 15)
+sprite_frames = SubResource("SpriteFrames_luxfi")
+frame = 3
+frame_progress = 0.177906
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_xuysp")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
