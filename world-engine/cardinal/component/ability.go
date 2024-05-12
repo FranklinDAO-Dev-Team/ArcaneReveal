@@ -1,8 +1,6 @@
 package component
 
 import (
-	"log"
-
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/types"
 )
@@ -44,7 +42,10 @@ const (
 	GameEventPlayerDown                           // 12
 	GameEventPlayerLeft                           // 13
 	GameEventMonsterHeal                          // 14
-	GameEventMonsterPolymorph                     // 15
+	GameEventMonsterPolymorph0                    // 15
+	GameEventMonsterPolymorph1                    // 16
+	GameEventMonsterPolymorph2                    // 17
+	GameEventMonsterPolymorph3                    // 18
 )
 
 type Ability interface {
@@ -146,24 +147,20 @@ func incrementHealthIfNeeded(
 }
 
 func handleEntityDeath(world cardinal.WorldContext, gameID types.EntityID, entityID types.EntityID) (err error) {
-	log.Println("enetered handleEntityDeath()")
 	health, err := cardinal.GetComponent[Health](world, entityID)
 	if err != nil {
 		return err
 	}
-	log.Printf("entity %d has health %d\n", entityID, health.CurrHealth)
 	if health.CurrHealth > 0 {
 		// if not dead, nothing to do
 		return nil
 	}
-	log.Printf("entity %d is dead\n", entityID)
 	// entity is dead, so remove it
 	// Add to score if it's a monster
 	colType, err := getCollisionType(world, entityID)
 	if err != nil {
 		return err
 	}
-	log.Printf("entity %d is of type %d\n", entityID, colType)
 	if colType == MonsterCollide {
 		game, err := cardinal.GetComponent[Game](world, gameID)
 		if err != nil {
@@ -174,8 +171,6 @@ func handleEntityDeath(world cardinal.WorldContext, gameID types.EntityID, entit
 			return err
 		}
 		game.Score += 10 * (int(monsterType.Type) + 1)
-		log.Printf("updated game score to %d\n", game.Score)
-		log.Printf("game: %v\n", game)
 		cardinal.SetComponent(world, gameID, game)
 	}
 	err = cardinal.Remove(world, entityID)

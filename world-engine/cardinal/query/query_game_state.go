@@ -57,7 +57,6 @@ type GameStateResponse struct {
 }
 
 func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateResponse, error) {
-	log.Println("GameState() querying data for game ", req.GameID)
 	playerData := &PlayerData{}
 	wands := &[]WandData{}
 	walls := &[]WallData{}
@@ -70,8 +69,6 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 		world,
 		filter.Contains(comp.GameObj{})).
 		Each(func(id types.EntityID) bool {
-			// log.Printf("id: %v\n", id)
-
 			gameObj, err := cardinal.GetComponent[comp.GameObj](world, id)
 			if err != nil {
 				log.Println("gameObj err: ", err)
@@ -123,8 +120,6 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 	if err != nil {
 		return nil, err
 	}
-
-	log.Printf("game: %v\n", game)
 
 	return &GameStateResponse{
 		GameID:   gameID,
