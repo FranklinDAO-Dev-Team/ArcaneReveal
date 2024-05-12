@@ -1,7 +1,6 @@
 extends Node
 
 var game_started = false
-
 var enemy_state = {}
 var player
 var player_prev_x
@@ -16,7 +15,8 @@ var username = ""
 @onready var socket
 @onready var session : NakamaSession
 @onready var ray = $RayCast3D
-
+@onready var display_username = preload("res://scenes/TestFinal/displayName.tscn").instantiate()
+@onready var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
 
 var enemies_defeated = 0
 const tile_size = 32
@@ -34,19 +34,28 @@ func _on_enemy_exited(enemy: Area2D):
 		if enemies_defeated == 2:
 			# Display WIN text or perform any other desired action
 			$GameWinLabel.visible = true
-	
 
 func _ready():
-	var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
 	add_child(username_input_screen)
 	username_input_screen.connect("username_submitted", Callable(self, "_on_username_submitted"))
-	
+
 func _on_username_submitted(submitted_username):
-	var display_username = preload("res://scenes/TestFinal/displayName.tscn").instantiate()
 	add_child(display_username)
 	username = submitted_username
 	display_username.text = "Username: " + username
-	
+
+	# Reset game state variables
+	game_over = false
+	enemies_defeated = 0
+	enemy_state.clear()
+	wall_state.clear()
+	staff_nodes.clear()
+
+	# Remove existing nodes
+	for child in get_children():
+		if child.is_in_group("game_objects"):
+			child.queue_free()
+
 	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
 	socket = Nakama.create_socket_from(client)
 
@@ -64,9 +73,9 @@ func _on_username_submitted(submitted_username):
 		print("An error occurred: %s" % connected_result)
 		return
 	print("Socket connected.")
-	
+
 	socket.received_notification.connect(self._on_notification)
-	
+
 	# Check whether account already has persona with the entered username
 	var resp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
 	if resp.is_exception():
@@ -80,7 +89,7 @@ func _on_username_submitted(submitted_username):
 	else:
 		if JSON.parse_string(resp.payload)["status"] == "accepted":
 			print("Persona already exists, using existing persona")
-	
+
 	while true:
 		# wait until show persona succeed
 		var personaResp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
@@ -92,11 +101,10 @@ func _on_username_submitted(submitted_username):
 			if personaResp.payload != null and JSON.parse_string(personaResp.payload)["status"] == "accepted":
 				print("Device has a persona, continuing")
 				break
-	
+
 	# Make CreateGame TXN call
 	var random = RandomNumberGenerator.new()
 	resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
-	#print(resp)
 	if resp.is_exception():
 		print("An error occurred: %s", % resp)
 		return
@@ -112,58 +120,17 @@ func _on_username_submitted(submitted_username):
 	initialize_state(state)
 	game_started = true
 
-func start_new_game():
-	# Reset game state variables
-	game_over = false
-	enemies_defeated = 0
-	enemy_state.clear()
-	wall_state.clear()
-	staff_nodes.clear()
-	
-	# Remove existing nodes
-	for child in get_children():
-		if child.is_in_group("game_objects"):
-			child.queue_free()
-	
-	# Make CreateGame TXN call
-	var random = RandomNumberGenerator.new()
-	var resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
-	if resp.is_exception():
-		print("An error occurred: %s", % resp)
-		return
-	print("Successfully created game request entity: %s", % resp)
-	var payload = await wait_for_game_creation()
-	var json = JSON.new()
-	var state = json.parse_string(payload)
-	for row in range(grid_size):
-		wall_state.append([])
-		for col in range(grid_size):
-			wall_state[row].append(null)
-			
-	initialize_state(state)
-
 func _on_rpc_response(result: NakamaAsyncResult):
 	if result.is_successful():
 		print("RPC succeeded: ", result.payload)
 	else:
 		print("RPC failed: ", result.error)
 
-
 func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	var notification = JSON.new()
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
-	if notification.data.has("event") and notification.data["event"] == "game-over":
-		player.update_health_ui(true)
-		game_over = true
-		
-		# Add a delay before starting a new game
-		await get_tree().create_timer(2.0).timeout
-		
-		# Start a new game
-		start_new_game()
-		
-		return
+
 	if notification.data.has("turnEvent"):
 		process_event(notification.data)
 		var payload = await handle_query()
@@ -509,7 +476,7 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event):
 	if game_started:
-		var gameID = await get_gameID();
+		var gameID = await get_gameID()
 		for dir in inputs.keys():
 			if event.is_action_pressed(dir) and not has_wall_collision(dir):
 				if has_player_attacked(dir):
@@ -518,11 +485,11 @@ func _unhandled_input(event):
 						"Action": "attack",
 						"Direction": dir,
 						"WandNum": "0",
-						}))
+					}))
 				else:
 					var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
 						"GameIDStr": str(gameID),
 						"Action": "move",
 						"Direction": dir,
 						"WandNum": "0",
-						}))
+					}))

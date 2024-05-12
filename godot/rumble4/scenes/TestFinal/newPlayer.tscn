@@ -1,7 +1,7 @@
 [gd_scene load_steps=21 format=3 uid="uid://dbch3nuw8pnkn"]
 
 [ext_resource type="Script" path="res://scenes/TestFinal/newPlayer.gd" id="1_ofh1u"]
-[ext_resource type="Texture2D" path="res://assets/AnimationSheet_Character.png" id="2_ejdsl"]
+[ext_resource type="Texture2D" uid="uid://beg5ahw1af5qx" path="res://assets/AnimationSheet_Character.png" id="2_ejdsl"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="6_bdseo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]

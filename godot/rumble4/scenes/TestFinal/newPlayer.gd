@@ -5,11 +5,9 @@ var health = MAX_HEALTH
 var x_pos
 var y_pos
 var id
-
 const animation_speed = 3
 var moving = false
 const tile_size = 32
-
 var inputs = {
 	"right": Vector2.RIGHT,
 	"left": Vector2.LEFT,
@@ -28,25 +26,25 @@ func _ready():
 	$"../Player/LifeBar/Life5".play("hearts")
 	update_health_ui(false)
 	global_position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
-	
 	$StaffPositionTop.position = Vector2(16, 0)  # Adjust this offset
 	$StaffPositionBottom.position = Vector2(16, 32)  # Adjust this offset
 	$StaffPositionLeft.position = Vector2(0, 16)  # Adjust this offset
 	$StaffPositionRight.position = Vector2(32, 16)  # Adjust this offset
-	
 
 func _process(delta):
 	$Sprite.play("idle")
 	update_health_ui(false)
-	
 
 func update_health_ui(game_over):
 	if health == 0 or game_over:
 		queue_free()
 		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
+		# Prompt the user for a new username
+		var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
+		game_node.add_child(username_input_screen)
+		username_input_screen.connect("username_submitted", Callable(game_node, "_on_username_submitted"))
 	for i in range(MAX_HEALTH):
 		$"../Player/LifeBar".get_child(i).visible = health > i
-
 
 func move(x_curr, y_curr):
 	var pos = Vector2((x_curr - 1) * tile_size, (y_curr - 1) * tile_size)
