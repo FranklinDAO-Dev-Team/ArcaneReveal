@@ -163,7 +163,7 @@ _data = {
 "player_hit": SubResource("Animation_c7y14")
 }
 
-[node name="Player" type="Area2D"]
+[node name="oldPlayer" type="Area2D"]
 position = Vector2(-1, -1)
 script = ExtResource("1_7xlh3")
 
