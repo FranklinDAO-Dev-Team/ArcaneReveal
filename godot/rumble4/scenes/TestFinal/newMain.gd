@@ -177,6 +177,37 @@ func handle_query():
 	else:
 		print("JSON Parse Error:", json.get_error_message())
 
+func get_gameID():
+	var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
+		"Persona": username,
+	}))
+	print(resp_getID)  # This should show the response details including payload
+
+	# Create a new JSON object and parse the response payload
+	var json = JSON.new()
+	var error = json.parse(resp_getID.payload)
+	if error == OK:
+		var response_dict = json.data  # Access the parsed data
+
+		# Check if the 'Success' key is true and then access 'GameID'
+		if response_dict and "Success" in response_dict and response_dict["Success"]:
+			var game_id = response_dict["GameID"]
+			print("Game ID: ", game_id)
+
+			# Make another RPC call using the retrieved GameID
+			var resp_getGameState = await client.rpc_async(session, "query/game/game-state", JSON.stringify({
+				"GameID": game_id,  # Use the actual game ID retrieved
+			}))
+			#print(resp_getGameState)  # Print the state response
+			return game_id;
+		else:
+			print("Failed to get Game ID or the response did not indicate success.")
+	else:
+		print("JSON Parse Error:", json.get_error_message())
+		
+func get_gameID_for_child():
+	return await get_gameID()
+
 
 func wait_for_game_creation():
 	var created = false
@@ -433,18 +464,19 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event):
 	if game_started:
+		var gameID = await get_gameID();
 		for dir in inputs.keys():
 			if event.is_action_pressed(dir) and not has_wall_collision(dir):
 				if has_player_attacked(dir):
 					var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
-						"GameIDStr": "2",
+						"GameIDStr": str(gameID),
 						"Action": "attack",
 						"Direction": dir,
 						"WandNum": "0",
 						}))
 				else:
 					var resp = await client.rpc_async(session, "tx/game/player-turn", JSON.stringify({
-						"GameIDStr": "2",
+						"GameIDStr": str(gameID),
 						"Action": "move",
 						"Direction": dir,
 						"WandNum": "0",
