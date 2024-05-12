@@ -4,6 +4,8 @@ var game_started = false
 
 var enemy_state = {}
 var player
+var player_prev_x
+var player_prev_y
 var level
 var wall_state = []
 var game_over = false
@@ -162,8 +164,7 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 		start_new_game()
 		
 		return
-	if (not game_over) and notification.data.has("turnEvent"):
-		print(game_over)
+	if notification.data.has("turnEvent"):
 		process_event(notification.data)
 		var payload = await handle_query()
 		var json = JSON.new()
@@ -175,7 +176,6 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 
 	if (not game_over) and notification.data.has("event") and notification.data["event"] == "player_turn":
 		print("caught player turn event")
-		print(game_over)
 		var payload = await handle_query()
 		var json = JSON.new()
 		if payload != null:
@@ -206,7 +206,7 @@ func handle_query():
 			var resp_getGameState = await client.rpc_async(session, "query/game/game-state", JSON.stringify({
 				"GameID": game_id,  # Use the actual game ID retrieved
 			}))
-			#print(resp_getGameState)  # Print the state response
+			print(resp_getGameState)  # Print the state response
 			return resp_getGameState.payload
 		else:
 			print("Failed to get Game ID or the response did not indicate success.")
@@ -299,6 +299,8 @@ func initialize_state(state : Dictionary):
 		player.y_pos = int(player_init["y"])
 		player.health = int(player_init["currHealth"])
 		player.id = int(player_init["id"])
+	player_prev_x = player.x_pos
+	player_prev_y = player.y_pos
 		
 	# Remove all existing staff nodes in reverse order
 	for child in player.get_children():
@@ -344,6 +346,14 @@ func initialize_state(state : Dictionary):
 		var wall_instance = wall_scene.instantiate()
 				
 		wall_instance.global_position = position
+		if (x_pos % 2 == 0 and y_pos % 2 == 0):
+			wall_instance.get_node("Fire").play("default")
+		else:
+			wall_instance.get_node("Fire").visible = false
+			
+		if (x_pos == 0 or x_pos == 10 or y_pos == 0 or y_pos == 10):
+			wall_instance.visible = false
+			
 		# Add the instance as a child to the main scene
 		wall_state[x_pos][y_pos] = wall_instance
 		add_child(wall_instance)
@@ -358,6 +368,7 @@ func initialize_state(state : Dictionary):
 		# Set the global position of the instance to the specified position
 		enemy_instance.x_pos = int(monster["x"])
 		enemy_instance.y_pos = int(monster["y"])
+		enemy_instance.max_health = int(monster["currHealth"])
 		enemy_instance.health = int(monster["currHealth"])
 		enemy_instance.id = int(monster["id"])
 			
@@ -372,9 +383,10 @@ func process_state(state : Dictionary):
 	var player_state = state["player"]
 	var player_x = int(player_state["x"])
 	var player_y = int(player_state["y"])
+	player_prev_x = player_x
+	player_prev_y = player_y
 	
 	player.move(player_x, player_y)
-	player.health = int(player_state["currHealth"])
 	
 	## Update staff nodes' positions
 	#for staff_node in staff_nodes:
@@ -462,17 +474,15 @@ func process_event(notification : Dictionary):
 					animation_player = basic_lightning_instance.get_node("WallActivation")
 					animation_player.play("default")
 				4: 
-					var payload = await handle_query()
-					var json = JSON.new()
-					if payload != null:
-						var state = json.parse_string(payload)
-						process_state(state)
+					await get_tree().create_timer(0.4).timeout
 					for enemy in enemy_state.values():
 						if x_pos == enemy.x_pos and y_pos == enemy.y_pos and player != null:
-							enemy.attack(player.x_pos, player.y_pos)
+							enemy.attack(player_prev_x, player_prev_y)
+							player.health -= 1
 				_:
 					# Handle unexpected action
 					print("")
+
 
 func has_player_attacked(dir):
 	var new_player_pos = Vector2(player.x_pos, player.y_pos) + 2 * inputs[dir]
