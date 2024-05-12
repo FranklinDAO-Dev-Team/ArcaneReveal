@@ -48,14 +48,15 @@ type GameStateRequest struct {
 type GameStateResponse struct {
 	GameID   types.EntityID `json:"gameID"`
 	Level    int            `json:"level"`
+	Score    int            `json:"score"`
 	Player   PlayerData     `json:"player"`
+	Reveals  [][]int        `json:"reveals"`
 	Wands    []WandData     `json:"wands"`
 	Walls    []WallData     `json:"walls"`
 	Monsters []MonsterData  `json:"monsters"`
 }
 
 func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateResponse, error) {
-	log.Println("GameState() querying data for game ", req.GameID)
 	playerData := &PlayerData{}
 	wands := &[]WandData{}
 	walls := &[]WallData{}
@@ -68,8 +69,6 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 		world,
 		filter.Contains(comp.GameObj{})).
 		Each(func(id types.EntityID) bool {
-			// log.Printf("id: %v\n", id)
-
 			gameObj, err := cardinal.GetComponent[comp.GameObj](world, id)
 			if err != nil {
 				log.Println("gameObj err: ", err)
@@ -125,6 +124,8 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 	return &GameStateResponse{
 		GameID:   gameID,
 		Level:    game.Level,
+		Score:    game.Score,
+		Reveals:  *game.Reveals,
 		Player:   *playerData,
 		Wands:    *wands,
 		Walls:    *walls,

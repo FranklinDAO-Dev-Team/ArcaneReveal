@@ -1,12 +1,11 @@
 package component
 
 import (
-	"log"
-
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// polymorph
 const Ability10ID = 10
 
 type Ability10 struct{}
@@ -15,6 +14,9 @@ var _ Ability = &Ability10{}
 
 func (Ability10) GetAbilityID() int {
 	return Ability10ID
+}
+func (Ability10) GetAbilityName() string {
+	return "polymorph"
 }
 
 // polymorphs the monster
@@ -45,12 +47,14 @@ func (Ability10) Resolve(
 	}
 
 	if executeUpdates {
-		err = polymorphMonster(world, gameID, id)
+		newMonsterType, err := polymorphMonster(world, gameID, id)
 		if err != nil {
-			log.Println("polymorphMonster() err: %w", err)
+			// log.Println("polymorphMonster() err: %w", err)
 			return false, err
 		}
-		gameEvent := GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: GameEventMonsterPolymorph}
+		monsterTypeToPolymorphEventOffset := 15
+		polymorphEvent := GameEvent(int(newMonsterType) + monsterTypeToPolymorphEventOffset)
+		gameEvent := GameEventLog{X: spellPosition.X, Y: spellPosition.Y, Event: polymorphEvent}
 		*eventLogList = append(*eventLogList, gameEvent)
 	}
 
@@ -58,28 +62,27 @@ func (Ability10) Resolve(
 	return true, nil
 }
 
-func polymorphMonster(world cardinal.WorldContext, gameID types.EntityID, monID types.EntityID) error {
-	log.Println("entered polymorphMonster()")
+func polymorphMonster(world cardinal.WorldContext, gameID types.EntityID, monID types.EntityID) (newMonsterType MonsterType, err error) {
 	// get monster type
 	monster, err := cardinal.GetComponent[Monster](world, monID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	monsterPos, err := cardinal.GetComponent[Position](world, monID)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	newMonsterType := (monster.Type + 1) % NumMonsterTypes
-	log.Println("oldMonsterType: ", monster.Type)
-	log.Println("newMonsterType: ", newMonsterType)
+	newMonsterType = (monster.Type + 1) % NumMonsterTypes
+	// log.Println("oldMonsterType: ", monster.Type)
+	// log.Println("newMonsterType: ", newMonsterType)
 	// remove old monster
 	err = cardinal.Remove(world, monID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// create new monster
-	newMonID, err := cardinal.Create(world,
+	_, err = cardinal.Create(world,
 		Monster{
 			Type: newMonsterType,
 		},
@@ -95,11 +98,11 @@ func polymorphMonster(world cardinal.WorldContext, gameID types.EntityID, monID 
 		GameObj{GameID: gameID},
 	)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	log.Println("oldMonID: ", monID)
-	log.Println("newMonID: ", newMonID)
+	// log.Println("oldMonID: ", monID)
+	// log.Println("newMonID: ", newMonID)
 
-	return nil
+	return newMonsterType, nil
 
 }
