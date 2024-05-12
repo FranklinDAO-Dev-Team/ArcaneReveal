@@ -187,7 +187,7 @@ func playerTurnAttack(
 		case comp.MonsterCollide:
 			gameEvent := comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: comp.GameEventPlayerAttack}
 			*eventLogList = append(*eventLogList, gameEvent)
-			return comp.DecrementHealth(world, id)
+			return comp.DamageEntity(world, gameID, id, true, true)
 		default:
 			return fmt.Errorf("attempting to attack %s", colType.ToString())
 		}

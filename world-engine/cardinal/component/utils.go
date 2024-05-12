@@ -9,6 +9,14 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+func getCollisionType(world cardinal.WorldContext, entityID types.EntityID) (collType CollideType, err error) {
+	colID, err := cardinal.GetComponent[Collidable](world, entityID)
+	if err != nil {
+		return collType, fmt.Errorf("getCollisionType err on entity %d: %w", entityID, err)
+	}
+	return colID.Type, nil
+}
+
 func IsCollisonThere(world cardinal.WorldContext, gameID types.EntityID, pos Position) (bool, error) {
 	found, id, err := pos.GetEntityIDByPosition(world, gameID)
 	if err != nil {

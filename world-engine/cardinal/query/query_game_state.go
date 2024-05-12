@@ -48,6 +48,7 @@ type GameStateRequest struct {
 type GameStateResponse struct {
 	GameID   types.EntityID `json:"gameID"`
 	Level    int            `json:"level"`
+	Score    int            `json:"score"`
 	Player   PlayerData     `json:"player"`
 	Reveals  [][]int        `json:"reveals"`
 	Wands    []WandData     `json:"wands"`
@@ -123,9 +124,12 @@ func GameState(world cardinal.WorldContext, req *GameStateRequest) (*GameStateRe
 		return nil, err
 	}
 
+	log.Printf("game: %v\n", game)
+
 	return &GameStateResponse{
 		GameID:   gameID,
 		Level:    game.Level,
+		Score:    game.Score,
 		Reveals:  *game.Reveals,
 		Player:   *playerData,
 		Wands:    *wands,

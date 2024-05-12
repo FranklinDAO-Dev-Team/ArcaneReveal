@@ -5,6 +5,7 @@ type Game struct {
 	Commitments *[][]string
 	Reveals     *[][]int
 	Level       int
+	Score       int
 }
 
 func (Game) Name() string {

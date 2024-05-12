@@ -1,6 +1,8 @@
 package component
 
 import (
+	"log"
+
 	"pkg.world.dev/world-engine/cardinal"
 	"pkg.world.dev/world-engine/cardinal/types"
 )
@@ -74,34 +76,43 @@ func damageAtPosition(
 		return false, nil
 	}
 
-	return damageEntity(world, id, executeUpdates, includePlayer)
+	return true, DamageEntity(world, gameID, id, executeUpdates, includePlayer)
 }
 
-func damageEntity(
+// DamageEntity decrements the health of an entity and handles death if health reaches 0
+func DamageEntity(
 	world cardinal.WorldContext,
+	gameID types.EntityID,
 	id types.EntityID,
 	executeUpdates bool,
 	includePlayer bool,
-) (bool, error) {
+) error {
 	colType, err := cardinal.GetComponent[Collidable](world, id)
 	if err != nil {
-		return false, err
+		return err
 	}
-
 	switch colType.Type {
 	case MonsterCollide:
-		return decrementHealthIfNeeded(world, id, executeUpdates)
+		err = decrementHealthIfNeeded(world, id, executeUpdates)
+		if err != nil {
+			return err
+		}
+		return handleEntityDeath(world, gameID, id)
 	case PlayerCollide:
 		if includePlayer {
-			return decrementHealthIfNeeded(world, id, executeUpdates)
+			err = decrementHealthIfNeeded(world, id, executeUpdates)
+			if err != nil {
+				return err
+			}
+			return handleEntityDeath(world, gameID, id)
 		}
-		return false, nil
+		return nil
 	case WallCollide:
-		return false, nil
+		return nil
 	case ItemCollide:
-		return false, nil
+		return nil
 	default:
-		return false, nil
+		return nil
 	}
 }
 
@@ -110,14 +121,14 @@ func decrementHealthIfNeeded(
 	world cardinal.WorldContext,
 	id types.EntityID,
 	executeUpdates bool,
-) (bool, error) {
+) error {
 	if executeUpdates {
 		err := DecrementHealth(world, id)
 		if err != nil {
-			return false, err
+			return err
 		}
 	}
-	return true, nil
+	return nil
 }
 
 func incrementHealthIfNeeded(
@@ -132,4 +143,44 @@ func incrementHealthIfNeeded(
 		}
 	}
 	return true, nil
+}
+
+func handleEntityDeath(world cardinal.WorldContext, gameID types.EntityID, entityID types.EntityID) (err error) {
+	log.Println("enetered handleEntityDeath()")
+	health, err := cardinal.GetComponent[Health](world, entityID)
+	if err != nil {
+		return err
+	}
+	log.Printf("entity %d has health %d\n", entityID, health.CurrHealth)
+	if health.CurrHealth > 0 {
+		// if not dead, nothing to do
+		return nil
+	}
+	log.Printf("entity %d is dead\n", entityID)
+	// entity is dead, so remove it
+	// Add to score if it's a monster
+	colType, err := getCollisionType(world, entityID)
+	if err != nil {
+		return err
+	}
+	log.Printf("entity %d is of type %d\n", entityID, colType)
+	if colType == MonsterCollide {
+		game, err := cardinal.GetComponent[Game](world, gameID)
+		if err != nil {
+			return err
+		}
+		monsterType, err := cardinal.GetComponent[Monster](world, entityID)
+		if err != nil {
+			return err
+		}
+		game.Score += 10 * (int(monsterType.Type) + 1)
+		log.Printf("updated game score to %d\n", game.Score)
+		log.Printf("game: %v\n", game)
+		cardinal.SetComponent(world, gameID, game)
+	}
+	err = cardinal.Remove(world, entityID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
