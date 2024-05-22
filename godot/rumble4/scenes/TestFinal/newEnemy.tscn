@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://gmnh1e5w4yb3"]
+[gd_scene load_steps=32 format=3 uid="uid://gmnh1e5w4yb3"]
 
 [ext_resource type="Script" path="res://scenes/TestFinal/newEnemy.gd" id="1_f4gb2"]
 [ext_resource type="Texture2D" uid="uid://dj61foprisa50" path="res://assets/Little Mage/Attack/StaffCrystal/AttackCrystal1.png" id="2_hkyc6"]
@@ -14,9 +14,60 @@
 [ext_resource type="Texture2D" uid="uid://7x0vh0xpmk60" path="res://assets/Little Mage/Idle/Idle5.png" id="12_3ev8y"]
 [ext_resource type="Texture2D" uid="uid://bmux3p13jry11" path="res://assets/Little Mage/Idle/Idle6.png" id="13_v3r4f"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="14_ky6qg"]
+[ext_resource type="Texture2D" uid="uid://4s72a1c8ailh" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Base/Idle/Idle-Sheet.png" id="14_vktis"]
+[ext_resource type="Texture2D" uid="uid://msx076amkcmv" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Warrior/Idle/Idle-Sheet.png" id="15_traxf"]
+[ext_resource type="Texture2D" uid="uid://b77xty3tq2uyx" path="res://Pixel Crawler - FREE - 1.8/Enemy/Skeleton Crew/Skeleton - Rogue/Idle/Idle-Sheet.png" id="16_sdmul"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6hbu"]
 size = Vector2(30, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ojuge"]
+atlas = ExtResource("14_vktis")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wysmy"]
+atlas = ExtResource("14_vktis")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcay6"]
+atlas = ExtResource("14_vktis")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0i73m"]
+atlas = ExtResource("14_vktis")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1rmsr"]
+atlas = ExtResource("15_traxf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4h6nr"]
+atlas = ExtResource("15_traxf")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ftsee"]
+atlas = ExtResource("15_traxf")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1sedx"]
+atlas = ExtResource("15_traxf")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eysyk"]
+atlas = ExtResource("16_sdmul")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xhnhs"]
+atlas = ExtResource("16_sdmul")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wek7d"]
+atlas = ExtResource("16_sdmul")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jkvra"]
+atlas = ExtResource("16_sdmul")
+region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kri47"]
 animations = [{
@@ -65,6 +116,57 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ojuge")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wysmy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pcay6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0i73m")
+}],
+"loop": true,
+"name": &"idle_1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1rmsr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4h6nr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ftsee")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1sedx")
+}],
+"loop": true,
+"name": &"idle_2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eysyk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xhnhs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wek7d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jkvra")
+}],
+"loop": true,
+"name": &"idle_3",
+"speed": 5.0
 }]
 
 [node name="EnemyV2" type="Area2D"]
@@ -77,10 +179,10 @@ shape = SubResource("RectangleShape2D_t6hbu")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, 1)
-scale = Vector2(1.875, 1.875)
+scale = Vector2(0.9375, 0.9375)
 sprite_frames = SubResource("SpriteFrames_kri47")
-animation = &"attack"
-frame_progress = 0.149807
+animation = &"idle_3"
+frame_progress = 0.189887
 centered = false
 
 [node name="RayCast2D" type="RayCast2D" parent="."]

@@ -21,20 +21,12 @@ func DecrementHealth(world cardinal.WorldContext, entityID types.EntityID) (err 
 	}
 	health.CurrHealth--
 
-	if health.CurrHealth <= 0 {
-		// remove health entity
-		err = cardinal.Remove(world, entityID)
-		if err != nil {
-			return err
-		}
-	} else {
-		// update health component
-		err = cardinal.SetComponent[Health](world, entityID, health)
-		if err != nil {
-			return err
-		}
-	}
+	// update health component
+	err = cardinal.SetComponent[Health](world, entityID, health)
+	if err != nil {
+		return err
 
+	}
 	return nil
 }
 

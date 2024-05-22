@@ -1,6 +1,7 @@
 extends Area2D
 
 const MAX_HEALTH = 5
+var max_health = MAX_HEALTH
 var health = MAX_HEALTH
 var x_pos
 var y_pos
@@ -25,7 +26,12 @@ func _ready():
 
 
 func _process(delta):
-	$Sprite.play("idle")
+	if max_health == 1:
+		$Sprite.play("idle_1")
+	elif max_health == 2:
+		$Sprite.play("idle_2")
+	else:
+		$Sprite.play("idle_3")
 	update_health_ui()
 
 

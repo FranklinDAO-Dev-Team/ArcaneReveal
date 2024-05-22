@@ -49,11 +49,11 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 					commitments[i][j] = pubSignals[1+i*client.NumAbilities+j]
 				}
 			}
-			reveals := make([][]string, client.NumWands)
+			reveals := make([][]int, client.NumWands)
 			for i := range reveals {
-				reveals[i] = make([]string, client.NumAbilities)
+				reveals[i] = make([]int, client.NumAbilities)
 				for j := range reveals[i] {
-					reveals[i][j] = "-1"
+					reveals[i][j] = -1
 				}
 			}
 

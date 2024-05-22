@@ -33,7 +33,6 @@ func _ready():
 	lightning_animation_top.connect("animation_finished", _on_animation_finished)
 	lightning_animation_bottom.connect("animation_finished", _on_animation_finished)
 
-
 func _process(delta):
 	var hovered_wand = "Staff" + str(selected_wand)
 	if Input.is_action_just_pressed("select_wand1"):
@@ -75,8 +74,9 @@ func cast_wand(hovered_wand_selected, direction):
 		print("casting wand" + str(selected_wand))
 
 	if name == hovered_wand_selected:
+		var gameID = await game_node.get_gameID_for_child()
 		var resp = await game_node.client.rpc_async(game_node.session, "tx/game/player-turn", JSON.stringify({
-			"GameIDStr": "2",
+			"GameIDStr": str(gameID),
 			"Action": "wand",
 			"Direction": direction,
 			"WandNum": str(selected_wand - 1),
@@ -112,10 +112,3 @@ func _on_animation_finished():
 	var casted_wand = "Staff" + str(selected_wand)
 	if name == casted_wand:
 		queue_free()  # Delete the staff node after the animation finishes
-
-#func reset_staff():
-	#visible = true  # Make the staff node visible again
-	#position = starting_pos  # Reset the position to the starting position
-	#rotation = 0  # Reset the rotation of the staff
-	#lightning_animation_bottom.position = Vector2(0, 0)  # Reset the position of the lightning animation
-	#$Icon.visible = false  # Hide the icon when the staff is reset

@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0e5fjc8u3vsm"]
+
+[ext_resource type="Script" path="res://scenes/TestFinal/username.gd" id="1_67vwy"]
+
+[node name="Username" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 56.0
+offset_top = 72.0
+offset_right = 56.0
+offset_bottom = 72.0
+script = ExtResource("1_67vwy")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 195.0
+offset_top = -32.0
+offset_right = 294.0
+offset_bottom = 31.0
+scale = Vector2(-2.0642, 2.25758)
+color = Color(0.352941, 0.352941, 0.352941, 1)
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_right = 184.0
+offset_bottom = 40.0
+placeholder_text = "Enter Persona"
+
+[node name="Button" type="Button" parent="."]
+modulate = Color(0.117647, 0.905882, 1, 1)
+layout_mode = 0
+offset_left = 64.0
+offset_top = 56.0
+offset_right = 128.0
+offset_bottom = 87.0
+text = "Submit
+"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

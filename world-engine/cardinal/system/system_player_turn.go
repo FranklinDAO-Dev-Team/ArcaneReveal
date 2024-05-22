@@ -187,7 +187,7 @@ func playerTurnAttack(
 		case comp.MonsterCollide:
 			gameEvent := comp.GameEventLog{X: playerPos.X, Y: playerPos.Y, Event: comp.GameEventPlayerAttack}
 			*eventLogList = append(*eventLogList, gameEvent)
-			return comp.DecrementHealth(world, id)
+			return comp.DamageEntity(world, gameID, id, true, true)
 		default:
 			return fmt.Errorf("attempting to attack %s", colType.ToString())
 		}
@@ -202,7 +202,6 @@ func playerTurnWand(
 	direction comp.Direction,
 	wandnum int,
 ) (castID types.EntityID, potentialAbilities *[client.TotalAbilities]bool, err error) {
-	log.Println("playerTurnWand")
 	playerID, err := comp.QueryPlayerID(world, gameID)
 	if err != nil {
 		return 0, nil, err
@@ -237,15 +236,12 @@ func playerTurnWand(
 	}
 
 	// simulate a cast to determine potential ability activations
-	// log.Printf("playerTurnWand potentialAbilities BEFORE resolveAbilities: %v \n", spell.Abilities)
 	updateChainState := false
 	dummy := &[]comp.GameEventLog{} // dummy event log, not used for anything but to satisfy the function signature
 	err = resolveAbilities(world, gameID, spell, playerPos, spell.Abilities, updateChainState, dummy)
 	if err != nil {
 		return 0, nil, err
 	}
-	log.Printf("playerTurnWand potentialAbilities AFTER resolveAbilities: %v \n\n", spell.Abilities)
-	// log.Printf("dummy event log: %v \n", dummy)
 
 	// create a new entity for the cast to later be resolved
 	castID, err = cardinal.Create(
