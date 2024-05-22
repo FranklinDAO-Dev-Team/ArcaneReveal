@@ -155,7 +155,7 @@ func handle_query():
 			var resp_getGameState = await client.rpc_async(session, "query/game/game-state", JSON.stringify({
 				"GameID": game_id,  # Use the actual game ID retrieved
 			}))
-			#print(resp_getGameState)  # Print the state response
+			print(resp_getGameState)  # Print the state response
 			return resp_getGameState.payload
 		else:
 			print("Failed to get Game ID or the response did not indicate success.")
