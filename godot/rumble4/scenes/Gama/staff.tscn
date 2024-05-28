@@ -1,0 +1,69 @@
+[gd_scene load_steps=6 format=3 uid="uid://dt2rnmodleduw"]
+
+[ext_resource type="Script" path="res://scripts/staff.gd" id="1_ikqvr"]
+[ext_resource type="Texture2D" uid="uid://b4pq5fqc5r47q" path="res://assets/tile001.png" id="2_ld3wj"]
+[ext_resource type="PackedScene" uid="uid://bu0gr54ywawxt" path="res://scenes/Gama/spell1.tscn" id="3_jgts1"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nltpd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ld3wj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n3ool"]
+
+[node name="Staff" type="Node2D"]
+z_index = 1
+script = ExtResource("1_ikqvr")
+metadata/_edit_group_ = true
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_nltpd")
+
+[node name="Area2D" type="Area2D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_n3ool")
+
+[node name="SpellRight" parent="." instance=ExtResource("3_jgts1")]
+z_index = 1
+position = Vector2(56, -7.86724e-12)
+rotation = 3.14159
+scale = Vector2(0.2, 0.2)
+
+[node name="SpellLeft" parent="." instance=ExtResource("3_jgts1")]
+z_index = 1
+position = Vector2(-51, 8.80634e-12)
+rotation = 3.14159
+scale = Vector2(0.2, 0.2)
+
+[node name="SpellTop" parent="." instance=ExtResource("3_jgts1")]
+z_index = 1
+position = Vector2(-7.21746e-14, -51)
+rotation = 4.71239
+scale = Vector2(0.2, 0.2)
+
+[node name="SpellBottom" parent="." instance=ExtResource("3_jgts1")]
+z_index = 1
+position = Vector2(2.16242e-13, 52)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+
+[node name="Icon" type="ColorRect" parent="."]
+visible = false
+offset_top = -22.0
+offset_right = 8.0
+offset_bottom = -14.0
+rotation = 0.785398
+color = Color(0.356863, 1, 0.882353, 1)
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

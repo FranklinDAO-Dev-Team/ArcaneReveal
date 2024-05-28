@@ -76,39 +76,65 @@ func _on_username_submitted(submitted_username):
 
 	socket.received_notification.connect(self._on_notification)
 
-	# Check whether account already has persona with the entered username
+	# Check if the persona already exists
 	var resp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
 	if resp.is_exception():
-		print("An error occurred: %s", % resp)
+		print("Persona not found, creating a new one: %s" % resp)
 		# Create persona if it doesn't exist
 		resp = await client.rpc_async(session, "nakama/claim-persona", JSON.stringify({"personaTag": username}))
 		if resp.is_exception():
-			print("An error occurred while claiming persona: %s", % resp)
+			print("An error occurred while claiming persona: %s" % resp)
 			return
 		print("Created PersonaTag: ", username)
+		# Verify the newly created persona
+		await verify_persona()
 	else:
 		if JSON.parse_string(resp.payload)["status"] == "accepted":
 			print("Persona already exists, using existing persona")
+			load_existing_game()
+			return
+		else:
+			print("An error occurred while checking persona: %s" % resp)
+			return
 
+	start_new_game()
+
+func verify_persona():
 	while true:
-		# wait until show persona succeed
 		var personaResp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
 		if personaResp.is_exception():
-			print("persona is not registered yet, waiting")
-			await get_tree().create_timer(0.25)
+			print("Persona is not registered yet, waiting")
+			await get_tree().create_timer(0.25).timeout
 			continue
 		else:
 			if personaResp.payload != null and JSON.parse_string(personaResp.payload)["status"] == "accepted":
 				print("Device has a persona, continuing")
-				break
+				return
 
-	# Make CreateGame TXN call
+func load_existing_game():
+	var game_id = await get_gameID()
+	if game_id != null:
+		var game_state = await client.rpc_async(session, "query/game/game-state", JSON.stringify({"GameID": game_id}))
+		if game_state.is_exception():
+			print("Failed to load game state: %s" % game_state)
+			return
+		for row in range(grid_size):
+			wall_state.append([])
+			for col in range(grid_size):
+				wall_state[row].append(null)
+		initialize_state(JSON.parse_string(game_state.payload))
+		game_started = true
+		print("Loaded existing game with GameID: ", game_id)
+	else:
+		print("No existing game found for the persona: ", username)
+
+func start_new_game():
 	var random = RandomNumberGenerator.new()
-	resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
+	var resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
 	if resp.is_exception():
-		print("An error occurred: %s", % resp)
+		print("An error occurred: %s" % resp)
 		return
-	print("Successfully created game request entity: %s", % resp)
+	print("Successfully created game request entity: %s" % resp)
 	var payload = await wait_for_game_creation()
 	var json = JSON.new()
 	var state = json.parse_string(payload)
@@ -116,9 +142,11 @@ func _on_username_submitted(submitted_username):
 		wall_state.append([])
 		for col in range(grid_size):
 			wall_state[row].append(null)
-			
 	initialize_state(state)
 	game_started = true
+	print("Started new game")
+
+
 
 func _on_rpc_response(result: NakamaAsyncResult):
 	if result.is_successful():
@@ -186,27 +214,21 @@ func get_gameID():
 	}))
 	print(resp_getID)  # This should show the response details including payload
 
-	# Create a new JSON object and parse the response payload
 	var json = JSON.new()
 	var error = json.parse(resp_getID.payload)
 	if error == OK:
-		var response_dict = json.data  # Access the parsed data
+		var response_dict = json.data
 
-		# Check if the 'Success' key is true and then access 'GameID'
 		if response_dict and "Success" in response_dict and response_dict["Success"]:
 			var game_id = response_dict["GameID"]
 			print("Game ID: ", game_id)
-
-			# Make another RPC call using the retrieved GameID
-			var resp_getGameState = await client.rpc_async(session, "query/game/game-state", JSON.stringify({
-				"GameID": game_id,  # Use the actual game ID retrieved
-			}))
-			#print(resp_getGameState)  # Print the state response
-			return game_id;
+			return game_id
 		else:
 			print("Failed to get Game ID or the response did not indicate success.")
 	else:
 		print("JSON Parse Error:", json.get_error_message())
+	return null
+
 		
 func get_gameID_for_child():
 	return await get_gameID()
@@ -236,7 +258,7 @@ func wait_for_game_creation():
 					"GameID": game_id,  # Use the actual game ID retrieved
 				}))
 				print(resp_getGameState)  # Print the state response
-				created = false
+				created = true
 				return resp_getGameState.payload
 			else:
 				print("Failed to get Game ID or the response did not indicate success.")
@@ -245,13 +267,13 @@ func wait_for_game_creation():
 	return
 
 
-func initialize_state(state : Dictionary):
+func initialize_state(state: Dictionary):
 	var player_init = state["player"]
 	var wands = state["wands"]
 	var walls = state["walls"]
 	var monsters = state["monsters"]
 	level = state["level"]
-	
+
 	if player == null:
 		var player_scene = load("res://scenes/TestFinal/newPlayer.tscn")
 		var player_instance = player_scene.instantiate()
@@ -268,19 +290,15 @@ func initialize_state(state : Dictionary):
 		player.id = int(player_init["id"])
 	player_prev_x = player.x_pos
 	player_prev_y = player.y_pos
-		
-	# Remove all existing staff nodes in reverse order
+
+	# Clear existing staff nodes
 	for child in player.get_children():
 		if child.name.begins_with("Staff"):
 			player.remove_child(child)
-	
+
 	# Clear the staff_nodes array
 	staff_nodes.clear()
-	
-	print("AFTER CLEARING")
-	for child in player.get_children():
-		print(child.name)  # Print the name of each child node
-	
+
 	# Create new staff nodes
 	for i in range(1, 5):
 		var staff_scene = load("res://scenes/Gama/staff_1.tscn")
@@ -291,57 +309,60 @@ func initialize_state(state : Dictionary):
 		staff_instance.name = staff_name
 		player.add_child(staff_instance)
 		staff_nodes.append(staff_instance)
-	
-	print("AFTER ADDING")
-	for child in player.get_children():
-		print(child.name)  # Print the name of each child node
-		
+
+	# Clear existing walls
 	for row in range(grid_size):
 		for col in range(grid_size):
 			if wall_state[row][col] != null:
 				var curr_wall = wall_state[row][col]
 				curr_wall.queue_free()
 				wall_state[row][col] = null
-			
+
+	# Initialize wall_state with correct dimensions if it's not already initialized
+	if wall_state.size() != grid_size:
+		wall_state = []
+		for row in range(grid_size):
+			wall_state.append([])
+			for col in range(grid_size):
+				wall_state[row].append(null)
+
+	# Add new walls
 	for wall in walls:
 		var x_pos = int(wall["x"])
 		var y_pos = int(wall["y"])
-		
+
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
-			
+
 		var wall_scene = load("res://scenes/Gama/wall.tscn")
 		var wall_instance = wall_scene.instantiate()
-				
+
 		wall_instance.global_position = position
 		if (x_pos % 2 == 0 and y_pos % 2 == 0):
 			wall_instance.get_node("Fire").play("default")
 		else:
 			wall_instance.get_node("Fire").visible = false
-			
+
 		if (x_pos == 0 or x_pos == 10 or y_pos == 0 or y_pos == 10):
 			wall_instance.visible = false
-			
+
 		# Add the instance as a child to the main scene
 		wall_state[x_pos][y_pos] = wall_instance
 		add_child(wall_instance)
-	
+
+	# Add new monsters
 	for monster in monsters:
-		# Load the BasicLightning scene
 		var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
-			
-		# Create an instance of the BasicLightning scene
 		var enemy_instance = enemy_scene.instantiate()
-			
-		# Set the global position of the instance to the specified position
+
 		enemy_instance.x_pos = int(monster["x"])
 		enemy_instance.y_pos = int(monster["y"])
 		enemy_instance.max_health = int(monster["currHealth"])
 		enemy_instance.health = int(monster["currHealth"])
 		enemy_instance.id = int(monster["id"])
-			
-		# Add the instance as a child to the main scene
+
 		add_child(enemy_instance)
 		enemy_state[enemy_instance.id] = enemy_instance
+
 
 
 func process_state(state : Dictionary):

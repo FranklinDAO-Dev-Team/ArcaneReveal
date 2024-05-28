@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dc6jw4arwneon"]
+[gd_scene load_steps=12 format=3 uid="uid://dgvad04ku3mdt"]
 
 [ext_resource type="Script" path="res://scripts/NakamaClient.gd" id="1_kqd0p"]
 [ext_resource type="Texture2D" uid="uid://gc1vmy2ygaye" path="res://assets/TX Tileset Grass.png" id="2_vpu8v"]
