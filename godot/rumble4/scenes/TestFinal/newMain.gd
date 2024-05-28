@@ -393,7 +393,6 @@ func process_state(state : Dictionary):
 			var thisTrait = traits[trait_index]
 			if thisTrait != -1:
 				
-				thisTrait = 0
 				var ability_scene = load("res://scenes/TestFinal/IconScenes/Ability%d.tscn" % thisTrait)
 				var ability_instance = ability_scene.instantiate()
 				
@@ -403,11 +402,11 @@ func process_state(state : Dictionary):
 				if trait_index == 0:
 					# Position above the staff
 					var offset = Vector2(0, -20)  # Adjust the vertical offset as needed
-					ability_instance.position = Vector2(41 + (wand_index) * 65, -83)
+					ability_instance.position = Vector2(41 + (wand_index) * 65, -93)
 				else:
 					# Position below the staff
 					var offset = Vector2(0, 20)  # Adjust the vertical offset as needed
-					ability_instance.position = Vector2(41 + (wand_index) * 65, -43)
+					ability_instance.position = Vector2(41 + (wand_index) * 65, -33)
 				
 				add_child(ability_instance)
 

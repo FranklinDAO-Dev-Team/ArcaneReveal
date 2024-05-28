@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c8n2t27oude26"]
 
-[ext_resource type="Texture2D" uid="uid://bfqdqt750nkon" path="res://assets/single/release_v1.2-single_43.png" id="1_hwski"]
+[ext_resource type="Texture2D" uid="uid://vo5tcsqg8aau" path="res://assets/single/release_v1.2-single_17.png" id="1_7gmac"]
 
 [node name="Ability0" type="Sprite2D"]
-texture = ExtResource("1_hwski")
+texture = ExtResource("1_7gmac")
