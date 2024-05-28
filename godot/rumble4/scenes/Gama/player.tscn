@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_7xlh3"]
 [ext_resource type="Texture2D" uid="uid://do748j32dk0s5" path="res://assets/AnimationSheet.png" id="1_req7c"]
-[ext_resource type="PackedScene" uid="uid://dt2rnmodleduw" path="res://scenes/Gama/staff.tscn" id="3_6po7h"]
+[ext_resource type="PackedScene" path="res://scenes/Gama/staff.tscn" id="3_6po7h"]
 [ext_resource type="PackedScene" uid="uid://cflwrb4c6hj8h" path="res://scenes/Gama/life_bar.tscn" id="4_ekywa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vxdc"]

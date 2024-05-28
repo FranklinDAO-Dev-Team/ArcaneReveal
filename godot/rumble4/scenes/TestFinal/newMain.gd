@@ -366,6 +366,9 @@ func initialize_state(state: Dictionary):
 
 
 func process_state(state : Dictionary):
+	
+	print(state)
+	
 	if level != state["level"]:
 		initialize_state(state)
 	var player_state = state["player"]
@@ -380,6 +383,34 @@ func process_state(state : Dictionary):
 	#for staff_node in staff_nodes:
 		#if is_instance_valid(staff_node):  # Check if the staff node still exists
 			#staff_node.global_position = player.global_position + staff_node.position
+			
+	#"reveals":[[-1,0],[-1,-1],[-1,-1],[-1,-1]]
+	# -1 for undiscovered, otherwise ranges from 0-9
+	var icons = state["reveals"]
+	for wand_index in range(icons.size()):
+		var traits = icons[wand_index]
+		for trait_index in range(traits.size()):
+			var thisTrait = traits[trait_index]
+			if thisTrait != -1:
+				
+				var ability_scene = load("res://scenes/TestFinal/IconScenes/Ability%d.tscn" % thisTrait)
+				var ability_instance = ability_scene.instantiate()
+				
+				# Positioning logic for the ability icon relative to the wand
+				var staff_node = staff_nodes[wand_index]
+				
+				if trait_index == 0:
+					# Position above the staff
+					var offset = Vector2(0, -20)  # Adjust the vertical offset as needed
+					ability_instance.position = Vector2(41 + (wand_index) * 65, -93)
+				else:
+					# Position below the staff
+					var offset = Vector2(0, 20)  # Adjust the vertical offset as needed
+					ability_instance.position = Vector2(41 + (wand_index) * 65, -33)
+				
+				add_child(ability_instance)
+
+		
 	
 	var monsters = state["monsters"]
 	var monster_ids = []
