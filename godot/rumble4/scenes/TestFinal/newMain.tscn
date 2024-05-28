@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dlb8v6ch4vqht" path="res://scenes/Gama/tile_piece.tscn" id="6_ku8vv"]
 [ext_resource type="PackedScene" uid="uid://bodyoiwslhiv1" path="res://scenes/Gama/key.tscn" id="7_w54np"]
 [ext_resource type="PackedScene" uid="uid://r62u7glqoqtw" path="res://scenes/Gama/door.tscn" id="8_ehegj"]
-[ext_resource type="PackedScene" path="res://scenes/Gama/BasicLightning.tscn" id="9_waj4p"]
+[ext_resource type="PackedScene" uid="uid://bbtihlbhgix8u" path="res://scenes/Gama/BasicLightning.tscn" id="9_waj4p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ebk6o"]
 texture = ExtResource("2_lsm5l")
