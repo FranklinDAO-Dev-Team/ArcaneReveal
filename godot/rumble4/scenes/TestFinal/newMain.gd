@@ -359,6 +359,9 @@ func process_state(state : Dictionary):
 	#for staff_node in staff_nodes:
 		#if is_instance_valid(staff_node):  # Check if the staff node still exists
 			#staff_node.global_position = player.global_position + staff_node.position
+			
+	var wands_reveal = state["reveals"]
+	
 	
 	var monsters = state["monsters"]
 	var monster_ids = []
