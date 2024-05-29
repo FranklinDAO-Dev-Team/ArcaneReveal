@@ -2,6 +2,7 @@ extends Node
 
 var game_started = false
 var enemy_state = {}
+var icon_state = {}
 var player
 var player_prev_x
 var player_prev_y
@@ -359,12 +360,11 @@ func initialize_state(state: Dictionary):
 		# Add the instance as a child to the main scene
 		wall_state[x_pos][y_pos] = wall_instance
 		add_child(wall_instance)
-		
-	# Clear existing monsters
-	#for id in enemy_state.keys():
-		#if id not in monster_ids:
-			#enemy_state[id].queue_free()
-			#enemy_state.erase(id)
+
+	# Clear existing icons
+	for id in icon_state.keys():
+		icon_state[id].queue_free()
+	icon_state.clear()
 
 	# Add new monsters
 	for monster in monsters:
@@ -381,14 +381,11 @@ func initialize_state(state: Dictionary):
 		enemy_state[enemy_instance.id] = enemy_instance
 
 
-
-func process_state(state : Dictionary):
+func process_state(state: Dictionary):
 	score = str(state["score"])
 	display_score.text = "Current Level: " + str(level) + ", Current Score: " + score
-	#print("FIND THE SCORE HERE: " % str(state["score"]))
-	
 	print(state)
-	
+
 	if level != state["level"]:
 		initialize_state(state)
 	
@@ -400,37 +397,27 @@ func process_state(state : Dictionary):
 	
 	player.move(player_x, player_y)
 	
-	## Update staff nodes' positions
-	#for staff_node in staff_nodes:
-		#if is_instance_valid(staff_node):  # Check if the staff node still exists
-			#staff_node.global_position = player.global_position + staff_node.position
-			
-	#"reveals":[[-1,0],[-1,-1],[-1,-1],[-1,-1]]
-	# -1 for undiscovered, otherwise ranges from 0-9
 	var icons = state["reveals"]
 	for wand_index in range(icons.size()):
 		var traits = icons[wand_index]
 		for trait_index in range(traits.size()):
 			var thisTrait = traits[trait_index]
 			if thisTrait != -1:
-				
 				var ability_scene = load("res://scenes/TestFinal/IconScenes/Ability%d.tscn" % thisTrait)
 				var ability_instance = ability_scene.instantiate()
-				
-				# Positioning logic for the ability icon relative to the wand
+
 				var staff_node = staff_nodes[wand_index]
 				
 				if trait_index == 0:
-					# Position above the staff
-					var offset = Vector2(0, -20)  # Adjust the vertical offset as needed
+					var offset = Vector2(0, -20)
 					ability_instance.position = Vector2(41 + (wand_index) * 65, -93)
 				else:
-					# Position below the staff
-					var offset = Vector2(0, 20)  # Adjust the vertical offset as needed
+					var offset = Vector2(0, 20)
 					ability_instance.position = Vector2(41 + (wand_index) * 65, -33)
-				
+
 				add_child(ability_instance)
-		
+				icon_state[ability_instance.get_instance_id()] = ability_instance
+
 	var monsters = state["monsters"]
 	var monster_ids = []
 	for i in range(monsters.size()):
@@ -440,7 +427,6 @@ func process_state(state : Dictionary):
 		var health = int(monster["currHealth"])
 		var id = int(monster["id"])
 
-		# Set the global position of the instance to the specified position
 		if id not in enemy_state.keys():
 			var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
 			var enemy_instance = enemy_scene.instantiate()
@@ -450,7 +436,6 @@ func process_state(state : Dictionary):
 			enemy_instance.health = health
 			enemy_instance.id = id
 				
-			# Add the instance as a child to the main scene
 			add_child(enemy_instance)
 			enemy_state[enemy_instance.id] = enemy_instance
 		else:
@@ -459,11 +444,11 @@ func process_state(state : Dictionary):
 			enemy_instance.health = health
 		monster_ids.append(id)
 		
-	# Check if an enemy died between turns
 	for id in enemy_state.keys():
 		if id not in monster_ids:
 			enemy_state[id].queue_free()
 			enemy_state.erase(id)
+
 
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.

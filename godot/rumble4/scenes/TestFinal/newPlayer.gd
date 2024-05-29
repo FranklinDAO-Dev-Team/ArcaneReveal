@@ -37,10 +37,12 @@ func _process(delta):
 
 func update_health_ui(game_over):
 	if health == 0 or game_over:
-		for child in game_node.get_children():
-			if child.name.begins_with("Ability"):
-				child.queue_free()
-				
+		# Clear all Ability nodes
+		for id in game_node.icon_state.keys():
+			game_node.icon_state[id].queue_free()
+			game_node.icon_state.erase(id)
+		
+		# Clear all enemy nodes
 		for id in game_node.enemy_state.keys():
 			game_node.enemy_state[id].queue_free()
 			game_node.enemy_state.erase(id)
@@ -61,6 +63,7 @@ func update_health_ui(game_over):
 		username_input_screen.connect("username_submitted", Callable(game_node, "_on_username_submitted"))
 	for i in range(MAX_HEALTH):
 		$"../Player/LifeBar".get_child(i).visible = health > i
+
 
 func move(x_curr, y_curr):
 	var pos = Vector2((x_curr - 1) * tile_size, (y_curr - 1) * tile_size)
