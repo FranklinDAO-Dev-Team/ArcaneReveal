@@ -2,6 +2,7 @@ extends Node
 
 var game_started = false
 var enemy_state = {}
+var icon_state = {}
 var player
 var player_prev_x
 var player_prev_y
@@ -10,12 +11,14 @@ var wall_state = []
 var game_over = false
 var staff_nodes = []
 var username = ""
+var score = ""
 
 @onready var client : NakamaClient
 @onready var socket
 @onready var session : NakamaSession
 @onready var ray = $RayCast3D
 @onready var display_username = preload("res://scenes/TestFinal/displayName.tscn").instantiate()
+@onready var display_score = preload("res://scenes/TestFinal/score.tscn").instantiate()
 @onready var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
 
 var enemies_defeated = 0
@@ -43,6 +46,10 @@ func _on_username_submitted(submitted_username):
 	add_child(display_username)
 	username = submitted_username
 	display_username.text = "Username: " + username
+	
+	add_child(display_score)
+	score = "0"
+	display_score.text = "Current Level: 1, Current Score: " + score
 
 	# Reset game state variables
 	game_over = false
@@ -60,8 +67,9 @@ func _on_username_submitted(submitted_username):
 	socket = Nakama.create_socket_from(client)
 
 	# Authenticate with the Nakama server using Device Authentication
-	var device_id = OS.get_unique_id()
-	session = await client.authenticate_device_async(device_id)
+	var rand_device_id = RandomNumberGenerator.new()
+	var random_number = rand_device_id.randi_range(999999999, 99999999999999999)
+	session = await client.authenticate_device_async(str(random_number))
 	if session.is_exception():
 		print("An error occurred: %s" % session)
 		return
@@ -77,6 +85,9 @@ func _on_username_submitted(submitted_username):
 	socket.received_notification.connect(self._on_notification)
 
 	# Check if the persona already exists
+	username = username + str(random_number)
+	username = username.substr(0,16)
+	display_username.text = "Username: " + username
 	var resp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
 	if resp.is_exception():
 		print("Persona not found, creating a new one: %s" % resp)
@@ -129,6 +140,7 @@ func load_existing_game():
 		print("No existing game found for the persona: ", username)
 
 func start_new_game():
+	$"GameOverLabel".visible = false  # Hide the GameOverLabel node
 	var random = RandomNumberGenerator.new()
 	var resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
 	if resp.is_exception():
@@ -349,6 +361,11 @@ func initialize_state(state: Dictionary):
 		wall_state[x_pos][y_pos] = wall_instance
 		add_child(wall_instance)
 
+	# Clear existing icons
+	for id in icon_state.keys():
+		icon_state[id].queue_free()
+	icon_state.clear()
+
 	# Add new monsters
 	for monster in monsters:
 		var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
@@ -364,13 +381,14 @@ func initialize_state(state: Dictionary):
 		enemy_state[enemy_instance.id] = enemy_instance
 
 
-
-func process_state(state : Dictionary):
-	
+func process_state(state: Dictionary):
+	score = str(state["score"])
+	display_score.text = "Current Level: " + str(level) + ", Current Score: " + score
 	print(state)
-	
+
 	if level != state["level"]:
 		initialize_state(state)
+	
 	var player_state = state["player"]
 	var player_x = int(player_state["x"])
 	var player_y = int(player_state["y"])
@@ -379,39 +397,27 @@ func process_state(state : Dictionary):
 	
 	player.move(player_x, player_y)
 	
-	## Update staff nodes' positions
-	#for staff_node in staff_nodes:
-		#if is_instance_valid(staff_node):  # Check if the staff node still exists
-			#staff_node.global_position = player.global_position + staff_node.position
-			
-	#"reveals":[[-1,0],[-1,-1],[-1,-1],[-1,-1]]
-	# -1 for undiscovered, otherwise ranges from 0-9
 	var icons = state["reveals"]
 	for wand_index in range(icons.size()):
 		var traits = icons[wand_index]
 		for trait_index in range(traits.size()):
 			var thisTrait = traits[trait_index]
 			if thisTrait != -1:
-				
 				var ability_scene = load("res://scenes/TestFinal/IconScenes/Ability%d.tscn" % thisTrait)
 				var ability_instance = ability_scene.instantiate()
-				
-				# Positioning logic for the ability icon relative to the wand
+
 				var staff_node = staff_nodes[wand_index]
 				
 				if trait_index == 0:
-					# Position above the staff
-					var offset = Vector2(0, -20)  # Adjust the vertical offset as needed
+					var offset = Vector2(0, -20)
 					ability_instance.position = Vector2(41 + (wand_index) * 65, -93)
 				else:
-					# Position below the staff
-					var offset = Vector2(0, 20)  # Adjust the vertical offset as needed
+					var offset = Vector2(0, 20)
 					ability_instance.position = Vector2(41 + (wand_index) * 65, -33)
-				
-				add_child(ability_instance)
 
-		
-	
+				add_child(ability_instance)
+				icon_state[ability_instance.get_instance_id()] = ability_instance
+
 	var monsters = state["monsters"]
 	var monster_ids = []
 	for i in range(monsters.size()):
@@ -421,7 +427,6 @@ func process_state(state : Dictionary):
 		var health = int(monster["currHealth"])
 		var id = int(monster["id"])
 
-		# Set the global position of the instance to the specified position
 		if id not in enemy_state.keys():
 			var enemy_scene = load("res://scenes/TestFinal/newEnemy.tscn")
 			var enemy_instance = enemy_scene.instantiate()
@@ -431,7 +436,6 @@ func process_state(state : Dictionary):
 			enemy_instance.health = health
 			enemy_instance.id = id
 				
-			# Add the instance as a child to the main scene
 			add_child(enemy_instance)
 			enemy_state[enemy_instance.id] = enemy_instance
 		else:
@@ -440,12 +444,12 @@ func process_state(state : Dictionary):
 			enemy_instance.health = health
 		monster_ids.append(id)
 		
-	# Check if an enemy died between turns
 	for id in enemy_state.keys():
 		if id not in monster_ids:
 			enemy_state[id].queue_free()
 			enemy_state.erase(id)
-		
+
+
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func process_event(notification : Dictionary):
