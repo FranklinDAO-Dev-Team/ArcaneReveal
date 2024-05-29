@@ -10,12 +10,14 @@ var wall_state = []
 var game_over = false
 var staff_nodes = []
 var username = ""
+var score = ""
 
 @onready var client : NakamaClient
 @onready var socket
 @onready var session : NakamaSession
 @onready var ray = $RayCast3D
 @onready var display_username = preload("res://scenes/TestFinal/displayName.tscn").instantiate()
+@onready var display_score = preload("res://scenes/TestFinal/score.tscn").instantiate()
 @onready var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
 
 var enemies_defeated = 0
@@ -43,6 +45,10 @@ func _on_username_submitted(submitted_username):
 	add_child(display_username)
 	username = submitted_username
 	display_username.text = "Username: " + username
+	
+	add_child(display_score)
+	score = "0"
+	display_score.text = "Current Level: 1, Current Score: " + score
 
 	# Reset game state variables
 	game_over = false
@@ -80,6 +86,7 @@ func _on_username_submitted(submitted_username):
 	# Check if the persona already exists
 	username = username + str(random_number)
 	username = username.substr(0,16)
+	display_username.text = "Username: " + username
 	var resp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
 	if resp.is_exception():
 		print("Persona not found, creating a new one: %s" % resp)
@@ -132,6 +139,7 @@ func load_existing_game():
 		print("No existing game found for the persona: ", username)
 
 func start_new_game():
+	$"GameOverLabel".visible = false  # Hide the GameOverLabel node
 	var random = RandomNumberGenerator.new()
 	var resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
 	if resp.is_exception():
@@ -353,13 +361,10 @@ func initialize_state(state: Dictionary):
 		add_child(wall_instance)
 		
 	# Clear existing monsters
-	#if enemy_state != {} :
-		#for row in range(grid_size):
-			#for col in range(grid_size):
-				#if enemy_state[row][col] != null:
-					#var curr_enemy = enemy_state[row][col]
-					#curr_enemy.queue_free()
-					#enemy_state[row][col] = null
+	#for id in enemy_state.keys():
+		#if id not in monster_ids:
+			#enemy_state[id].queue_free()
+			#enemy_state.erase(id)
 
 	# Add new monsters
 	for monster in monsters:
@@ -378,11 +383,15 @@ func initialize_state(state: Dictionary):
 
 
 func process_state(state : Dictionary):
+	score = str(state["score"])
+	display_score.text = "Current Level: " + str(level) + ", Current Score: " + score
+	#print("FIND THE SCORE HERE: " % str(state["score"]))
 	
 	print(state)
 	
 	if level != state["level"]:
 		initialize_state(state)
+	
 	var player_state = state["player"]
 	var player_x = int(player_state["x"])
 	var player_y = int(player_state["y"])
@@ -421,9 +430,7 @@ func process_state(state : Dictionary):
 					ability_instance.position = Vector2(41 + (wand_index) * 65, -33)
 				
 				add_child(ability_instance)
-
 		
-	
 	var monsters = state["monsters"]
 	var monster_ids = []
 	for i in range(monsters.size()):
@@ -457,7 +464,7 @@ func process_state(state : Dictionary):
 		if id not in monster_ids:
 			enemy_state[id].queue_free()
 			enemy_state.erase(id)
-		
+
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func process_event(notification : Dictionary):

@@ -37,6 +37,22 @@ func _process(delta):
 
 func update_health_ui(game_over):
 	if health == 0 or game_over:
+		for child in game_node.get_children():
+			if child.name.begins_with("Ability"):
+				child.queue_free()
+				
+		for id in game_node.enemy_state.keys():
+			game_node.enemy_state[id].queue_free()
+			game_node.enemy_state.erase(id)
+			
+		# Clear existing walls
+		for row in range(game_node.grid_size):
+			for col in range(game_node.grid_size):
+				if game_node.wall_state[row][col] != null:
+					var curr_wall = game_node.wall_state[row][col]
+					curr_wall.queue_free()
+					game_node.wall_state[row][col] = null
+		
 		queue_free()
 		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
 		# Prompt the user for a new username
