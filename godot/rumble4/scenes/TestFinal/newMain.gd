@@ -60,8 +60,9 @@ func _on_username_submitted(submitted_username):
 	socket = Nakama.create_socket_from(client)
 
 	# Authenticate with the Nakama server using Device Authentication
-	var device_id = OS.get_unique_id()
-	session = await client.authenticate_device_async(device_id)
+	var rand_device_id = RandomNumberGenerator.new()
+	var random_number = rand_device_id.randi_range(999999999, 99999999999999999)
+	session = await client.authenticate_device_async(str(random_number))
 	if session.is_exception():
 		print("An error occurred: %s" % session)
 		return
@@ -77,6 +78,8 @@ func _on_username_submitted(submitted_username):
 	socket.received_notification.connect(self._on_notification)
 
 	# Check if the persona already exists
+	username = username + str(random_number)
+	username = username.substr(0,16)
 	var resp = await client.rpc_async(session, "nakama/show-persona", JSON.stringify({"personaTag": username}))
 	if resp.is_exception():
 		print("Persona not found, creating a new one: %s" % resp)
@@ -348,6 +351,15 @@ func initialize_state(state: Dictionary):
 		# Add the instance as a child to the main scene
 		wall_state[x_pos][y_pos] = wall_instance
 		add_child(wall_instance)
+		
+	# Clear existing monsters
+	#if enemy_state != {} :
+		#for row in range(grid_size):
+			#for col in range(grid_size):
+				#if enemy_state[row][col] != null:
+					#var curr_enemy = enemy_state[row][col]
+					#curr_enemy.queue_free()
+					#enemy_state[row][col] = null
 
 	# Add new monsters
 	for monster in monsters:
