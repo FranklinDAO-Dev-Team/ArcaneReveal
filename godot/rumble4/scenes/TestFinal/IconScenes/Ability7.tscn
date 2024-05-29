@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cv1tll1ve25wh"]
+
+[ext_resource type="Texture2D" uid="uid://dnqfvt2qs61fp" path="res://assets/single/release_v1.2-single_24.png" id="1_g3s3y"]
+
+[node name="Ability7" type="Sprite2D"]
+rotation = -1.5708
+texture = ExtResource("1_g3s3y")

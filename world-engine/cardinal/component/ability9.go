@@ -5,6 +5,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// heal monster
 const Ability9ID = 9
 
 type Ability9 struct{}
@@ -13,6 +14,9 @@ var _ Ability = &Ability9{}
 
 func (Ability9) GetAbilityID() int {
 	return Ability9ID
+}
+func (Ability9) GetAbilityName() string {
+	return "heal monster"
 }
 
 // heals monster if it is below max health
@@ -42,7 +46,7 @@ func (a Ability9) Resolve(
 		return false, nil
 	}
 
-	// check if monster is below max health
+	// check if monster is below max health but not zero health
 	monsterHealth, err := cardinal.GetComponent[Health](world, id)
 	if err != nil {
 		return false, err

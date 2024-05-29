@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhdqol6oo3a13"]
+
+[ext_resource type="Texture2D" uid="uid://dnqfvt2qs61fp" path="res://assets/single/release_v1.2-single_24.png" id="1_74toy"]
+
+[node name="Ability6" type="Sprite2D"]
+rotation = 3.14159
+texture = ExtResource("1_74toy")

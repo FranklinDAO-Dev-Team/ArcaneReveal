@@ -162,23 +162,18 @@ func updateGameLevel(world cardinal.WorldContext, gameID types.EntityID) (int, e
 	}
 
 	// player is not at max level, increment level
-	newLevel := game.Level + 1
-	updatedGame := comp.Game{
-		PersonaTag:  game.PersonaTag,
-		Commitments: game.Commitments,
-		Level:       newLevel,
-	}
-	err = cardinal.SetComponent[comp.Game](world, gameID, &updatedGame)
+	game.Level += 1
+	err = cardinal.SetComponent[comp.Game](world, gameID, game)
 	if err != nil {
 		return -1, err
 	}
 	world.EmitEvent(map[string]any{
 		"event":    "level-won",
 		"gameID":   gameID,
-		"newLevel": newLevel,
+		"newLevel": game.Level,
 	})
 
-	return newLevel, nil
+	return game.Level, nil
 }
 
 // clearBoard removes all gameObjs attatched to the gameID except the player
