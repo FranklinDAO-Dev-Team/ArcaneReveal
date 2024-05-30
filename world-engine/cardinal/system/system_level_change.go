@@ -50,7 +50,7 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 				})
 				err = removeGameInstance(world, gameID)
 				if err != nil {
-					log.Printf("LevelChangeSystem() failed to remove game instance %d: %w\n", gameID, err)
+					// log.Printf("LevelChangeSystem() failed to remove game instance %d: %w\n", gameID, err)
 					return false
 				}
 				return false
@@ -155,7 +155,7 @@ func updateGameLevel(world cardinal.WorldContext, gameID types.EntityID) (int, e
 		})
 		err = removeGameInstance(world, gameID)
 		if err != nil {
-			log.Printf("updateGameLevel() failed to remove game instance %d: %w\n", gameID, err)
+			// log.Printf("updateGameLevel() failed to remove game instance %d: %w\n", gameID, err)
 			return -1, err
 		}
 		return -1, nil

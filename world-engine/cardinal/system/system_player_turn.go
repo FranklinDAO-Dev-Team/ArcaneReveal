@@ -214,6 +214,10 @@ func playerTurnWand(
 	if err != nil {
 		return 0, nil, err
 	}
+	spellPos, err = spellPos.GetUpdateFromDirection(direction) // extra update allows you to cast through walls.
+	if err != nil {
+		return 0, nil, err
+	}
 	wandID, _, available, err := getWandByNumber(world, gameID, wandnum)
 	if err != nil {
 		return 0, nil, err

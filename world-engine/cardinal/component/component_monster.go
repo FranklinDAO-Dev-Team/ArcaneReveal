@@ -2,13 +2,13 @@ package component
 
 type MonsterType int
 
-const NumMonsterTypes = 4
+const NumMonsterTypes = 2
 
 const (
 	LIGHT MonsterType = iota
 	MEDIUM
-	HEAVY
-	XL
+	// HEAVY
+	// XL
 )
 
 type Monster struct {

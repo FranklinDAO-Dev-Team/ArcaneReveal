@@ -29,13 +29,29 @@ func resolveAbilities(
 	eventLogList *[]comp.GameEventLog,
 ) error {
 	for !spell.Expired {
-		// log.Println()
-		// log.Println("resolveAbilities. start Spell position: ", spellPos.X, spellPos.Y)
+		// If spell hits a wall, spell expires, no next loop
+		found, id, err := spellPos.GetEntityIDByPosition(world, gameID)
+		if err != nil {
+			log.Println("resolveAbilitiesAtPosition err: ", err)
+			return err
+		}
+		if found {
+			colType, err := cardinal.GetComponent[comp.Collidable](world, id)
+			if err != nil {
+				log.Println("resolveAbilitiesAtPosition err: ", err)
+				return err
+			}
+			// if entity is a wall, break
+			if colType.Type == comp.WallCollide {
+				spell.Expired = true
+			}
+
+		}
 
 		// log SpellBeam position
 		*eventLogList = append(*eventLogList, comp.GameEventLog{X: spellPos.X, Y: spellPos.Y, Event: comp.GameEventSpellBeam})
 		// record abilities that could activate a current square
-		err := resolveAbilitiesAtPosition(
+		err = resolveAbilitiesAtPosition(
 			world,
 			gameID,
 			spellPos,
@@ -57,7 +73,6 @@ func resolveAbilities(
 		}
 		if spellPos == nil {
 			spell.Expired = true
-			break
 		}
 		// log.Println("resolveAbilities. end Spell position: , err; ", spellPos.X, spellPos.Y, err)
 	}
