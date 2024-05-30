@@ -124,7 +124,7 @@ func setPlayerPosition(world cardinal.WorldContext, gameID types.EntityID, x, y 
 	if err != nil {
 		return err
 	}
-	err = cardinal.SetComponent[comp.Position](world, playerID, &comp.Position{x, y})
+	err = cardinal.SetComponent[comp.Position](world, playerID, &comp.Position{X: x, Y: y})
 	return err
 }
 
@@ -137,9 +137,6 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 	createPlayer(world, gameID, 1, 1)
 	// create wands to track when abilities are spent
 	spawnWands(world, gameID)
-
-	// if debug:
-	// populateDebugLevel(world, gameID)
 
 	// create walls
 	spawnWallFrame(world, gameID)
@@ -154,8 +151,6 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 	createMonster(world, gameID, 3, 3, comp.LIGHT)
 	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 9, 1, comp.LIGHT)
-
-	createMonster(world, gameID, 1, 7, comp.LIGHT)
 
 	PrintStateToTerminal(world, gameID)
 

@@ -50,11 +50,6 @@ func (a Ability4) Resolve(
 			}
 			return applyExplosion(world, gameID, prevSpellPos, executeUpdates, eventLogList)
 		}
-
-		// if entity is a monster, also trigger explosion
-		if colType.Type == MonsterCollide {
-			return applyExplosion(world, gameID, spellPosition, executeUpdates, eventLogList)
-		}
 	}
 	return false, nil
 }
@@ -66,6 +61,7 @@ func applyExplosion(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
+	log.Printf("abiltiy4 applyExplosion. spellPosition: (%d, %d)\n", spellPosition.X, spellPosition.Y)
 	explosionRange := 2
 	topLeft := Position{X: spellPosition.X - explosionRange, Y: spellPosition.Y - explosionRange}
 	for i := 0; i < 5; i++ {

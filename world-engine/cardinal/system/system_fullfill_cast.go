@@ -40,6 +40,7 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
+			log.Printf("FulfillCastSystem. Starting spellPos: (%d, %d)", spellPos.X, spellPos.Y)
 			castGameObj, err := cardinal.GetComponent[comp.GameObj](world, turn.Msg.Result.CastID)
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
