@@ -155,6 +155,8 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 9, 1, comp.LIGHT)
 
+	createMonster(world, gameID, 1, 7, comp.LIGHT)
+
 	PrintStateToTerminal(world, gameID)
 
 	return nil

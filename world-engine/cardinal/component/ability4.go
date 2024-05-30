@@ -25,7 +25,7 @@ func (a Ability4) Resolve(
 	world cardinal.WorldContext,
 	gameID types.EntityID,
 	spellPosition *Position,
-	_ Direction,
+	dir Direction,
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
@@ -43,6 +43,16 @@ func (a Ability4) Resolve(
 		}
 		// if entity is a wall, then trigger explosion
 		if colType.Type == WallCollide {
+			backwards := dir.rotateClockwise().rotateClockwise()
+			prevSpellPos, err := spellPosition.GetUpdateFromDirection(backwards)
+			if err != nil {
+				return false, err
+			}
+			return applyExplosion(world, gameID, prevSpellPos, executeUpdates, eventLogList)
+		}
+
+		// if entity is a monster, also trigger explosion
+		if colType.Type == MonsterCollide {
 			return applyExplosion(world, gameID, spellPosition, executeUpdates, eventLogList)
 		}
 	}
