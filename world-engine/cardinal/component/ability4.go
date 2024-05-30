@@ -7,6 +7,7 @@ import (
 	"pkg.world.dev/world-engine/cardinal/types"
 )
 
+// explosion
 const Ability4ID = 4
 
 type Ability4 struct{}
@@ -15,6 +16,9 @@ var _ Ability = &Ability4{}
 
 func (Ability4) GetAbilityID() int {
 	return Ability4ID
+}
+func (Ability4) GetAbilityName() string {
+	return "explosion"
 }
 
 func (a Ability4) Resolve(
