@@ -68,14 +68,19 @@ func polymorphMonster(world cardinal.WorldContext, gameID types.EntityID, monID 
 	if err != nil {
 		return 0, err
 	}
+	newMonsterType = (monster.Type + 1) % NumMonsterTypes
+
+	// get monster pos and health
 	monsterPos, err := cardinal.GetComponent[Position](world, monID)
 	if err != nil {
 		return 0, err
 	}
-	newMonsterType = (monster.Type + 1) % NumMonsterTypes
-	// log.Println("oldMonsterType: ", monster.Type)
-	// log.Println("newMonsterType: ", newMonsterType)
-	// remove old monster
+	oldMonsterHealth, err := cardinal.GetComponent[Health](world, monID)
+	if err != nil {
+		return 0, err
+	}
+	oldMonsterDamage := oldMonsterHealth.MaxHealth - oldMonsterHealth.CurrHealth
+
 	err = cardinal.Remove(world, monID)
 	if err != nil {
 		return 0, err
@@ -89,7 +94,7 @@ func polymorphMonster(world cardinal.WorldContext, gameID types.EntityID, monID 
 		Collidable{Type: MonsterCollide},
 		Health{
 			MaxHealth:  int(newMonsterType) + 1,
-			CurrHealth: int(newMonsterType) + 1,
+			CurrHealth: int(newMonsterType) + 1 - oldMonsterDamage,
 		},
 		Position{
 			X: monsterPos.X,

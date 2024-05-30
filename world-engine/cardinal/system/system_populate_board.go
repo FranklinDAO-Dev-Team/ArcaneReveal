@@ -192,7 +192,7 @@ func populateLevel3(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 2, 5)
 
 	// create monsters
-	createMonster(world, gameID, 5, 9, comp.HEAVY)
+	createMonster(world, gameID, 5, 9, comp.MEDIUM)
 	createMonster(world, gameID, 3, 9, comp.MEDIUM)
 	createMonster(world, gameID, 1, 9, comp.MEDIUM)
 	createMonster(world, gameID, 9, 5, comp.LIGHT)
@@ -217,7 +217,7 @@ func populateLevel4(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 9, 8)
 
 	// create monsters
-	createMonster(world, gameID, 1, 3, comp.HEAVY)
+	createMonster(world, gameID, 1, 3, comp.MEDIUM)
 	createMonster(world, gameID, 5, 7, comp.MEDIUM)
 	createMonster(world, gameID, 3, 1, comp.LIGHT)
 	createMonster(world, gameID, 5, 3, comp.LIGHT)
@@ -239,8 +239,8 @@ func populateLevel5(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 4, 7)
 
 	// create monsters
-	createMonster(world, gameID, 1, 7, comp.HEAVY)
-	createMonster(world, gameID, 5, 9, comp.HEAVY)
+	createMonster(world, gameID, 1, 7, comp.MEDIUM)
+	createMonster(world, gameID, 5, 9, comp.MEDIUM)
 	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 9, 1, comp.LIGHT)
 	createMonster(world, gameID, 1, 5, comp.LIGHT)
@@ -266,8 +266,8 @@ func populateLevel6(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 4, 3)
 
 	// create monsters
-	createMonster(world, gameID, 3, 1, comp.HEAVY)
-	createMonster(world, gameID, 1, 7, comp.HEAVY)
+	createMonster(world, gameID, 3, 1, comp.MEDIUM)
+	createMonster(world, gameID, 1, 7, comp.MEDIUM)
 	createMonster(world, gameID, 3, 7, comp.MEDIUM)
 	createMonster(world, gameID, 7, 5, comp.LIGHT)
 	createMonster(world, gameID, 7, 3, comp.LIGHT)
@@ -294,8 +294,8 @@ func populateLevel7(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 7, 8)
 
 	// create monsters
-	createMonster(world, gameID, 7, 1, comp.HEAVY)
-	createMonster(world, gameID, 3, 3, comp.HEAVY)
+	createMonster(world, gameID, 7, 1, comp.MEDIUM)
+	createMonster(world, gameID, 3, 3, comp.MEDIUM)
 	createMonster(world, gameID, 1, 9, comp.MEDIUM)
 	createMonster(world, gameID, 1, 3, comp.LIGHT)
 
@@ -317,8 +317,8 @@ func populateLevel8(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 7, 4)
 
 	// create monsters
-	createMonster(world, gameID, 9, 9, comp.XL)
-	createMonster(world, gameID, 5, 9, comp.XL)
+	createMonster(world, gameID, 9, 9, comp.MEDIUM)
+	createMonster(world, gameID, 5, 9, comp.MEDIUM)
 	createMonster(world, gameID, 3, 7, comp.LIGHT)
 	createMonster(world, gameID, 7, 3, comp.LIGHT)
 
@@ -339,9 +339,9 @@ func populateLevel9(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 7, 8)
 
 	// create monsters
-	createMonster(world, gameID, 3, 9, comp.XL)
-	createMonster(world, gameID, 5, 9, comp.HEAVY)
-	createMonster(world, gameID, 7, 1, comp.HEAVY)
+	createMonster(world, gameID, 3, 9, comp.MEDIUM)
+	createMonster(world, gameID, 5, 9, comp.MEDIUM)
+	createMonster(world, gameID, 7, 1, comp.MEDIUM)
 	createMonster(world, gameID, 3, 9, comp.MEDIUM)
 	createMonster(world, gameID, 7, 9, comp.LIGHT)
 
@@ -367,9 +367,9 @@ func populateLevel10(world cardinal.WorldContext, gameID types.EntityID) error {
 	createWall(world, gameID, 9, 6)
 
 	// create monsters
-	createMonster(world, gameID, 1, 3, comp.XL)
-	createMonster(world, gameID, 5, 1, comp.XL)
-	createMonster(world, gameID, 9, 3, comp.HEAVY)
+	createMonster(world, gameID, 1, 3, comp.MEDIUM)
+	createMonster(world, gameID, 5, 1, comp.MEDIUM)
+	createMonster(world, gameID, 9, 3, comp.MEDIUM)
 	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 1, 5, comp.LIGHT)
 
