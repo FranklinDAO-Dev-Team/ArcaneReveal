@@ -63,7 +63,7 @@ func _on_username_submitted(submitted_username):
 		if child.is_in_group("game_objects"):
 			child.queue_free()
 
-	client = Nakama.create_client("defaultkey", "127.0.0.1", 7350, "http")
+	client = Nakama.create_client("defaultkey", "nakama-production-a861.up.railway.app", 443, "https")
 	socket = Nakama.create_socket_from(client)
 
 	# Authenticate with the Nakama server using Device Authentication
