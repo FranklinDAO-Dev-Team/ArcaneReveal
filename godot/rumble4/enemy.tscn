@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cn33ldjo7gt78"]
+[gd_scene load_steps=16 format=3 uid="uid://cb7bmfp66vb7e"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_wo51w"]
 [ext_resource type="Texture2D" uid="uid://ci7iksysfmdpg" path="res://assets/Little Mage/AttackCharge/StaffCrystal/ChargeCrystal1.png" id="2_31fsy"]

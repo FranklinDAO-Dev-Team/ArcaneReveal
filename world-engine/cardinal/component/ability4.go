@@ -25,7 +25,7 @@ func (a Ability4) Resolve(
 	world cardinal.WorldContext,
 	gameID types.EntityID,
 	spellPosition *Position,
-	_ Direction,
+	dir Direction,
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
@@ -43,7 +43,12 @@ func (a Ability4) Resolve(
 		}
 		// if entity is a wall, then trigger explosion
 		if colType.Type == WallCollide {
-			return applyExplosion(world, gameID, spellPosition, executeUpdates, eventLogList)
+			backwards := dir.rotateClockwise().rotateClockwise()
+			prevSpellPos, err := spellPosition.GetUpdateFromDirection(backwards)
+			if err != nil {
+				return false, err
+			}
+			return applyExplosion(world, gameID, prevSpellPos, executeUpdates, eventLogList)
 		}
 	}
 	return false, nil
@@ -56,6 +61,7 @@ func applyExplosion(
 	executeUpdates bool,
 	eventLogList *[]GameEventLog,
 ) (reveal bool, err error) {
+	log.Printf("abiltiy4 applyExplosion. spellPosition: (%d, %d)\n", spellPosition.X, spellPosition.Y)
 	explosionRange := 2
 	topLeft := Position{X: spellPosition.X - explosionRange, Y: spellPosition.Y - explosionRange}
 	for i := 0; i < 5; i++ {

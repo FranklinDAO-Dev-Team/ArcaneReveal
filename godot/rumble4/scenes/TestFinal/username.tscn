@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cwliovkq1t1qa"]
+[gd_scene load_steps=2 format=3 uid="uid://d0e5fjc8u3vsm"]
 
 [ext_resource type="Script" path="res://scenes/TestFinal/username.gd" id="1_67vwy"]
 
@@ -24,7 +24,7 @@ color = Color(0.352941, 0.352941, 0.352941, 1)
 layout_mode = 0
 offset_right = 184.0
 offset_bottom = 40.0
-placeholder_text = "Enter Persona"
+placeholder_text = "Name (12 char max)"
 
 [node name="Button" type="Button" parent="."]
 modulate = Color(0.117647, 0.905882, 1, 1)

@@ -752,18 +752,18 @@ position = Vector2(288, 128)
 
 [node name="GameOverLabel" type="RichTextLabel" parent="."]
 visible = false
-offset_left = 43.0
-offset_top = 328.0
-offset_right = 272.0
-offset_bottom = 368.0
+offset_left = 32.0
+offset_top = 216.0
+offset_right = 261.0
+offset_bottom = 256.0
 text = "                GAME OVER"
 
 [node name="GameWinLabel" type="RichTextLabel" parent="."]
 visible = false
 offset_left = 43.0
-offset_top = 328.0
+offset_top = 216.0
 offset_right = 272.0
-offset_bottom = 368.0
+offset_bottom = 256.0
 text = "                YOU WIN!"
 
 [node name="BasicLightning" parent="." instance=ExtResource("9_waj4p")]
