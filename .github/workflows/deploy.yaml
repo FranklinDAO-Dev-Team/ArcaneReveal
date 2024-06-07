@@ -1,0 +1,108 @@
+name: Deploy
+
+## workflow will need manual trigger from actions page
+on:
+  workflow_dispatch:
+    inputs:
+      IMAGE_VERSION:
+        type: string
+        description: "Cardinal Tag Version:"
+        default: "vX.X.X"
+        required: true
+      RESET_CARDINAL_STATE:
+        type: boolean
+        description: "Reset Cardinal DB (Redis)"
+        default: false
+        required: true
+      RESET_NAKAMA_STATE:
+        type: boolean
+        description: "Reset Nakama DB (Postgres)"
+        default: false
+        required: true
+      DEPLOY_PROD:
+        type: boolean
+        description: "env: PROD"
+        default: false
+        required: true
+
+jobs:
+  deploy-prod:
+    name: Deploy Railway
+    if: ${{ inputs.DEPLOY_PROD }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.IMAGE_VERSION }}
+      - name: Install Railway CLI
+        run: |
+          bash <(curl -fsSL cli.new)
+      - name: Install Redis-CLI
+        if: ${{ inputs.RESET_CARDINAL_STATE }}
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: 7
+          auto-start: "false"
+      - name: Install Postgresql client-only
+        if: ${{ inputs.RESET_NAKAMA_STATE }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends postgresql-client
+      - name: Cardinal - Shutdown Previous Deployment
+        working-directory: cardinal
+        run: |
+          ## Get Cardinal Latest Deployment ID
+          DEPLOYMENT_ID=$(curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"query deployments($projectId: String!, $environmentId: String!, $serviceId: String!) {\n  deployments(\n    first: 1\n    input: {\n      projectId: $projectId\n      environmentId: $environmentId\n      serviceId: $serviceId\n    }\n  ) {\n    edges {\n      node {\n        id\n        staticUrl\n      }\n    }\n  }\n}",
+            "variables":{"projectId":"${{ vars.RAILWAY_PROJECT_ID }}","environmentId":"${{ vars.PROD_US_RAILWAY_ENVIRONMENT_ID }}","serviceId":"${{ vars.RAILWAY_CARDINAL_SERVICE_ID }}"}}' | jq -r '.data.deployments.edges[].node.id')
+
+          ## Remove Deployment
+          curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation deploymentRemove($id: String!) {\n  deploymentRemove(id: $id)\n}","variables":{"id":"'${DEPLOYMENT_ID}'"}}'
+      - name: Clear Up Redis
+        if: ${{ inputs.RESET_CARDINAL_STATE }}
+        run: |
+          sleep 10
+          redis-cli -h ${{ secrets.PROD_US_REDIS_HOST }} -p ${{ secrets.PROD_US_REDIS_PORT }}  <<EOF
+          AUTH ${{ secrets.PROD_US_REDIS_PASSWORD }}
+          FLUSHALL
+          keys *
+          EOF
+      - name: Cardinal - Up New Deployment
+        env:
+          RAILWAY_TOKEN: ${{ secrets.PROD_US_RAILWAY_TOKEN }}
+        working-directory: cardinal
+        run: |
+          railway up --service Cardinal --environment production-us
+      - name: Cardinal Healthcheck
+        run: |
+          curl -X POST --max-time 10 --retry 20 --retry-delay 5 --retry-max-time 300 ${{ vars.PROD_US_CARDINAL_HEALTHCHECK }} -d "{}"
+      - name: Restart Datadog Logger Sink (Railway)
+        run: |
+          curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation deploymentRestart($id: String!) {\n  deploymentRestart(id: $id)\n}","variables":{"id":"${{ vars.RAILWAY_DATADOGSINK_DEPLOYMENT_ID }}"}}'
+      - name: Remove Nakama Database (Railway)
+        if: ${{ inputs.RESET_NAKAMA_STATE }}
+        run: |
+          PGPASSWORD=${{ secrets.PROD_US_RAILWAY_POSTGRES_PASSWORD }} psql -h ${{ secrets.PROD_US_RAILWAY_POSTGRES_HOST }} -U ${{ secrets.PROD_US_RAILWAY_POSTGRES_USER }} -p ${{ secrets.PROD_US_RAILWAY_POSTGRES_PORT }} -d railway -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+      - name: Restart Nakama Services (Railway)
+        run: |
+          ## Get NAKAMA Latest Deployment ID
+          DEPLOYMENT_ID=$(curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"query deployments($projectId: String!, $environmentId: String!, $serviceId: String!) {\n  deployments(\n    first: 1\n    input: {\n      projectId: $projectId\n      environmentId: $environmentId\n      serviceId: $serviceId\n    }\n  ) {\n    edges {\n      node {\n        id\n        staticUrl\n      }\n    }\n  }\n}",
+            "variables":{"projectId":"${{ vars.RAILWAY_PROJECT_ID }}","environmentId":"${{ vars.PROD_US_RAILWAY_ENVIRONMENT_ID }}","serviceId":"${{ vars.RAILWAY_NAKAMA_SERVICE_ID }}"}}' | jq -r '.data.deployments.edges[].node.id')
+
+          ## RESTART Deployment
+          curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation deploymentRestart($id: String!) {\n  deploymentRestart(id: $id)\n}","variables":{"id":"'${DEPLOYMENT_ID}'"}}'
