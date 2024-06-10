@@ -4,37 +4,37 @@ name: Deploy
 on:
   workflow_dispatch:
     inputs:
-      IMAGE_VERSION:
+      BRANCH_NAME:
         type: string
-        description: "Cardinal Tag Version:"
-        default: "vX.X.X"
+        description: "Cardinal Branch:"
+        default: "main"
         required: true
       RESET_CARDINAL_STATE:
         type: boolean
         description: "Reset Cardinal DB (Redis)"
-        default: false
+        default: true
         required: true
       RESET_NAKAMA_STATE:
         type: boolean
         description: "Reset Nakama DB (Postgres)"
-        default: false
+        default: true
         required: true
-      DEPLOY_PROD:
+      DEPLOY_MAIN:
         type: boolean
         description: "env: PROD"
-        default: false
+        default: true
         required: true
 
 jobs:
   deploy-prod:
     name: Deploy Railway
-    if: ${{ inputs.DEPLOY_PROD }}
+    if: ${{ inputs.DEPLOY_MAIN }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.IMAGE_VERSION }}
+          ref: ${{ inputs.BRANCH_NAME }}
       - name: Install Railway CLI
         run: |
           bash <(curl -fsSL cli.new)
