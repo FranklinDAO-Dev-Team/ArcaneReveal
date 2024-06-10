@@ -81,7 +81,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
       ## Execute makefile
       - name: Copy Godot Export HTML data
-        run: cp -r ./godot/web_export .github/docker-webexport/
+        run: |
+          cp -r ./godot/web_export .github/docker-webexport/
+          ls -lah .github/docker-webexport/web_export
       ## Set Docker metadata
       - name: Docker metadata
         id: meta
