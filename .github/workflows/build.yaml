@@ -3,9 +3,9 @@ name: Build
 ## workflow will trigger on commit to "main" branch only
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 env:
   GITHUB_REGISTRY_URL: ghcr.io
