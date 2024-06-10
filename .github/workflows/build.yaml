@@ -3,7 +3,7 @@ name: Build
 ## workflow will trigger on commit to "main" branch only
 on:
   workflow_dispatch:
-  # push:
+  push:
   #   branches:
   #     - main
 
