@@ -185,7 +185,7 @@ position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_2vxdc")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, 1)
+position = Vector2(1.47793e-12, 1)
 scale = Vector2(0.96875, 0.9375)
 sprite_frames = SubResource("SpriteFrames_klfs3")
 animation = &"idle"
@@ -208,15 +208,19 @@ libraries = {
 }
 
 [node name="StaffPositionTop" type="Node2D" parent="."]
+visible = false
 position = Vector2(16, 16)
 
 [node name="StaffPositionBottom" type="Node2D" parent="."]
+visible = false
 position = Vector2(16, 16)
 
 [node name="StaffPositionLeft" type="Node2D" parent="."]
+visible = false
 position = Vector2(16, 16)
 
 [node name="StaffPositionRight" type="Node2D" parent="."]
+visible = false
 position = Vector2(16, 16)
 
 [node name="RayCast2DMagic" type="RayCast2D" parent="."]
