@@ -44,8 +44,9 @@ func update_health_ui(game_over):
 		
 		# Clear all enemy nodes
 		for id in game_node.enemy_state.keys():
-			game_node.enemy_state[id].queue_free()
-			game_node.enemy_state.erase(id)
+			if game_node.enemy_state[id] != null:
+				game_node.enemy_state[id].queue_free()
+				game_node.enemy_state.erase(id)
 			
 		# Clear existing walls
 		for row in range(game_node.grid_size):
