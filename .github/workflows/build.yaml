@@ -2,6 +2,7 @@ name: Build
 
 ## workflow will trigger on commit to "main" branch only
 on:
+  workflow_call:
   workflow_dispatch:
   push:
   #   branches:

@@ -3,49 +3,28 @@ name: Deploy
 ## workflow will need manual trigger from actions page
 on:
   workflow_dispatch:
-    inputs:
-      BRANCH_NAME:
-        type: string
-        description: "Cardinal Branch:"
-        default: "main"
-        required: true
-      RESET_CARDINAL_STATE:
-        type: boolean
-        description: "Reset Cardinal DB (Redis)"
-        default: true
-        required: true
-      RESET_NAKAMA_STATE:
-        type: boolean
-        description: "Reset Nakama DB (Postgres)"
-        default: true
-        required: true
-      DEPLOY_MAIN:
-        type: boolean
-        description: "env: PROD"
-        default: true
-        required: true
+  push:
+    branches:
+      - main
 
 jobs:
-  deploy-prod:
+  build:
+    uses: ./.github/workflows/build.yml
+  deploy:
     name: Deploy Railway
-    if: ${{ inputs.DEPLOY_MAIN }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.BRANCH_NAME }}
       - name: Install Railway CLI
         run: |
           bash <(curl -fsSL cli.new)
       - name: Install Redis-CLI
-        if: ${{ inputs.RESET_CARDINAL_STATE }}
         uses: shogo82148/actions-setup-redis@v1
         with:
           redis-version: 7
           auto-start: "false"
       - name: Install Postgresql client-only
-        if: ${{ inputs.RESET_NAKAMA_STATE }}
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
@@ -65,7 +44,6 @@ jobs:
             --header 'Content-Type: application/json' \
             --data '{"query":"mutation deploymentRemove($id: String!) {\n  deploymentRemove(id: $id)\n}","variables":{"id":"'${DEPLOYMENT_ID}'"}}'
       - name: Clear Up Redis
-        if: ${{ inputs.RESET_CARDINAL_STATE }}
         run: |
           sleep 10
           redis-cli -h ${{ secrets.PROD_US_REDIS_HOST }} -p ${{ secrets.PROD_US_REDIS_PORT }}  <<EOF
@@ -89,7 +67,6 @@ jobs:
             --header 'Content-Type: application/json' \
             --data '{"query":"mutation deploymentRestart($id: String!) {\n  deploymentRestart(id: $id)\n}","variables":{"id":"${{ vars.RAILWAY_DATADOGSINK_DEPLOYMENT_ID }}"}}'
       - name: Remove Nakama Database (Railway)
-        if: ${{ inputs.RESET_NAKAMA_STATE }}
         run: |
           PGPASSWORD=${{ secrets.PROD_US_RAILWAY_POSTGRES_PASSWORD }} psql -h ${{ secrets.PROD_US_RAILWAY_POSTGRES_HOST }} -U ${{ secrets.PROD_US_RAILWAY_POSTGRES_USER }} -p ${{ secrets.PROD_US_RAILWAY_POSTGRES_PORT }} -d railway -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
       - name: Restart Nakama Services (Railway)
