@@ -141,6 +141,7 @@ func load_existing_game():
 
 func start_new_game():
 	$"GameOverLabel".visible = false  # Hide the GameOverLabel node
+	$"GameWinLabel".visible = false  # Hide the GameWinLabel node
 	var random = RandomNumberGenerator.new()
 	var resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
 	if resp.is_exception():
@@ -177,19 +178,20 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 		var json = JSON.new()
 		if payload != null:
 			var state = json.parse_string(payload)
-			if state != null:  # Add this check
+			if state != null and not game_over:  # Add this check
+				print(game_over)
 				process_state(state)
-				print("caught wand turn event")
-
-	if (not game_over) and notification.data.has("event") and notification.data["event"] == "player_turn":
-		print("caught player turn event")
+	
+	if notification.data.has("event") and notification.data["event"] == "game-won":
+		player.update_health_ui(false, true)
+		game_over = true
+	elif notification.data.has("event") and notification.data["event"] == "player_turn":
 		var payload = await handle_query()
 		var json = JSON.new()
 		if payload != null:
 			var state = json.parse_string(payload)
-			if state != null:  # Add this check
+			if state != null and not game_over:  # Add this check
 				process_state(state)
-				print("caught wand turn event")
 
 
 func handle_query():

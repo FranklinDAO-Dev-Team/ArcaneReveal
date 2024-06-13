@@ -24,7 +24,7 @@ func _ready():
 	$"../Player/LifeBar/Life3".play("hearts")
 	$"../Player/LifeBar/Life4".play("hearts")
 	$"../Player/LifeBar/Life5".play("hearts")
-	update_health_ui(false)
+	update_health_ui(false, false)
 	global_position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
 	$StaffPositionTop.position = Vector2(16, 0)  # Adjust this offset
 	$StaffPositionBottom.position = Vector2(16, 32)  # Adjust this offset
@@ -33,10 +33,10 @@ func _ready():
 
 func _process(delta):
 	$Sprite.play("idle")
-	update_health_ui(false)
+	update_health_ui(false, false)
 
-func update_health_ui(game_over):
-	if health == 0 or game_over:
+func update_health_ui(game_over, game_won):
+	if health == 0 or game_over or game_won:
 		# Clear all Ability nodes
 		for id in game_node.icon_state.keys():
 			game_node.icon_state[id].queue_free()
@@ -57,7 +57,10 @@ func update_health_ui(game_over):
 					game_node.wall_state[row][col] = null
 		
 		queue_free()
-		$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
+		if game_won:
+			$"../GameWinLabel".visible = true  # Hide the GamewinLabel node
+		elif health == 0 or game_over:
+			$"../GameOverLabel".visible = true  # Hide the GameOverLabel node
 		# Prompt the user for a new username
 		var username_input_screen = preload("res://scenes/TestFinal/username.tscn").instantiate()
 		game_node.add_child(username_input_screen)
