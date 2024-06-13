@@ -92,6 +92,37 @@ jobs:
             --header 'Content-Type: application/json' \
             --data '{"query":"mutation environmentPatchCommitStaged($environmentId: String!, $message: String, $skipDeploys: Boolean) {\n  environmentPatchCommitStaged(\n    environmentId: $environmentId\n    commitMessage: $message\n    skipDeploys: $skipDeploys\n  )\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","skipDeploys":false}}'
 
+      - name: Godot Client - Up New Deployment
+        env:
+          RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
+        run: |
+          ## remove prev docker image
+          curl --location 'https://backboard.railway.app/graphql/internal?q=stageEnvironmentChanges' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation stageEnvironmentChanges($environmentId: String!, $payload: EnvironmentConfig!) {\n  environmentStageChanges(environmentId: $environmentId, input: $payload) {\n    id\n  }\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","payload":{"services":{"${{ vars.RAILWAY_GODOT_SERVICE_ID }}":{"source":{"image":null}}}}}}'
+
+          sleep 5
+          ## commit changes
+          curl --location 'https://backboard.railway.app/graphql/internal?q=environmentPatchCommitStaged' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation environmentPatchCommitStaged($environmentId: String!, $message: String, $skipDeploys: Boolean) {\n  environmentPatchCommitStaged(\n    environmentId: $environmentId\n    commitMessage: $message\n    skipDeploys: $skipDeploys\n  )\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","skipDeploys":false}}'
+
+          sleep 5
+          ## change new docker image
+          curl --location 'https://backboard.railway.app/graphql/internal?q=stageEnvironmentChanges' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation stageEnvironmentChanges($environmentId: String!, $payload: EnvironmentConfig!) {\n  environmentStageChanges(environmentId: $environmentId, input: $payload) {\n    id\n  }\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","payload":{"services":{"${{ vars.RAILWAY_GODOT_SERVICE_ID }}":{"source":{"image":"ghcr.io/franklindao-dev-team/arcanereveal/godotexport:sha-${{ steps.commit_data.outputs.sha_short }}","repo":null,"branch":null,"upstreamUrl":null},"deploy":{"registryCredentials":{"username":"USERNAME","password":"${{ secrets.RAILWAY_GITHUB_REGISTRY_TOKEN }}"}}}}}}}'
+
+          sleep 5
+          ## commit changes
+          curl --location 'https://backboard.railway.app/graphql/internal?q=environmentPatchCommitStaged' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation environmentPatchCommitStaged($environmentId: String!, $message: String, $skipDeploys: Boolean) {\n  environmentPatchCommitStaged(\n    environmentId: $environmentId\n    commitMessage: $message\n    skipDeploys: $skipDeploys\n  )\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","skipDeploys":false}}'
+
       - name: Cardinal Healthcheck
         run: |
           curl -X POST --max-time 10 --retry 20 --retry-delay 5 --retry-max-time 300 ${{ vars.PROD_CARDINAL_HEALTHCHECK }} -d "{}"
