@@ -61,7 +61,7 @@ func FulfillCreateGameSystem(world cardinal.WorldContext) error {
 				PersonaTag:  req.Msg.Result.PersonaTag,
 				Commitments: &commitments,
 				Reveals:     &reveals,
-				Level:       1,
+				Level:       10,
 			})
 			if err != nil {
 				return msg.FulfillCreateGameMsgResult{}, fmt.Errorf("failed to create Game component: %w", err)
