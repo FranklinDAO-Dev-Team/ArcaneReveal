@@ -7,6 +7,9 @@ on:
     # branches:
     #   - main
 
+env:
+  GO_VERSION: 1.22.1
+
 jobs:
   deploy:
     name: Deploy Railway
@@ -14,6 +17,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
       - name: Install Railway CLI
         run: |
           bash <(curl -fsSL cli.new)
@@ -27,7 +34,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
       - name: Cardinal - Shutdown Previous Deployment
-        working-directory: cardinal
+        working-directory: world-engine/cardinal
         run: |
           ## Get Cardinal Latest Deployment ID
           DEPLOYMENT_ID=$(curl --location 'https://backboard.railway.app/graphql/v2' \
