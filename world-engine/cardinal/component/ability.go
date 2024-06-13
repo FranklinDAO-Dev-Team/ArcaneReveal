@@ -76,6 +76,13 @@ func damageAtPosition(
 	if !found {
 		return false, nil
 	}
+	colType, err := cardinal.GetComponent[Collidable](world, id)
+	if err != nil {
+		return false, err
+	}
+	if colType.Type == WallCollide {
+		return false, nil
+	}
 
 	return true, DamageEntity(world, gameID, id, executeUpdates, includePlayer)
 }

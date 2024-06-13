@@ -21,6 +21,15 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 		world,
 		filter.Contains(comp.Game{})).
 		Each(func(gameID types.EntityID) bool {
+			game, err := cardinal.GetComponent[comp.Game](world, gameID)
+			if err != nil {
+				outerErr = err
+				return false
+			}
+			if game.Level == -1 { // game was won, check next game
+				return true
+			}
+
 			levelCompleted, err := checkLevelCompleted(world, gameID)
 			if err != nil {
 				outerErr = err
@@ -48,12 +57,12 @@ func LevelChangeSystem(world cardinal.WorldContext) error {
 					"event":  "game-over",
 					"gameID": gameID,
 				})
-				err = removeGameInstance(world, gameID)
-				if err != nil {
-					// log.Printf("LevelChangeSystem() failed to remove game instance %d: %w\n", gameID, err)
-					return false
-				}
-				return false
+				// err = removeGameInstance(world, gameID)
+				// if err != nil {
+				// 	// log.Printf("LevelChangeSystem() failed to remove game instance %d: %w\n", gameID, err)
+				// 	return false
+				// }
+				// return false
 			}
 
 			// check next game
@@ -120,6 +129,15 @@ func switchLevels(world cardinal.WorldContext, gameID types.EntityID) error {
 	if err != nil {
 		return err
 	}
+	if updatedLevel == -1 { // game was won
+		game, err := cardinal.GetComponent[comp.Game](world, gameID)
+		if err != nil {
+			return err
+		}
+		game.PersonaTag = "Game Completed"
+		cardinal.SetComponent(world, gameID, game) // change the owner so people can't interact with it anymore
+		return nil
+	}
 
 	// clear board
 	err = clearBoard(world, gameID)
@@ -153,25 +171,25 @@ func updateGameLevel(world cardinal.WorldContext, gameID types.EntityID) (int, e
 			"event":  "game-won",
 			"gameID": gameID,
 		})
-		err = removeGameInstance(world, gameID)
+		// err = removeGameInstance(world, gameID)
+		// if err != nil {
+		// 	// log.Printf("updateGameLevel() failed to remove game instance %d: %w\n", gameID, err)
+		// 	return -1, err
+		// }
+		// return -1, nil
+	} else {
+		// player is not at max level, increment level
+		game.Level += 1
+		err = cardinal.SetComponent[comp.Game](world, gameID, game)
 		if err != nil {
-			// log.Printf("updateGameLevel() failed to remove game instance %d: %w\n", gameID, err)
 			return -1, err
 		}
-		return -1, nil
+		world.EmitEvent(map[string]any{
+			"event":    "level-won",
+			"gameID":   gameID,
+			"newLevel": game.Level,
+		})
 	}
-
-	// player is not at max level, increment level
-	game.Level += 1
-	err = cardinal.SetComponent[comp.Game](world, gameID, game)
-	if err != nil {
-		return -1, err
-	}
-	world.EmitEvent(map[string]any{
-		"event":    "level-won",
-		"gameID":   gameID,
-		"newLevel": game.Level,
-	})
 
 	return game.Level, nil
 }
@@ -285,7 +303,13 @@ func populateBoard(world cardinal.WorldContext, gameID types.EntityID, level int
 }
 
 func removeGameInstance(world cardinal.WorldContext, gameID types.EntityID) error {
-	log.Printf("removeGameInstance() removing game instance %d", gameID)
+	log.Printf("removeGameInstance() removing game instance %d HERE!!!!!!!!!!!!!!!", gameID)
+	game, err := cardinal.GetComponent[comp.Game](world, gameID)
+	if err != nil {
+		return err
+	}
+	log.Printf("removeGameInstance() removing game level %d", game.Level)
+
 	var outerErr error
 	searchErr := cardinal.NewSearch(
 		world,
@@ -320,7 +344,7 @@ func removeGameInstance(world cardinal.WorldContext, gameID types.EntityID) erro
 	}
 
 	// remove game itself
-	err := cardinal.Remove(world, gameID)
+	err = cardinal.Remove(world, gameID)
 	if err != nil {
 		return err
 	}
