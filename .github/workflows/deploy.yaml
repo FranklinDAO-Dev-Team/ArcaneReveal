@@ -7,20 +7,15 @@ on:
     # branches:
     #   - main
 
-env:
-  GO_VERSION: 1.22.1
-
 jobs:
+  tests:
+    uses: ./.github/workflows/build.yml
   deploy:
     name: Deploy Railway
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Golang
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
       - name: Install Railway CLI
         run: |
           bash <(curl -fsSL cli.new)
@@ -33,6 +28,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
+      - name: Get Last Commit Short SHA
+        id: commit_data
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Cardinal - Shutdown Previous Deployment
         working-directory: world-engine/cardinal
         run: |
@@ -56,18 +55,37 @@ jobs:
           FLUSHALL
           keys *
           EOF
-      - name: Cardinal - Run Make
-        working-directory: world-engine/cardinal
-        run: |
-          make
-          ## includ artifacts directory to Railway build
-          echo "node_modules" > seismic/circuit/.gitignore
       - name: Cardinal - Up New Deployment
         env:
           RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
-        working-directory: world-engine/cardinal
         run: |
-          railway up --service Cardinal --environment production
+          ## remove prev docker image
+          curl --location 'https://backboard.railway.app/graphql/internal?q=stageEnvironmentChanges' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation stageEnvironmentChanges($environmentId: String!, $payload: EnvironmentConfig!) {\n  environmentStageChanges(environmentId: $environmentId, input: $payload) {\n    id\n  }\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","payload":{"services":{"${{ vars.RAILWAY_CARDINAL_SERVICE_ID }}":{"source":{"image":null}}}}}}'
+
+          sleep 5
+          ## commit changes
+          curl --location 'https://backboard.railway.app/graphql/internal?q=environmentPatchCommitStaged' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation environmentPatchCommitStaged($environmentId: String!, $message: String, $skipDeploys: Boolean) {\n  environmentPatchCommitStaged(\n    environmentId: $environmentId\n    commitMessage: $message\n    skipDeploys: $skipDeploys\n  )\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","skipDeploys":false}}'
+
+          sleep 5
+          ## change new docker image
+          curl --location 'https://backboard.railway.app/graphql/internal?q=stageEnvironmentChanges' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation stageEnvironmentChanges($environmentId: String!, $payload: EnvironmentConfig!) {\n  environmentStageChanges(environmentId: $environmentId, input: $payload) {\n    id\n  }\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","payload":{"services":{"${{ vars.RAILWAY_CARDINAL_SERVICE_ID }}":{"source":{"image":"ghcr.io/franklindao-dev-team/arcanereveal/cardinal:sha-${{ steps.commit_data.outputs.sha_short }}","repo":null,"branch":null,"upstreamUrl":null},"deploy":{"registryCredentials":{"username":"USERNAME","password":"${{ secrets.RAILWAY_GITHUB_REGISTRY_TOKEN }}"}}}}}}}'
+
+          sleep 5
+          ## commit changes
+          curl --location 'https://backboard.railway.app/graphql/internal?q=environmentPatchCommitStaged' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
+            --header 'Content-Type: application/json' \
+            --data '{"query":"mutation environmentPatchCommitStaged($environmentId: String!, $message: String, $skipDeploys: Boolean) {\n  environmentPatchCommitStaged(\n    environmentId: $environmentId\n    commitMessage: $message\n    skipDeploys: $skipDeploys\n  )\n}","variables":{"environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","skipDeploys":false}}'
+
       - name: Cardinal Healthcheck
         run: |
           curl -X POST --max-time 10 --retry 20 --retry-delay 5 --retry-max-time 300 ${{ vars.PROD_CARDINAL_HEALTHCHECK }} -d "{}"
@@ -88,13 +106,3 @@ jobs:
             --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
             --header 'Content-Type: application/json' \
             --data '{"query":"mutation deploymentRestart($id: String!) {\n  deploymentRestart(id: $id)\n}","variables":{"id":"'${DEPLOYMENT_ID}'"}}'
-      - name: Godot - Copy files
-        run: |
-          cp -r ./godot/web_export .github/docker-godot-webexport/
-          ls -lah .github/docker-godot-webexport/web_export
-      - name: Godot - Up New Deployment
-        env:
-          RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
-        working-directory: .github/docker-godot-webexport/
-        run: |
-          railway up --service ArcaneReveal-client --environment production
