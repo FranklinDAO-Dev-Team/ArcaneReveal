@@ -58,7 +58,10 @@ jobs:
           EOF
       - name: Cardinal - Run Make
         working-directory: world-engine/cardinal
-        run: make
+        run: |
+          make
+          ## includ artifacts directory to Railway build
+          echo "node_modules" > seismic/circuit/.gitignore
       - name: Cardinal - Up New Deployment
         env:
           RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
