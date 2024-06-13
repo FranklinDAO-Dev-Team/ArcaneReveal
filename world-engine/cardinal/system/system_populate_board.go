@@ -138,20 +138,20 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 	// create wands to track when abilities are spent
 	spawnWands(world, gameID)
 
-	// // create walls
-	// spawnWallFrame(world, gameID)
-	// createWall(world, gameID, 3, 2)
-	// createWall(world, gameID, 5, 2)
-	// createWall(world, gameID, 2, 5)
-	// createWall(world, gameID, 2, 7)
-	// createWall(world, gameID, 4, 7)
+	// create walls
+	spawnWallFrame(world, gameID)
+	createWall(world, gameID, 3, 2)
+	createWall(world, gameID, 5, 2)
+	createWall(world, gameID, 2, 5)
+	createWall(world, gameID, 2, 7)
+	createWall(world, gameID, 4, 7)
 
-	// // create monsters
-	// createMonster(world, gameID, 1, 9, comp.MEDIUM)
-	// createMonster(world, gameID, 3, 3, comp.LIGHT)
-	// createMonster(world, gameID, 3, 9, comp.LIGHT)
-	// createMonster(world, gameID, 9, 1, comp.LIGHT)
-	populateDebugLevel(world, gameID)
+	// create monsters
+	createMonster(world, gameID, 1, 9, comp.MEDIUM)
+	createMonster(world, gameID, 3, 3, comp.LIGHT)
+	createMonster(world, gameID, 3, 9, comp.LIGHT)
+	createMonster(world, gameID, 9, 1, comp.LIGHT)
+	// populateDebugLevel(world, gameID)
 
 	PrintStateToTerminal(world, gameID)
 
