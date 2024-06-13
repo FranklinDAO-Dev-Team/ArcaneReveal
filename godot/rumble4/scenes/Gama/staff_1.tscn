@@ -19,10 +19,11 @@ animations = [{
 
 [node name="Staff" type="Node2D"]
 z_index = 1
+scale = Vector2(9.10884, 9.01778)
 script = ExtResource("1_tqrul")
-metadata/_edit_group_ = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.444921, 0)
 sprite_frames = SubResource("SpriteFrames_nltpd")
 
 [node name="Area2D" type="Area2D" parent="."]
@@ -32,36 +33,39 @@ metadata/_edit_group_ = true
 shape = SubResource("RectangleShape2D_n3ool")
 
 [node name="SpellRight" parent="." instance=ExtResource("3_kmh55")]
+visible = false
 z_index = 1
-position = Vector2(56, -7.86724e-12)
+position = Vector2(56, -6.56948e-12)
 rotation = 3.14159
 scale = Vector2(0.2, 0.2)
 
 [node name="SpellLeft" parent="." instance=ExtResource("3_kmh55")]
+visible = false
 z_index = 1
-position = Vector2(-51, 8.80634e-12)
+position = Vector2(-51, -7.17455e-12)
 rotation = 3.14159
 scale = Vector2(0.2, 0.2)
 
 [node name="SpellTop" parent="." instance=ExtResource("3_kmh55")]
 z_index = 1
-position = Vector2(-7.21746e-14, -51)
+position = Vector2(2.41524, -40.6974)
 rotation = 4.71239
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.315948, 0.315948)
 
 [node name="SpellBottom" parent="." instance=ExtResource("3_kmh55")]
+visible = false
 z_index = 1
-position = Vector2(2.16242e-13, 52)
+position = Vector2(1.22215e-11, 51)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 
 [node name="Icon" type="ColorRect" parent="."]
-visible = false
 offset_top = -22.0
 offset_right = 8.0
 offset_bottom = -14.0
 rotation = 0.785398
 color = Color(0.356863, 1, 0.882353, 1)
+metadata/_edit_use_anchors_ = true
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
