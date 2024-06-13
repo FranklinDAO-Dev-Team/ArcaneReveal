@@ -1,6 +1,6 @@
 name: Build
 
-## workflow will trigger on commit to "main" branch only
+## workflow will trigger by deploy workflow on main branch
 on:
   workflow_call:
   workflow_dispatch:
@@ -48,6 +48,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha
       ## Login into GCR / Github Packages
       - name: Docker - Auth to Github Container Registry
         uses: docker/login-action@v3
@@ -83,8 +84,8 @@ jobs:
       ## Execute makefile
       - name: Copy Godot Export HTML data
         run: |
-          cp -r ./godot/web_export .github/docker-webexport/
-          ls -lah .github/docker-webexport/web_export
+          cp -r ./godot/web_export .github/docker-godot-webexport/
+          ls -lah .github/docker-godot-webexport/web_export
       ## Set Docker metadata
       - name: Docker metadata
         id: meta
@@ -95,6 +96,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha
       ## Login into GCR / Github Packages
       - name: Docker - Auth to Github Container Registry
         uses: docker/login-action@v3
@@ -106,7 +108,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .github/docker-webexport/
+          context: .github/docker-godot-webexport/
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

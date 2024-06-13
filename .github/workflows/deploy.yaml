@@ -8,8 +8,6 @@ on:
       - main
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
   deploy:
     name: Deploy Railway
     runs-on: ubuntu-latest
@@ -36,7 +34,7 @@ jobs:
             --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
             --header 'Content-Type: application/json' \
             --data '{"query":"query deployments($projectId: String!, $environmentId: String!, $serviceId: String!) {\n  deployments(\n    first: 1\n    input: {\n      projectId: $projectId\n      environmentId: $environmentId\n      serviceId: $serviceId\n    }\n  ) {\n    edges {\n      node {\n        id\n        staticUrl\n      }\n    }\n  }\n}",
-            "variables":{"projectId":"${{ vars.RAILWAY_PROJECT_ID }}","environmentId":"${{ vars.PROD_US_RAILWAY_ENVIRONMENT_ID }}","serviceId":"${{ vars.RAILWAY_CARDINAL_SERVICE_ID }}"}}' | jq -r '.data.deployments.edges[].node.id')
+            "variables":{"projectId":"${{ vars.RAILWAY_PROJECT_ID }}","environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","serviceId":"${{ vars.RAILWAY_CARDINAL_SERVICE_ID }}"}}' | jq -r '.data.deployments.edges[].node.id')
 
           ## Remove Deployment
           curl --location 'https://backboard.railway.app/graphql/v2' \
@@ -46,29 +44,26 @@ jobs:
       - name: Clear Up Redis
         run: |
           sleep 10
-          redis-cli -h ${{ secrets.PROD_US_REDIS_HOST }} -p ${{ secrets.PROD_US_REDIS_PORT }}  <<EOF
-          AUTH ${{ secrets.PROD_US_REDIS_PASSWORD }}
+          redis-cli -h ${{ secrets.PROD_REDIS_HOST }} -p ${{ secrets.PROD_REDIS_PORT }}  <<EOF
+          AUTH ${{ secrets.PROD_REDIS_PASSWORD }}
           FLUSHALL
           keys *
           EOF
+      - name: Cardinal - Run Make
+        working-directory: world-engine/cardinal
+        run: make
       - name: Cardinal - Up New Deployment
         env:
-          RAILWAY_TOKEN: ${{ secrets.PROD_US_RAILWAY_TOKEN }}
-        working-directory: cardinal
+          RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
+        working-directory: world-engine/cardinal
         run: |
-          railway up --service Cardinal --environment production-us
+          railway up --service Cardinal --environment production
       - name: Cardinal Healthcheck
         run: |
-          curl -X POST --max-time 10 --retry 20 --retry-delay 5 --retry-max-time 300 ${{ vars.PROD_US_CARDINAL_HEALTHCHECK }} -d "{}"
-      - name: Restart Datadog Logger Sink (Railway)
-        run: |
-          curl --location 'https://backboard.railway.app/graphql/v2' \
-            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
-            --header 'Content-Type: application/json' \
-            --data '{"query":"mutation deploymentRestart($id: String!) {\n  deploymentRestart(id: $id)\n}","variables":{"id":"${{ vars.RAILWAY_DATADOGSINK_DEPLOYMENT_ID }}"}}'
+          curl -X POST --max-time 10 --retry 20 --retry-delay 5 --retry-max-time 300 ${{ vars.PROD_CARDINAL_HEALTHCHECK }} -d "{}"
       - name: Remove Nakama Database (Railway)
         run: |
-          PGPASSWORD=${{ secrets.PROD_US_RAILWAY_POSTGRES_PASSWORD }} psql -h ${{ secrets.PROD_US_RAILWAY_POSTGRES_HOST }} -U ${{ secrets.PROD_US_RAILWAY_POSTGRES_USER }} -p ${{ secrets.PROD_US_RAILWAY_POSTGRES_PORT }} -d railway -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+          PGPASSWORD=${{ secrets.PROD_RAILWAY_POSTGRES_PASSWORD }} psql -h ${{ secrets.PROD_RAILWAY_POSTGRES_HOST }} -U ${{ secrets.PROD_RAILWAY_POSTGRES_USER }} -p ${{ secrets.PROD_RAILWAY_POSTGRES_PORT }} -d railway -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
       - name: Restart Nakama Services (Railway)
         run: |
           ## Get NAKAMA Latest Deployment ID
@@ -76,10 +71,20 @@ jobs:
             --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
             --header 'Content-Type: application/json' \
             --data '{"query":"query deployments($projectId: String!, $environmentId: String!, $serviceId: String!) {\n  deployments(\n    first: 1\n    input: {\n      projectId: $projectId\n      environmentId: $environmentId\n      serviceId: $serviceId\n    }\n  ) {\n    edges {\n      node {\n        id\n        staticUrl\n      }\n    }\n  }\n}",
-            "variables":{"projectId":"${{ vars.RAILWAY_PROJECT_ID }}","environmentId":"${{ vars.PROD_US_RAILWAY_ENVIRONMENT_ID }}","serviceId":"${{ vars.RAILWAY_NAKAMA_SERVICE_ID }}"}}' | jq -r '.data.deployments.edges[].node.id')
+            "variables":{"projectId":"${{ vars.RAILWAY_PROJECT_ID }}","environmentId":"${{ vars.PROD_RAILWAY_ENVIRONMENT_ID }}","serviceId":"${{ vars.RAILWAY_NAKAMA_SERVICE_ID }}"}}' | jq -r '.data.deployments.edges[].node.id')
 
           ## RESTART Deployment
           curl --location 'https://backboard.railway.app/graphql/v2' \
             --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
             --header 'Content-Type: application/json' \
             --data '{"query":"mutation deploymentRestart($id: String!) {\n  deploymentRestart(id: $id)\n}","variables":{"id":"'${DEPLOYMENT_ID}'"}}'
+      - name: Godot - Copy files
+        run: |
+          cp -r ./godot/web_export .github/docker-godot-webexport/
+          ls -lah .github/docker-godot-webexport/web_export
+      - name: Godot - Up New Deployment
+        env:
+          RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
+        working-directory: .github/docker-godot-webexport/
+        run: |
+          railway up --service ArcaneReveal-client --environment production
