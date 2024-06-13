@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build.yaml
   deploy:
     name: Deploy Railway
     runs-on: ubuntu-latest
