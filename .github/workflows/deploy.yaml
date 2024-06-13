@@ -8,8 +8,13 @@ on:
     #   - main
 
 jobs:
-  tests:
+  build:
+    name: Build
     uses: ./.github/workflows/build.yaml
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
   deploy:
     name: Deploy Railway
     runs-on: ubuntu-latest
