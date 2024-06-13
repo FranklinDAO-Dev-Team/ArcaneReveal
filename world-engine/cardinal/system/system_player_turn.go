@@ -54,6 +54,7 @@ func PlayerTurnSystem(world cardinal.WorldContext) error {
 			// emit event log to client
 			err = world.EmitEvent(map[string]any{
 				"event":     "player_turn",
+				"gameID":    gameID,
 				"action":    turn.Msg.Action,
 				"direction": direction,
 			})
@@ -95,12 +96,11 @@ func playerTurnAction(
 		}
 
 		// emit after attck and move
-		eventMap := make(map[string]any)
-		eventMap["turnEvent"] = *eventLogList
-		err = world.EmitEvent(eventMap)
-		if err != nil {
-			return err
-		}
+		world.EmitEvent(map[string]any{
+			"event":  "turn-event",
+			"log":    *eventLogList,
+			"gameID": gameID,
+		})
 
 	case "wand":
 		wandnum, err := strconv.Atoi(turn.Msg.WandNum)
@@ -137,9 +137,11 @@ func playerTurnAction(
 		if err != nil {
 			return fmt.Errorf("MonsterTurnSystem err: %w", err)
 		}
-		eventMap := make(map[string]any)
-		eventMap["turnEvent"] = *eventLogList
-		err = world.EmitEvent(eventMap)
+		err = world.EmitEvent(map[string]any{
+			"event":  "turn-event",
+			"log":    *eventLogList,
+			"gameID": gameID,
+		})
 		if err != nil {
 			return err
 		}

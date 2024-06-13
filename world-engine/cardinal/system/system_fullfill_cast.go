@@ -82,9 +82,11 @@ func FulfillCastSystem(world cardinal.WorldContext) error {
 			}
 
 			// Emit activated abilities and spell log to client
-			eventMap := make(map[string]any)
-			eventMap["turnEvent"] = *eventLogList
-			err = world.EmitEvent(eventMap)
+			err = world.EmitEvent(map[string]any{
+				"event":  "turn-event",
+				"log":    *eventLogList,
+				"gameID": gameID,
+			})
 			if err != nil {
 				return msg.FulfillCastMsgResult{}, err
 			}
