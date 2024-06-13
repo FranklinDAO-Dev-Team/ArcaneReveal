@@ -382,7 +382,13 @@ func populateDebugLevel(world cardinal.WorldContext, gameID types.EntityID) erro
 	log.Print("populateDebugLevel()")
 	setPlayerPosition(world, gameID, 1, 1)
 	spawnWallFrame(world, gameID)
-	createMonster(world, gameID, 3, 1, comp.LIGHT)
+	createMonster(world, gameID, 5, 1, comp.LIGHT)
+	createMonster(world, gameID, 5, 3, comp.LIGHT)
+
+	createWall(world, gameID, 3, 2)
+	createWall(world, gameID, 5, 2)
+	createWall(world, gameID, 7, 2)
+	createWall(world, gameID, 9, 2)
 
 	return nil
 }

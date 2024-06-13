@@ -73,8 +73,8 @@ func applyExplosion(
 			}
 			if damageDealt {
 				*eventLogList = append(*eventLogList, GameEventLog{X: damagePos.X, Y: damagePos.Y, Event: GameEventSpellDamage})
+				reveal = true
 			}
-			reveal = true
 		}
 	}
 	return reveal, nil // return true if explosion actually damaged anything
