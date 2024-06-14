@@ -33,7 +33,8 @@ jobs:
 
       - name: Change directory and run server
         run: |
-          cd ArcaneReveal/godot/web_export
+          cd godot
+          cd web_export
           npx local-web-server --https --cors.embedder-policy "require-corp" --cors.opener-policy "same-origin" --directory "." &
 
       - name: Setup Pages
@@ -42,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'ArcaneReveal/godot/web_export'
+          path: 'godot/web_export'
 
       - name: Deploy to GitHub Pages
         id: deployment
