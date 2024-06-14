@@ -24,8 +24,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./
-          working-directory: ./
+          path: |
+            index.html
+            _headers
+            godot/web_export/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
