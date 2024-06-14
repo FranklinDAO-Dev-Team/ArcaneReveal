@@ -172,7 +172,13 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
 
-	if notification.data.has("turnEvent"):
+	var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
+		"Persona": username,
+	}))
+	print(notification.data)
+	if notification.data.has("gameID") and notification.data["gameID"] != resp_getID:
+		return
+	if notification.data.has("event") and notification.data["event"] == "turn-event":
 		process_event(notification.data)
 		var payload = await handle_query()
 		var json = JSON.new()
@@ -463,7 +469,7 @@ func process_state(state: Dictionary):
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func process_event(notification : Dictionary):
-	var event_log = notification["turnEvent"]
+	var event_log = notification["log"]
 	for event in event_log:
 		var action = int(event["Event"])
 		var x_pos = int(event["X"])
