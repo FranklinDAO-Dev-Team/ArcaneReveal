@@ -151,6 +151,7 @@ func populateLevel1(world cardinal.WorldContext, gameID types.EntityID) error {
 	createMonster(world, gameID, 3, 3, comp.LIGHT)
 	createMonster(world, gameID, 3, 9, comp.LIGHT)
 	createMonster(world, gameID, 9, 1, comp.LIGHT)
+	// populateDebugLevel(world, gameID)
 
 	PrintStateToTerminal(world, gameID)
 
@@ -382,7 +383,6 @@ func populateDebugLevel(world cardinal.WorldContext, gameID types.EntityID) erro
 	log.Print("populateDebugLevel()")
 	setPlayerPosition(world, gameID, 1, 1)
 	spawnWallFrame(world, gameID)
-	createMonster(world, gameID, 3, 1, comp.LIGHT)
-
+	createMonster(world, gameID, 1, 3, comp.LIGHT)
 	return nil
 }

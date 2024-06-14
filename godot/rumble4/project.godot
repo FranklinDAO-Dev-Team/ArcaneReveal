@@ -33,6 +33,10 @@ window/stretch/scale=2.5
 
 enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
 
+[gui]
+
+theme/custom_font="res://assets/PressStart.tres"
+
 [input]
 
 up={

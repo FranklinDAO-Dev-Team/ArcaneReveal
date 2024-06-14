@@ -1,25 +1,25 @@
-name: Release
+name: Build
 
-## workflow will trigger on commit to "main" branch only
+## workflow will trigger by deploy workflow on main branch
 on:
+  workflow_call:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 env:
   GITHUB_REGISTRY_URL: ghcr.io
-  GITHUB_CONTAINER_NAME: ArcaneReveal/cardinal
+  GITHUB_CONTAINER_NAME: ${{ github.repository }}
   GO_VERSION: 1.22.1
 
 jobs:
-  build:
-    name: World Engine - Cardinal Build
+  cardinal:
+    name: World Engine - Cardinal
     runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
-        working-directory: world-engine
     # Add "id-token" with the intended permissions.
     permissions:
       contents: read
@@ -34,10 +34,21 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Set SHA_SHORT outputs
-        id: vars
-        run:
-          echo "sha_short=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+      ## Execute makefile
+      - name: Run Make
+        working-directory: world-engine/cardinal
+        run: make
+      ## Set Docker metadata
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.GITHUB_REGISTRY_URL }}/${{ env.GITHUB_CONTAINER_NAME }}/cardinal
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha
       ## Login into GCR / Github Packages
       - name: Docker - Auth to Github Container Registry
         uses: docker/login-action@v3
@@ -45,17 +56,64 @@ jobs:
           registry: ${{ env.GITHUB_REGISTRY_URL }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      ## Execute makefile
-      - name: Run Make
-        working-directory: world-engine/cardinal
-        run: make
-      ## Build Cardinal dockerfile
-      - name: Cardinal Build
-        run: |
-          # Build container image
-          # Image name: ghcr.io/FranklinDAO-Dev-Team/ArcaneReveal/cardinal:{sha_hort}
-          docker build -t ${{ env.GITHUB_REGISTRY_URL }}/${{ github.repository_owner }}/${{ env.GITHUB_CONTAINER_NAME }}:${{ steps.vars.outputs.sha_short }} .
       ## Push build image to GCR / Github Packages
-      - name: Docker - Publish Image to Github Container Registry
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./world-engine/cardinal
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  godot:
+    name: Godot - HTML Export
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      ## Execute makefile
+      - name: Copy Godot Export HTML data
         run: |
-          docker push ${{ env.GITHUB_REGISTRY_URL }}/${{ github.repository_owner }}/${{ env.GITHUB_CONTAINER_NAME }}:${{ steps.vars.outputs.sha_short }}
+          ## godot-web_export directory on the main branch has changed recently ## need to update the copy path command accordingly.
+          # (prev) cp -r ./godot/web_export .github/docker-godot-webexport/
+
+          mkdir -p .github/docker-godot-webexport/web_export
+          cp -rf ./ArcaneReveal* .github/docker-godot-webexport/web_export/
+
+          ls -lah .github/docker-godot-webexport/web_export
+      ## Set Docker metadata
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.GITHUB_REGISTRY_URL }}/${{ env.GITHUB_CONTAINER_NAME }}/godotexport
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha
+      ## Login into GCR / Github Packages
+      - name: Docker - Auth to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.GITHUB_REGISTRY_URL }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      ## Push build image to GCR / Github Packages
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .github/docker-godot-webexport/
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

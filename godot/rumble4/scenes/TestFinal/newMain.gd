@@ -141,6 +141,7 @@ func load_existing_game():
 
 func start_new_game():
 	$"GameOverLabel".visible = false  # Hide the GameOverLabel node
+	$"GameWinLabel".visible = false  # Hide the GameWinLabel node
 	var random = RandomNumberGenerator.new()
 	var resp = await client.rpc_async(session, "tx/game/request-game", JSON.stringify({"playerSource": str(random.randi_range(100000, 999999))}))
 	if resp.is_exception():
@@ -177,19 +178,20 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 		var json = JSON.new()
 		if payload != null:
 			var state = json.parse_string(payload)
-			if state != null:  # Add this check
+			if state != null and not game_over:  # Add this check
+				print(game_over)
 				process_state(state)
-				print("caught wand turn event")
-
-	if (not game_over) and notification.data.has("event") and notification.data["event"] == "player_turn":
-		print("caught player turn event")
+	
+	if notification.data.has("event") and notification.data["event"] == "game-won":
+		player.update_health_ui(false, true)
+		game_over = true
+	elif notification.data.has("event") and notification.data["event"] == "player_turn":
 		var payload = await handle_query()
 		var json = JSON.new()
 		if payload != null:
 			var state = json.parse_string(payload)
-			if state != null:  # Add this check
+			if state != null and not game_over:  # Add this check
 				process_state(state)
-				print("caught wand turn event")
 
 
 func handle_query():
@@ -373,7 +375,7 @@ func initialize_state(state: Dictionary):
 
 		enemy_instance.x_pos = int(monster["x"])
 		enemy_instance.y_pos = int(monster["y"])
-		enemy_instance.max_health = int(monster["currHealth"])
+		enemy_instance.max_health = int(monster["maxHealth"])
 		enemy_instance.health = int(monster["currHealth"])
 		enemy_instance.id = int(monster["id"])
 
@@ -392,9 +394,12 @@ func process_state(state: Dictionary):
 	var player_state = state["player"]
 	var player_x = int(player_state["x"])
 	var player_y = int(player_state["y"])
+	var player_health = int(player_state["currHealth"])
 	player_prev_x = player_x
 	player_prev_y = player_y
 	
+	if player_health >= player.health:
+		player.health = player_health
 	player.move(player_x, player_y)
 	
 	var icons = state["reveals"]
@@ -424,6 +429,7 @@ func process_state(state: Dictionary):
 		var monster = monsters[i]
 		var x_pos = int(monster["x"])
 		var y_pos = int(monster["y"])
+		var max_health = int(monster["maxHealth"])
 		var health = int(monster["currHealth"])
 		var id = int(monster["id"])
 
@@ -433,19 +439,23 @@ func process_state(state: Dictionary):
 				
 			enemy_instance.x_pos = x_pos
 			enemy_instance.y_pos = y_pos
+			enemy_instance.max_health = max_health
 			enemy_instance.health = health
 			enemy_instance.id = id
 				
 			add_child(enemy_instance)
 			enemy_state[enemy_instance.id] = enemy_instance
+		elif enemy_state[id] == null:
+			enemy_state.erase(id)
 		else:
 			var enemy_instance = enemy_state[id]
 			enemy_instance.move(x_pos, y_pos)
+			enemy_instance.max_health = max_health
 			enemy_instance.health = health
 		monster_ids.append(id)
 		
 	for id in enemy_state.keys():
-		if id not in monster_ids:
+		if id not in monster_ids and enemy_state[id] != null:
 			enemy_state[id].queue_free()
 			enemy_state.erase(id)
 
@@ -476,7 +486,7 @@ func process_event(notification : Dictionary):
 			
 		var animation_player = basic_lightning_instance.get_node("Blank")
 			
-		if animation_player != null and x_pos > 0 and x_pos < 10 and y_pos > 0 and y_pos < 10:
+		if animation_player != null:
 			# Initiate corresponding animation based on action
 			match action:
 				0:
@@ -490,16 +500,17 @@ func process_event(notification : Dictionary):
 					animation_player.play("default")
 				2:
 					# Animate lightning bolt dissipating
-					animation_player = basic_lightning_instance.get_node("Spark")
-					animation_player.play("default")
+					if x_pos > 0 and x_pos < 10 and y_pos > 0 and y_pos < 10:
+						animation_player = basic_lightning_instance.get_node("Spark")
+						animation_player.play("default")
 				3:
-					# Animate lightning bolt dissipating
+					# Animate wall activation
 					animation_player = basic_lightning_instance.get_node("WallActivation")
 					animation_player.play("default")
 				4: 
 					await get_tree().create_timer(0.4).timeout
 					for enemy in enemy_state.values():
-						if x_pos == enemy.x_pos and y_pos == enemy.y_pos and player != null:
+						if player != null and enemy != null and x_pos == enemy.x_pos and y_pos == enemy.y_pos:
 							enemy.attack(player_prev_x, player_prev_y)
 							player.health -= 1
 				_:
@@ -510,6 +521,8 @@ func process_event(notification : Dictionary):
 func has_player_attacked(dir):
 	var new_player_pos = Vector2(player.x_pos, player.y_pos) + 2 * inputs[dir]
 	for enemy in enemy_state.values():
+		if enemy == null:
+			return false
 		var monster_curr_pos = Vector2(enemy.x_pos, enemy.y_pos)
 		if new_player_pos.x == monster_curr_pos.x and new_player_pos.y == monster_curr_pos.y:
 			player.attack(dir)
