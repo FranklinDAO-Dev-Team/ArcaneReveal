@@ -3,7 +3,7 @@
 // that they need an Internet connection to run the project if desired.
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
-const CACHE_VERSION = "1717259368|1223974433";
+const CACHE_VERSION = "1718338006|307551502";
 const CACHE_PREFIX = "Test Game-sw-cache-";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 const OFFLINE_URL = "ArcaneReveal.offline.html";
