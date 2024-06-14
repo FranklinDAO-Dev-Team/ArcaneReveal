@@ -84,7 +84,11 @@ jobs:
       ## Execute makefile
       - name: Copy Godot Export HTML data
         run: |
-          cp -r ./godot/web_export .github/docker-godot-webexport/
+          ## godot-web_export directory on the main branch has changed recently ## please update the copy path command accordingly.
+          # (prev) cp -r ./godot/web_export .github/docker-godot-webexport/
+
+          mkdir -p .github/docker-godot-webexport/web_export
+          cp -rf ./ArcameReveal* .github/docker-godot-webexport/web_export/
           ls -lah .github/docker-godot-webexport/web_export
       ## Set Docker metadata
       - name: Docker metadata
