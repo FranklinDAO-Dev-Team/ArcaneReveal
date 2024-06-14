@@ -23,3 +23,8 @@ Once the World Engine is running, you can start the godot/rumble4 folder in the 
 
 Use WASD to move the player. Moving into enemies triggers the default attack. Use number keys 1, 2, 3, 4 to select wands. Use arrow keys up, down, left, right to cast the wands in the corresponding direction. Each wand will have a randomized selection of spell abilities that are hidden at the beginning of each round. It will expire after one time of usage, and restore once player reaches the next level.
 
+## Running the HTML5 game locally
+```
+npx local-web-server --https --cors.embedder-policy "require-corp" --cors.opener-policy "same-origin" --directory "."
+```
+and choose any of the local web servers
