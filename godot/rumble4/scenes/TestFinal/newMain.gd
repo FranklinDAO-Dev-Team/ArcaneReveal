@@ -172,13 +172,14 @@ func _on_notification(p_notification : NakamaAPI.ApiNotification):
 	notification.parse(p_notification.content)
 	print("[Notification]: ", notification.data)
 
-	var resp_getID = await client.rpc_async(session, "query/game/query-game-id-by-persona", JSON.stringify({
-		"Persona": username,
-	}))
+	var resp_getID = await get_gameID()
 	print(notification.data)
-	if notification.data.has("gameID") and notification.data["gameID"] != resp_getID:
+	if notification.data.has("gameID") and str(notification.data["gameID"]) != str(resp_getID):
+		print("noti" +str(notification.data["gameID"]))
+		print("resp" + str(resp_getID))
 		return
 	if notification.data.has("event") and notification.data["event"] == "turn-event":
+		print(notification.data["event"])
 		process_event(notification.data)
 		var payload = await handle_query()
 		var json = JSON.new()
@@ -474,6 +475,7 @@ func process_event(notification : Dictionary):
 		var action = int(event["Event"])
 		var x_pos = int(event["X"])
 		var y_pos = int(event["Y"])
+		print(event)
 			
 		# Calculate position based on x_pos and y_pos, assuming each square has a size of 32
 		var position = Vector2((x_pos - 1) * tile_size, (y_pos - 1) * tile_size)
