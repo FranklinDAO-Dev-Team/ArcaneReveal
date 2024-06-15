@@ -768,6 +768,16 @@ text = "                YOU WIN!"
 
 [node name="BasicLightning" parent="." instance=ExtResource("9_waj4p")]
 
+[node name="Label" type="RichTextLabel" parent="."]
+offset_left = -183.0
+offset_top = 75.0
+offset_right = -33.0
+offset_bottom = 255.0
+text = "PRESS 1-4 to select a wand and the 
+arrow keys to cast"
+scroll_active = false
+autowrap_mode = 2
+
 [connection signal="door_opened" from="Key" to="Door" method="_on_key_door_opened"]
 [connection signal="entered_door_zone" from="Door" to="Key" method="_on_door_entered_door_zone"]
 [connection signal="exited_door_zone" from="Door" to="Key" method="_on_door_exited_door_zone"]
