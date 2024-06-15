@@ -773,8 +773,17 @@ offset_left = -183.0
 offset_top = 75.0
 offset_right = -33.0
 offset_bottom = 255.0
-text = "PRESS 1-4 to select a wand and the 
+text = "Press 1-4 to select a wand and the 
 arrow keys to cast"
+scroll_active = false
+autowrap_mode = 2
+
+[node name="Label2" type="RichTextLabel" parent="."]
+offset_left = 337.0
+offset_top = 96.0
+offset_right = 487.0
+offset_bottom = 276.0
+text = "Use WASD to move the player and hit enemies"
 scroll_active = false
 autowrap_mode = 2
 
